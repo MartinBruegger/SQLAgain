@@ -1,0 +1,44 @@
+Tooltip Text
+
+Form Header
+Use Oracle SQL*Plus to excute one File with SQL Statements in multiple Databases.
+
+CheckedListBox_DB
+Select one or multiple Databases.
+
+listBox_User
+Select Database User for the Database Connection.
+
+SQL File
+Enter the Filename with your SQL Statements to execute.
+
+Explore
+Explore your Directories where you may create and select Files including SQL Statements.
+
+View
+View the logfile with SQL*Plus Output from earlier runs.
+
+Manage DB Users
+Define your DB Users including Alias, Name and Password or Environment Settings like TNS_ADMIN and SQLPATH.
+
+tnsping
+Test the Connectifity to the selected Databases using Oracles tnsping Utility.
+
+SQL*Plus Options
+-S
+-S[ILENT] Suppresses all SQL*Plus information and prompt messages.
+-M
+-M[ARKUP] CSV ON  Output from a query will be displayed in CSV format (Version 12.2 required).
+-M[ARKUP] HTML ON  Output from a query will be displayed in HTML format.
+
+Log to File
+Enter the Filename where the Output of Oracle SQL*Plus will be saved.
+
+Log Append
+Append to existing log file or create a new log file.
+
+Run SQL
+Press this Button when you selected at least one Database, the correct DB User and the SQL File to execute in Oracle SQL*Plus.
+
+Status Messages
+A Message for each Database and Action (tnsping or sqlplus) including the Start Timestamp will be displayed here.
