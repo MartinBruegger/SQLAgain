@@ -12,7 +12,7 @@ namespace SQLAgain.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,13 +25,25 @@ namespace SQLAgain.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://drive.google.com/uc?export=download&id=18eLFei0oYw6_hfms2XpVlN0Sph3WAq5Z")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://github.com/MartinBruegger/SQLAgain/Update/SQLAgain.manifest")]
         public string RemoteManifest {
             get {
                 return ((string)(this["RemoteManifest"]));
             }
             set {
                 this["RemoteManifest"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoCheckForUpdate {
+            get {
+                return ((bool)(this["AutoCheckForUpdate"]));
+            }
+            set {
+                this["AutoCheckForUpdate"] = value;
             }
         }
     }

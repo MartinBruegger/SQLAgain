@@ -14,6 +14,10 @@ using System.Text;
 using System.Reflection;
 using System.Net;
 using System.Security.Cryptography;
+using SQLAgain.Properties;
+using System.Data;
+using ExampleApp;
+//using JarrettVance.Updater;
 
 namespace SQLAgain
 {
@@ -94,7 +98,9 @@ namespace SQLAgain
         //private readonly bool isHideStringAvailable;
         public Form1(string[] file)
         {
-            InitializeComponent(); 
+            InitializeComponent();
+            if (Settings.Default.AutoCheckForUpdate)
+                ThreadPool.QueueUserWorkItem((w) => Updater.CheckForUpdate(ShowUpdateDialog));
             // Create an instance of a ListView column sorter and assign it to the ListView control.
             lvwColumnSorter = new ListViewColumnSorter();
             listViewFavorites.ListViewItemSorter = lvwColumnSorter;
@@ -1793,6 +1799,26 @@ namespace SQLAgain
         private void ShowFavorites()
         {
             listViewFavorites.Select();
+        }
+        private void ShowUpdateDialog(Version appVersion, Version newVersion, XDocument doc)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<Version, Version, XDocument>(ShowUpdateDialog), appVersion, newVersion, doc);
+                return;
+            }
+            using (UpdateForm f = new UpdateForm())
+            {
+                f.Text = string.Format(f.Text, appVersion);
+                f.MoreInfoLink = (string)doc.Root.Element("info");
+                f.Info = string.Format(f.Info, newVersion, (DateTime)doc.Root.Element("date"));
+                if (f.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                {
+                    MessageBox.Show("I am going to update now - Good Bye :-)");
+                    Updater.LaunchUpdater(doc);
+                    this.Close();
+                }
+            }
         }
     }
     static class Helper
