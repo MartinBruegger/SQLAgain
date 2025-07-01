@@ -1,120 +1,120 @@
 This file contains latest news about SQLAgain
 
-Version  	Date		Changes  
-========	==========	=======
-2.0.0.6		2025/07/01	Moved Repository to Github.com, re-activated Updater using folder Update in SQLAgain Repository
-2.0.0.2		2024/12/13	Buton "Add Favorites" changed
-2.0.0.1		2024/12/11	Version 2.0.0.1 Production - SQL*Plus replaces SQLcl
-1.1.3.3		2024/11/22	Fixed labelSessionHistory_Message Anchor to  Bottom,Left
-1.1.3.2		2024/11/21	Fixed CANCEL exception - Process.ID is int32
-1.1.3.1		2024/09/20	SessionHistory: DoubleClick copies Session-Parameters
-1.1.3.0		2024/09/13  Session History: select SQL-File with Mouse Right-Click
-1.1.2.9		2024/04/26	SetLogfileSuffix: check logFile IsNullOrEmpty
-1.1.2.8		2024/04/18  Favorites: Update-Function added.
-1.1.2.7		2024/03/21	Pathing.GetUNCPath for all Drag/Drop Variants
-1.1.2.6		2024/03/21	Converting SQL- and Log-Filenames to UNC Paths (Task Scheduler Job fails when a mapped drive letter is used)
-1.1.2.5		2024/03/20	Batch-Mode: send always e-mail - even when option-verification fails.
-1.1.2.3		2024/01/18  Result-Line: Aggregate same Errors, optimize elapsed-time format.
-1.1.2.2		2023/10/04	Mail Format fixed (body style background-color), F5 (Refresh) added in SessionHistory
-1.1.2.1		2023/06/29	Cosmetics - listView1.SelectedItems.Clear() on MouseLeave
-1.1.2.0		2023/06/29  read tnsnames: regexp group matching fixed
-1.1.1.9		2023/03/08	Scheduled Task: add JAVA_TOOL_OPTIONS.
-1.1.1.8		2023/03/01	sqlStartFile as Full-Path after "SP2-0310: unable to open file SQLAgainStart.sql".
-1.1.1.7		2023/03/01	Create Task in Try/Catch-Block prevents Failure when Password is invalid.
-1.1.1.3		2023/02/01	Favorites ContextMenu added "Edit File" OptionThis file contains latest news about SQLAgain
-1.1.1.2		2023/01/31	Reset FontStyle in RunWorkerCompleted
-1.1.1.1		2023/01/30	Default App not defined - failed to open Logfile with undefined Mime-Type.
-1.1.1.0		2023/01/30	GUI switched to Dark Theme.
-1.1.0.9		2023/01/23	Button "Cancel" add Text to Session-History at the end of the Process.
-1.1.0.8		2022/11/04	Resize Form fixed, Font in SessionHistory changed.
-1.1.0.7		2022/11/04	Enhanced SessionHistory, print SQL-Result per DB - better Overview, less Lines 
-1.1.0.5		2022/09/23	Table Database-Summary in Mail when Job is started from Task Scheduler
-1.1.0.4		2021/11/12	Fixed logic for logFileTemporary (nologging option).
-1.1.0.3		2021/11/11	Input validaten and error-handling enhanced.
-1.1.0.2		2021/08/10	Accept german umlauts in SQL Filename.
-1.1.0.1		2021/05/06	Fixed Mail Footer info.
-1.1.0.0		2021/05/06	SQLcl replaces SQL*Plus.
-1.0.8.4		2021/04/29	Added SQLAgainCodePage.cmd to enable Cp1252
-1.0.8.3		2020/11/05	HidePasswords as Option in Config-File (HideString works in 4.5.2 but fails on SAZ servers).
-1.0.8.2		2020/11/04	HideString requires .Net Framework >= 4.8
-1.0.8.1		2020/11/04	HideString.Encrypt/Decrypt to hide passwords in config file.
-1.0.8.0		2020/11/03	implement MS Naming Conventions, add Timeout to Favorites, rename Profiles to Favorites.
-1.0.7.9		2020/10/29	Auto-Resize Status-Messages, enhance SessionHistory.Reorg.
-1.0.7.8		2020/10/28	SessionHistory.Reorg write trace record into SessionHistory.
-1.0.7.7		2020/10/26	SessionHistory.Reorg commented out.
-1.0.7.6		2020/10/26	Error in SessionHistory.Reorg fixed, no Exit-Code Line when HTML Option selected.
-1.0.7.5		2020/10/20	Removed unwanted button
-1.0.7.4		2020/10/20	Format Execution-Time
-1.0.7.3		2020/08/04	CANCEL-Message on DB-Status Line
-1.0.7.2		2020/07/06	Search ORA- Message at line start
-1.0.7.1		2020/06/22	re-sync Google Drive Link
-1.0.7.0		2020/06/22	Form AutoSize=true due to size problems in Form3.
-1.0.6.9		2020/06/22	New Google Drive Share-Link Address
-1.0.6.8		2020/06/19	TestAccessLogFile: new Streamwriter in APPEND mode - otherwise its old content is lost.
-1.0.6.7		2020/06/15	TestAccessLogFile: delete logfile when size=0
-1.0.6.6		2020/06/12	"Status Message" now include result of SQL*Plus (Errors, resp. OK and elapsed time)
-1.0.6.5		2020/06/05	"Session History" try/catch block (file not found); size corrected
-1.0.6.4		2020/06/03	Test Write-Access for log-file
-1.0.6.3		2020/01/09	TIMEOUT split into more user friendly format (HH MM SS).
-1.0.6.2		2020/01/08	Add "TIMEOUT for SQL*Plus" Option
-1.0.6.1		2019/12/05	Documentation updates
-1.0.6.0		2019/11/29	Selection Buttons fixed - all do "toggle" - "Reset all" deleted
-1.0.5.9		2019/11/29	RegExp Option IgnoreWhiteSpace, Documentation updates
-1.0.5.8		2019/11/28	Fixed Select-Button highlighting, Options: FileOpenDialog for the Editor-Program
-1.0.5.7		2019/11/27	Enhanced Selection Buttons (additive, toggle, change font)
-1.0.5.6		2019/05/06	SQLPATH includes path of SQL-File; set in BackgroundWorker1_DoWork (async task)
-1.0.5.5		2019/04/17	Additional File Type .pls accepted in OpenFileDialog Explorer.
-1.0.5.4		2019/01/29	Support of whitespace in file names (SQL File, Log File).
-1.0.5.3		2019/01/04	Design changes in Favorites, no error-messages while changing SQL-File text, real validation occurs later.
-1.0.5.2		2019/01/04	Validation problems fixed.
-1.0.5.1		2019/01/04	SQL-File validation fixed - crashed after wrong copy/paste contents.
-1.0.5.0		2019/01/04	Delete-Key used to delete Profile (Favorites) entry.
-1.0.4.9		2018/12/17	Cosmetics in Form3 (BackGroundColor, Button alignement).
-1.0.4.8		2018/12/17	CheckForUpdate in Form3 calls Application.Exit instead of this.Close() -> Form1 was still active.
-1.0.4.7		2018/12/14	Fix size of button "Check for update" - text was truncated.
-1.0.4.6		2018/12/14	Options divided in TabControl Sections, Update check in Options
-1.0.4.5		2018/11/29	Calendar: Microsoft Outlook "Show As": FREE, "Time Transparency": TRANSPARENT
-1.0.4.4		2018/11/28	Load from Favorites: Log-Append parameter fixed
-1.0.4.3		2018/11/28	Schedule SQL: send E-Mail confirmation plus Calendar Event
-1.0.4.2		2018/11/16	E-mail: typos fixed in style and disclaimer.
-1.0.4.1		2018/11/16	E-mail style with even more HTML options (hover, nth-child).
-1.0.4.0		2018/11/15	E-mail style changed (dark mode).
-1.0.3.9		2018/11/12	Batch Mode: fix email-sender, save file names in apostrophes.
-1.0.3.8		2018/11/12	Batch Mode: enhanced "send mail failed" message.
-1.0.3.7		2018/10/04	try/catch block around sqlplus to bypass unknown errors.
-1.0.3.6		2018/10/02	Right Mouse Button changes SelectedIndex in tabControl1 -> context-menu for the "right" Tab.
-1.0.3.5		2018/09/28	Session History load on TabControl IndexChanged
-1.0.3.4		2018/09/28	Fix DB-List (lost space delimitter after removing domain-name) used in Scheduler and History Session log
-1.0.3.3		2018/09/14	Favorites: Sort by any column, write/read in sorted order; optimize class Profile (minus ID, DELETED)
-1.0.3.2		2018/09/13	Textboxes (SQL File, Log File) not properly updated in Favorite-Load.
-1.0.3.1		2018/09/13	Terminates SQL*Plus when "Enter value " is detected.
-1.0.3.0		2018/09/13	Added FAVORITES (Save Settings, re-run with a couble click)
-1.0.2.9		2018/09/11	Suppress NAMES.DEFAULT_DOMAIN in DB-List using StringComparison.OrdinalIgnoreCase
-1.0.2.8		2018/09/11	Suppress NAMES.DEFAULT_DOMAIN in DB-List
-1.0.2.7		2018/09/07	TabControl Sizes and Locations fixed.
-1.0.2.6		2018/09/06	ProgressBarStyle.Blocks resp. ProgressBarStyle.Marquee depends on number of selected DBs.
-1.0.2.5		2018/08/24	Ankors fixed (left-top-right), Forms2 location fixed
-1.0.2.4		2018/08/10	Automatic Manifest update.
-1.0.2.3		2018/08/09	Trace eliminated, Docu updated
-1.0.2.2		2018/08/09	SQL*Plus enhancements: ECHO ON TERMOUT ON, write to STDIN, get rid of SQL-Wrapper file
-1.0.2.1		2018/08/08	"TNSPing" uses same visible behaviour as "Run SQL"
-1.0.2.0		2018/08/08	SQLPlus Session Window hidden, "Cancel SQL" Button added, Progress Bar, Background Worker Async, Context Menu Items in TabControl
-1.0.1.8		2018/07/31	Button "Check for Updates" restored (was hidden behind RichText)
-1.0.1.7		2018/07/31	Fix for Config Variable TNS_ADMIN
-1.0.1.6		2018/06/19	TabIndex order fixed
-1.0.1.5		2018/06/18	DB List and Regular Expressions: Exclude DBs, build Selection-Groups
-1.0.1.4		2018/06/13	Session-History fixed, corrected string "file:\\\\"
-1.0.1.3		2018/06/08	Session-Hisory: edit linked *.sql, *.log and *.html files (RichText and DetectUrls, LinkClicked Event) 
-1.0.1.2		2018/05/23	Test E-Mail in HTML style, reworked form "Schedule SQL" 
-1.0.1.1		2018/05/18	E-Mail Options modifiable in Options, Button "Test E-Mail" added
-1.0.1.0		2018/05/17	Changed to static classes (SessionHistory, ExecSQL)
-1.0.0.9		2018/05/15	Added "ORA-28001: the password has expired" to SQL*Plus stop conditions
-1.0.0.8		2018/05/15	Switch to Tab "Status Messages" when "Run SQL" or "Schedule SQL / Create Task" is pressed
-1.0.0.7		2018/03/29	Fixed SQLPlus Version issue; enhancements in Tab "History"
-1.0.0.6		2018/03/28	New copy of Windows TaskScheduler and Simplify.Mail
-1.0.0.5		2018/03/28	Error in "Options" Window fixed.
-1.0.0.4		2018/03/28	Error-Handling enhanced, base configuration corrected.
-1.0.0.3		2018/03/23	updater.exe refreshed due to older .NET framework.
-1.0.0.2		2018/03/23	Increased size for tabbed textboxes.
-1.0.0.1		2018/03/22	Start "Check for Update" on request, in tab "About SQLAgain", instead of AutoCheck at Startup.
-1.0.0.0		2018/03/22	Implemented "simple updater" with files from Jarrett Vance -> http://jvance.com/pages/SimpleUpdater.xhtml
+Version     Date        Changes  
+========    ==========  =======
+2.0.0.6     2025/07/01  Move Repository to Github, reactive Auto-Update from Github
+2.0.0.2     2024/12/13  Buton "Add Favorites" changed
+2.0.0.1     2024/12/11  Version 2.0.0.1 Production - SQL*Plus replaces SQLcl
+1.1.3.3     2024/11/22  Fixed labelSessionHistory_Message Anchor to  Bottom,Left
+1.1.3.2     2024/11/21  Fixed CANCEL exception - Process.ID is int32
+1.1.3.1     2024/09/20  SessionHistory: DoubleClick copies Session-Parameters
+1.1.3.0     2024/09/13  Session History: select SQL-File with Mouse Right-Click
+1.1.2.9     2024/04/26  SetLogfileSuffix: check logFile IsNullOrEmpty
+1.1.2.8     2024/04/18  Favorites: Update-Function added.
+1.1.2.7     2024/03/21  Pathing.GetUNCPath for all Drag/Drop Variants
+1.1.2.6     2024/03/21  Converting SQL- and Log-Filenames to UNC Paths (Task Scheduler Job fails when a mapped drive letter is used)
+1.1.2.5     2024/03/20  Batch-Mode: send always e-mail - even when option-verification fails.
+1.1.2.3     2024/01/18  Result-Line: Aggregate same Errors, optimize elapsed-time format.
+1.1.2.2     2023/10/04  Mail Format fixed (body style background-color), F5 (Refresh) added in SessionHistory
+1.1.2.1     2023/06/29  Cosmetics - listView1.SelectedItems.Clear() on MouseLeave
+1.1.2.0     2023/06/29  read tnsnames: regexp group matching fixed
+1.1.1.9     2023/03/08  Scheduled Task: add JAVA_TOOL_OPTIONS.
+1.1.1.8     2023/03/01  sqlStartFile as Full-Path after "SP2-0310: unable to open file SQLAgainStart.sql".
+1.1.1.7     2023/03/01  Create Task in Try/Catch-Block prevents Failure when Password is invalid.
+1.1.1.3     2023/02/01  Favorites ContextMenu added "Edit File" OptionThis file contains latest news about SQLAgain
+1.1.1.2     2023/01/31  Reset FontStyle in RunWorkerCompleted
+1.1.1.1     2023/01/30  Default App not defined - failed to open Logfile with undefined Mime-Type.
+1.1.1.0     2023/01/30  GUI switched to Dark Theme.
+1.1.0.9     2023/01/23  Button "Cancel" add Text to Session-History at the end of the Process.
+1.1.0.8     2022/11/04  Resize Form fixed, Font in SessionHistory changed.
+1.1.0.7     2022/11/04  Enhanced SessionHistory, print SQL-Result per DB - better Overview, less Lines 
+1.1.0.5     2022/09/23  Table Database-Summary in Mail when Job is started from Task Scheduler
+1.1.0.4     2021/11/12  Fixed logic for logFileTemporary (nologging option).
+1.1.0.3     2021/11/11  Input validaten and error-handling enhanced.
+1.1.0.2     2021/08/10  Accept german umlauts in SQL Filename.
+1.1.0.1     2021/05/06  Fixed Mail Footer info.
+1.1.0.0     2021/05/06  SQLcl replaces SQL*Plus.
+1.0.8.4     2021/04/29  Added SQLAgainCodePage.cmd to enable Cp1252
+1.0.8.3     2020/11/05  HidePasswords as Option in Config-File (HideString works in 4.5.2 but fails on SAZ servers).
+1.0.8.2     2020/11/04  HideString requires .Net Framework >= 4.8
+1.0.8.1     2020/11/04  HideString.Encrypt/Decrypt to hide passwords in config file.
+1.0.8.0     2020/11/03  implement MS Naming Conventions, add Timeout to Favorites, rename Profiles to Favorites.
+1.0.7.9     2020/10/29  Auto-Resize Status-Messages, enhance SessionHistory.Reorg.
+1.0.7.8     2020/10/28  SessionHistory.Reorg write trace record into SessionHistory.
+1.0.7.7     2020/10/26  SessionHistory.Reorg commented out.
+1.0.7.6     2020/10/26  Error in SessionHistory.Reorg fixed, no Exit-Code Line when HTML Option selected.
+1.0.7.5     2020/10/20  Removed unwanted button
+1.0.7.4     2020/10/20  Format Execution-Time
+1.0.7.3     2020/08/04  CANCEL-Message on DB-Status Line
+1.0.7.2     2020/07/06  Search ORA- Message at line start
+1.0.7.1     2020/06/22  re-sync Google Drive Link
+1.0.7.0     2020/06/22  Form AutoSize=true due to size problems in Form3.
+1.0.6.9     2020/06/22  New Google Drive Share-Link Address
+1.0.6.8     2020/06/19  TestAccessLogFile: new Streamwriter in APPEND mode - otherwise its old content is lost.
+1.0.6.7     2020/06/15  TestAccessLogFile: delete logfile when size=0
+1.0.6.6     2020/06/12  "Status Message" now include result of SQL*Plus (Errors, resp. OK and elapsed time)
+1.0.6.5     2020/06/05  "Session History" try/catch block (file not found); size corrected
+1.0.6.4     2020/06/03  Test Write-Access for log-file
+1.0.6.3     2020/01/09  TIMEOUT split into more user friendly format (HH MM SS).
+1.0.6.2     2020/01/08  Add "TIMEOUT for SQL*Plus" Option
+1.0.6.1     2019/12/05  Documentation updates
+1.0.6.0     2019/11/29  Selection Buttons fixed - all do "toggle" - "Reset all" deleted
+1.0.5.9     2019/11/29  RegExp Option IgnoreWhiteSpace, Documentation updates
+1.0.5.8     2019/11/28  Fixed Select-Button highlighting, Options: FileOpenDialog for the Editor-Program
+1.0.5.7     2019/11/27  Enhanced Selection Buttons (additive, toggle, change font)
+1.0.5.6     2019/05/06  SQLPATH includes path of SQL-File; set in BackgroundWorker1_DoWork (async task)
+1.0.5.5     2019/04/17  Additional File Type .pls accepted in OpenFileDialog Explorer.
+1.0.5.4     2019/01/29  Support of whitespace in file names (SQL File, Log File).
+1.0.5.3     2019/01/04  Design changes in Favorites, no error-messages while changing SQL-File text, real validation occurs later.
+1.0.5.2     2019/01/04  Validation problems fixed.
+1.0.5.1     2019/01/04  SQL-File validation fixed - crashed after wrong copy/paste contents.
+1.0.5.0     2019/01/04  Delete-Key used to delete Profile (Favorites) entry.
+1.0.4.9     2018/12/17  Cosmetics in Form3 (BackGroundColor, Button alignement).
+1.0.4.8     2018/12/17  CheckForUpdate in Form3 calls Application.Exit instead of this.Close() -> Form1 was still active.
+1.0.4.7     2018/12/14  Fix size of button "Check for update" - text was truncated.
+1.0.4.6     2018/12/14  Options divided in TabControl Sections, Update check in Options
+1.0.4.5     2018/11/29  Calendar: Microsoft Outlook "Show As": FREE, "Time Transparency": TRANSPARENT
+1.0.4.4     2018/11/28  Load from Favorites: Log-Append parameter fixed
+1.0.4.3     2018/11/28  Schedule SQL: send E-Mail confirmation plus Calendar Event
+1.0.4.2     2018/11/16  E-mail: typos fixed in style and disclaimer.
+1.0.4.1     2018/11/16  E-mail style with even more HTML options (hover, nth-child).
+1.0.4.0     2018/11/15  E-mail style changed (dark mode).
+1.0.3.9     2018/11/12  Batch Mode: fix email-sender, save file names in apostrophes.
+1.0.3.8     2018/11/12  Batch Mode: enhanced "send mail failed" message.
+1.0.3.7     2018/10/04  try/catch block around sqlplus to bypass unknown errors.
+1.0.3.6     2018/10/02  Right Mouse Button changes SelectedIndex in tabControl1 -> context-menu for the "right" Tab.
+1.0.3.5     2018/09/28  Session History load on TabControl IndexChanged
+1.0.3.4     2018/09/28  Fix DB-List (lost space delimitter after removing domain-name) used in Scheduler and History Session log
+1.0.3.3     2018/09/14  Favorites: Sort by any column, write/read in sorted order; optimize class Profile (minus ID, DELETED)
+1.0.3.2     2018/09/13  Textboxes (SQL File, Log File) not properly updated in Favorite-Load.
+1.0.3.1     2018/09/13  Terminates SQL*Plus when "Enter value " is detected.
+1.0.3.0     2018/09/13  Added FAVORITES (Save Settings, re-run with a couble click)
+1.0.2.9     2018/09/11  Suppress NAMES.DEFAULT_DOMAIN in DB-List using StringComparison.OrdinalIgnoreCase
+1.0.2.8     2018/09/11  Suppress NAMES.DEFAULT_DOMAIN in DB-List
+1.0.2.7     2018/09/07  TabControl Sizes and Locations fixed.
+1.0.2.6     2018/09/06  ProgressBarStyle.Blocks resp. ProgressBarStyle.Marquee depends on number of selected DBs.
+1.0.2.5     2018/08/24  Ankors fixed (left-top-right), Forms2 location fixed
+1.0.2.4     2018/08/10  Automatic Manifest update.
+1.0.2.3     2018/08/09  Trace eliminated, Docu updated
+1.0.2.2     2018/08/09  SQL*Plus enhancements: ECHO ON TERMOUT ON, write to STDIN, get rid of SQL-Wrapper file
+1.0.2.1     2018/08/08  "TNSPing" uses same visible behaviour as "Run SQL"
+1.0.2.0     2018/08/08  SQLPlus Session Window hidden, "Cancel SQL" Button added, Progress Bar, Background Worker Async, Context Menu Items in TabControl
+1.0.1.8     2018/07/31  Button "Check for Updates" restored (was hidden behind RichText)
+1.0.1.7     2018/07/31  Fix for Config Variable TNS_ADMIN
+1.0.1.6     2018/06/19  TabIndex order fixed
+1.0.1.5     2018/06/18  DB List and Regular Expressions: Exclude DBs, build Selection-Groups
+1.0.1.4     2018/06/13  Session-History fixed, corrected string "file:\\\\"
+1.0.1.3     2018/06/08  Session-Hisory: edit linked *.sql, *.log and *.html files (RichText and DetectUrls, LinkClicked Event) 
+1.0.1.2     2018/05/23  Test E-Mail in HTML style, reworked form "Schedule SQL" 
+1.0.1.1     2018/05/18  E-Mail Options modifiable in Options, Button "Test E-Mail" added
+1.0.1.0     2018/05/17  Changed to static classes (SessionHistory, ExecSQL)
+1.0.0.9     2018/05/15  Added "ORA-28001: the password has expired" to SQL*Plus stop conditions
+1.0.0.8     2018/05/15  Switch to Tab "Status Messages" when "Run SQL" or "Schedule SQL / Create Task" is pressed
+1.0.0.7     2018/03/29  Fixed SQLPlus Version issue; enhancements in Tab "History"
+1.0.0.6     2018/03/28  New copy of Windows TaskScheduler and Simplify.Mail
+1.0.0.5     2018/03/28  Error in "Options" Window fixed.
+1.0.0.4     2018/03/28  Error-Handling enhanced, base configuration corrected.
+1.0.0.3     2018/03/23  updater.exe refreshed due to older .NET framework.
+1.0.0.2     2018/03/23  Increased size for tabbed textboxes.
+1.0.0.1     2018/03/22  Start "Check for Update" on request, in tab "About SQLAgain", instead of AutoCheck at Startup.
+1.0.0.0     2018/03/22  Implemented "simple updater" with files from Jarrett Vance -> http://jvance.com/pages/SimpleUpdater.xhtml
