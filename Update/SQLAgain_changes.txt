@@ -7,17 +7,17 @@ Version  	Date		Changes
 2.0.0.1		2024/12/11	Version 2.0.0.1 Production - SQL*Plus replaces SQLcl
 1.1.3.3		2024/11/22	Fixed labelSessionHistory_Message Anchor to  Bottom,Left
 1.1.3.2		2024/11/21	Fixed CANCEL exception - Process.ID is int32
-1.1.3.1     2024/09/20	SessionHistory: DoubleClick copies Session-Parameters
-1.1.3.0     2024/09/13  Session History: select SQL-File with Mouse Right-Click
+1.1.3.1		2024/09/20	SessionHistory: DoubleClick copies Session-Parameters
+1.1.3.0		2024/09/13  Session History: select SQL-File with Mouse Right-Click
 1.1.2.9		2024/04/26	SetLogfileSuffix: check logFile IsNullOrEmpty
-1.1.2.8     2024/04/18  Favorites: Update-Function added.
+1.1.2.8		2024/04/18  Favorites: Update-Function added.
 1.1.2.7		2024/03/21	Pathing.GetUNCPath for all Drag/Drop Variants
 1.1.2.6		2024/03/21	Converting SQL- and Log-Filenames to UNC Paths (Task Scheduler Job fails when a mapped drive letter is used)
 1.1.2.5		2024/03/20	Batch-Mode: send always e-mail - even when option-verification fails.
-1.1.2.3     2024/01/18  Result-Line: Aggregate same Errors, optimize elapsed-time format.
+1.1.2.3		2024/01/18  Result-Line: Aggregate same Errors, optimize elapsed-time format.
 1.1.2.2		2023/10/04	Mail Format fixed (body style background-color), F5 (Refresh) added in SessionHistory
 1.1.2.1		2023/06/29	Cosmetics - listView1.SelectedItems.Clear() on MouseLeave
-1.1.2.0     2023/06/29  read tnsnames: regexp group matching fixed
+1.1.2.0		2023/06/29  read tnsnames: regexp group matching fixed
 1.1.1.9		2023/03/08	Scheduled Task: add JAVA_TOOL_OPTIONS.
 1.1.1.8		2023/03/01	sqlStartFile as Full-Path after "SP2-0310: unable to open file SQLAgainStart.sql".
 1.1.1.7		2023/03/01	Create Task in Try/Catch-Block prevents Failure when Password is invalid.
