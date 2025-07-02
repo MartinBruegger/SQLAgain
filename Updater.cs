@@ -65,7 +65,7 @@ namespace SQLAgain
 
             // launch updater
             string updater = GetUpdaterPath();
-            //System.Diagnostics.Process.Start(updater, "\"" + file + "\" \"" + Application.ExecutablePath + "\"");
+            System.Diagnostics.Process.Start(updater, "\"" + file + "\" \"" + Application.ExecutablePath + "\"");
         }
 
         /// <summary>

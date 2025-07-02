@@ -25,7 +25,8 @@ namespace SQLAgain.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://github.com/MartinBruegger/SQLAgain/Update/SQLAgain.manifest")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://raw.githubusercontent.com/MartinBruegger/SQLAgain/refs/heads/master/Updat" +
+            "e/SQLAgain.manifest")]
         public string RemoteManifest {
             get {
                 return ((string)(this["RemoteManifest"]));

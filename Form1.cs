@@ -99,8 +99,7 @@ namespace SQLAgain
         public Form1(string[] file)
         {
             InitializeComponent();
-            if (Settings.Default.AutoCheckForUpdate)
-                ThreadPool.QueueUserWorkItem((w) => Updater.CheckForUpdate(ShowUpdateDialog));
+            
             // Create an instance of a ListView column sorter and assign it to the ListView control.
             lvwColumnSorter = new ListViewColumnSorter();
             listViewFavorites.ListViewItemSorter = lvwColumnSorter;
@@ -122,6 +121,8 @@ namespace SQLAgain
             checkBoxLogAppend.Checked = true;
             checkBoxOptIgnoreError.Checked = false;
             buttonViewLog.Enabled = false;
+            if (Settings.Default.AutoCheckForUpdate)
+                ThreadPool.QueueUserWorkItem((w) => Updater.CheckForUpdate(ShowUpdateDialog));
             InitEnv();              // may be called more than once - at Startup and when Options are changed/saved
         }
         private void InitEnv()
@@ -1800,7 +1801,7 @@ namespace SQLAgain
         {
             listViewFavorites.Select();
         }
-        private void ShowUpdateDialog(Version appVersion, Version newVersion, XDocument doc)
+        private void ShowUpdateDialog(Version appVersion, Version newVersion, XDocument doc)  // showUpdateDialog
         {
             if (InvokeRequired)
             {
@@ -1809,7 +1810,8 @@ namespace SQLAgain
             }
             using (UpdateForm f = new UpdateForm())
             {
-                f.Text = string.Format(f.Text, appVersion);
+                //f.Text = string.Format(f.Text, appVersion);
+                //f.Text = "A new version " + newVersion + "was made available on" + appVersion + ".";
                 f.MoreInfoLink = (string)doc.Root.Element("info");
                 f.Info = string.Format(f.Info, newVersion, (DateTime)doc.Root.Element("date"));
                 if (f.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)

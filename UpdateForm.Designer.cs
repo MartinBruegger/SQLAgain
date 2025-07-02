@@ -42,9 +42,9 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.label1.Location = new System.Drawing.Point(28, 20);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(151, 24);
+            this.label1.Size = new System.Drawing.Size(265, 24);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Update Available";
+            this.label1.Text = "Update for SQLAgain available";
             // 
             // lblInfo
             // 
@@ -65,7 +65,7 @@
             this.linkInfo.TabIndex = 2;
             this.linkInfo.TabStop = true;
             this.linkInfo.Text = "More Info";
-            this.linkInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkInfo_LinkClicked);
+            this.linkInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkInfo_LinkClicked);
             // 
             // btnUpdate
             // 
@@ -115,7 +115,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "{0} {1}";
+            this.Text = "New Version found";
             this.ResumeLayout(false);
             this.PerformLayout();
 

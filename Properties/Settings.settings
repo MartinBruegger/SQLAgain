@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="RemoteManifest" Type="System.String" Scope="User">
-      <Value Profile="(Default)">https://github.com/MartinBruegger/SQLAgain/Update/SQLAgain.manifest</Value>
+      <Value Profile="(Default)">https://raw.githubusercontent.com/MartinBruegger/SQLAgain/refs/heads/master/Update/SQLAgain.manifest</Value>
     </Setting>
     <Setting Name="AutoCheckForUpdate" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
