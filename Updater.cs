@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -63,6 +64,11 @@ namespace SQLAgain
             string file = Application.ExecutablePath.Replace(".EXE", ".exe").Replace(".exe", ".manifest");
             manifest.Save(file);
 
+            // save application .Config
+            string fileConfig = Regex.Replace(Application.ExecutablePath, ".exe", ".exe.Config", RegexOptions.IgnoreCase);
+            string tmpFileConfig = fileConfig.Replace(".Config", ".Config.tmp");
+            File.Copy(fileConfig, tmpFileConfig, true);
+
             // launch updater
             string updater = GetUpdaterPath();
             System.Diagnostics.Process.Start(updater, "\"" + file + "\" \"" + Application.ExecutablePath + "\"");
@@ -73,6 +79,26 @@ namespace SQLAgain
         /// </summary>
         public static void UpdateUpdater()
         {
+            try
+            {
+                // rename Config file
+                //string fileConfig = Application.ExecutablePath.Replace(".exe", ".exe.Config");
+                string fileConfig = Regex.Replace(Application.ExecutablePath,".exe", ".exe.Config", RegexOptions.IgnoreCase);
+                string tmpFileConfig = fileConfig.Replace(".Config", ".Config.tmp");
+                if (File.Exists(tmpFileConfig))
+                {
+                    if (File.Exists(fileConfig))
+                        File.Delete(fileConfig);
+                    File.Move(tmpFileConfig, fileConfig);
+                    File.Move(tmpFileConfig, tmpFileConfig.Replace(".Config.tmp", ".Config.tmp.old"));
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+            }
+
+            
             ThreadPool.QueueUserWorkItem((x) =>
             {
                 Thread.Sleep(1000);
@@ -92,6 +118,7 @@ namespace SQLAgain
                 {
                     Trace.WriteLine(ex);
                 }
+               
             });
         }
 

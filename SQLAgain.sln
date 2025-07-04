@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BDDEFB1F-0543-4EDF-926F-537B6873970B}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\Documents\sql\SQLAgainStart.sql = ..\..\..\Documents\sql\SQLAgainStart.sql
+		..\Updater\bin\Release\Updater.exe = ..\Updater\bin\Release\Updater.exe
 	EndProjectSection
 EndProject
 Global

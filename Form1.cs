@@ -11,13 +11,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Drawing;
 using System.Text;
-using System.Reflection;
-using System.Net;
-using System.Security.Cryptography;
-using SQLAgain.Properties;
-using System.Data;
-using ExampleApp;
-//using JarrettVance.Updater;
 
 namespace SQLAgain
 {
@@ -25,11 +18,10 @@ namespace SQLAgain
     /// SQLAgain executes a SQL File in a iteration against multiple Oracle Databases
     /// </summary> 
     /// <remarks> 
-    /// You need the Oracle SQL Developer (or at least SQLcl) Software installed and a tnsNames.ora file containing your databases.
+    /// You need the Oracle sqlplus.exe (Oracle Client or Oracle DB Installation) and a tnsNames.ora file containing your databases.
     /// In SQLAgain, you define usernames and passwords and select SQL Files to execute.
     /// </remarks> 
     /// 
-    
 
     public partial class Form1 : Form
     {        
@@ -77,7 +69,6 @@ namespace SQLAgain
         private string mailSender;
         private string mailReceiver;
         private string sqlPlusVersion;
-        private string editProgram = string.Empty;                    // Application used to view .log files
         private string tnsNames;
         private string taskUserId, taskPassword;
         private string group1Regexp, group2Regexp, group3Regexp;
@@ -95,7 +86,6 @@ namespace SQLAgain
         private int timeout;
         private bool ignoreError ;
         private bool pingWithSqlPlus = false;                      // When sqlPlusVersion >= 23, then use "sqlplus -P" instead of tnsping.exe
-        //private readonly bool isHideStringAvailable;
         public Form1(string[] file)
         {
             InitializeComponent();
@@ -103,11 +93,10 @@ namespace SQLAgain
             // Create an instance of a ListView column sorter and assign it to the ListView control.
             lvwColumnSorter = new ListViewColumnSorter();
             listViewFavorites.ListViewItemSorter = lvwColumnSorter;
-            //isHideStringAvailable = Utils.Compatibility();
             ReadFavorites();            // Read Favorites, load into listViewFavorites; file: Favorites.xml
             textBoxAbout.LoadFile("SQLAgain_About.rtf");
-            textBoxAbout.AppendText("\n\n\nProduct Version: " + Assembly.GetEntryAssembly().GetName().Version.ToString());
-            textBoxAbout.AppendText(", date modified: " + System.IO.File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToString("yyyy'/'MM'/'dd HH:mm:ss"));
+            //textBoxAbout.AppendText("\n\n\nProduct Version: " + Assembly.GetEntryAssembly().GetName().Version.ToString());
+            //textBoxAbout.AppendText(", date modified: " + System.IO.File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToString("yyyy'/'MM'/'dd HH:mm:ss"));
             Process currentProcess = Process.GetCurrentProcess();
             processIDFile = Path.GetTempPath() + "sqlagain.ProcID_" + currentProcess.Id + ".tmp";
             SessionHistory.Reorg();
@@ -121,8 +110,6 @@ namespace SQLAgain
             checkBoxLogAppend.Checked = true;
             checkBoxOptIgnoreError.Checked = false;
             buttonViewLog.Enabled = false;
-            if (Settings.Default.AutoCheckForUpdate)
-                ThreadPool.QueueUserWorkItem((w) => Updater.CheckForUpdate(ShowUpdateDialog));
             InitEnv();              // may be called more than once - at Startup and when Options are changed/saved
         }
         private void InitEnv()
@@ -167,7 +154,16 @@ namespace SQLAgain
         }
         private void GetConfig()
         {
-            var appSettings = ConfigurationManager.AppSettings;
+            try
+            {
+                var appSettingsTest = ConfigurationManager.AppSettings;
+            }
+            catch (ConfigurationErrorsException)
+            {
+                MessageBox.Show("Error reading app settings.");
+                Thread.Sleep(5000);                                 // wait 5 seconds - hope the user gets the message above ?
+                Application.Exit();
+            }
             string nlsLang;
             string tnsAdmin ;
             string sqlPath ;
@@ -175,6 +171,7 @@ namespace SQLAgain
             string connectString;
             string dbaFlag;
             bool isHidePasswordsActive = false;
+            var appSettings = ConfigurationManager.AppSettings;
             dbUserList.Clear();
             connectStringList.Clear();
             dbaFlagList.Clear();
@@ -185,37 +182,37 @@ namespace SQLAgain
             if (string.IsNullOrEmpty(appSettings["DBG1_REGEXP"]))
             {
                 group1Regexp = "^$";
-                group1Name   = "n/a";
-                group1Color  = "ButtonFace";
+                buttonSelectGroup1.Visible = false;
             } else
             {
                 group1Regexp = appSettings["DBG1_REGEXP"];
                 group1Name   = appSettings["DBG1_TEXT"];
                 group1Color  = appSettings["DBG1_COLOR"];
+                buttonSelectGroup1.Visible = true;
             }
             if (string.IsNullOrEmpty(appSettings["DBG2_REGEXP"]))
             {
                 group2Regexp = "^$";
-                group2Name   = "n/a";
-                group2Color  = "ButtonFace";
+                buttonSelectGroup2.Visible = false;
             }
             else
             {
                 group2Regexp = appSettings["DBG2_REGEXP"];
                 group2Name   = appSettings["DBG2_TEXT"];
                 group2Color  = appSettings["DBG2_COLOR"];
+                buttonSelectGroup2.Visible = true;
             }
             if (string.IsNullOrEmpty(appSettings["DBG3_REGEXP"]))
             {
                 group3Regexp = "^$";
-                group3Name   = "n/a";
-                group3Color  = "ButtonFace";
+                buttonSelectGroup3.Visible = false;
             }
             else
             {
                 group3Regexp = appSettings["DBG3_REGEXP"];
                 group3Name   = appSettings["DBG3_TEXT"];
                 group3Color  = appSettings["DBG3_COLOR"];
+                buttonSelectGroup3.Visible = true;
             }
             mailSender   = appSettings["TASK_EMAIL1"];
             mailReceiver = appSettings["TASK_EMAIL2"];
@@ -255,7 +252,7 @@ namespace SQLAgain
                 connectStringList.Add(connectString);
                 dbaFlagList.Add(dbaFlag);
             }
-            editProgram  = appSettings["APPL_LOG"];
+            //editProgram  = appSettings["APPL_LOG"];
             taskUserId   = appSettings["TASK_USER"];
             taskPassword = Utils.Decrypt(appSettings["TASK_USER_PWD"], isHidePasswordsActive);
             BindingSource bindingSource = new BindingSource();
@@ -495,9 +492,9 @@ namespace SQLAgain
                 if (System.IO.File.Exists(logFile))
                 {
                     if (logFile.EndsWith(".log"))
-                        EditLog(logFile, editProgram);
+                        EditLog(logFile);
                     else
-                        EditLog(logFile, "");
+                        EditLog(logFile);
                 }
                 else { MessageBox.Show("Logfile does not exist."); }
             }
@@ -841,26 +838,31 @@ namespace SQLAgain
             //return string.Format("{ 0}", lastLine);
             return lastLine;
         }
-        public static void EditLog(string logfile, string editProgram)
+        //public static void EditLog(string logfile, string editProgram)
+        public static void EditLog(string logfile)
         {
-            if (string.IsNullOrEmpty(editProgram) == false)
+            if (string.IsNullOrEmpty(logfile))
             {
-                try { Process.Start(editProgram, AddQuotesIfRequired(logfile));  }
-                catch (Exception EX)
-                {
-                    MessageBox.Show(string.Format("Application APPL_LOG in config file is not able to edit the logfile. " + EX.Message));
-                }
+                throw new ArgumentException($"'{nameof(logfile)}' cannot be null or empty.", nameof(logfile));
             }
-            else
+            //if (string.IsNullOrEmpty(editProgram) == false)
+            //{
+            //    try { Process.Start(editProgram, AddQuotesIfRequired(logfile));  }
+            //    catch (Exception EX)
+            //    {
+            //        MessageBox.Show(string.Format("Application APPL_LOG in config file is not able to edit the logfile. " + EX.Message));
+            //    }
+            //}
+            //else
+            //{
+            //}
+            Process p = new Process();
+            p.StartInfo.UseShellExecute = true;
+            p.StartInfo.FileName = logfile;
+            try { p.Start(); }
+            catch (Exception EX)
             {
-                Process p = new Process();
-                p.StartInfo.UseShellExecute = true;
-                p.StartInfo.FileName = logfile;
-                try { p.Start(); }
-                catch (Exception EX)
-                {
-                    MessageBox.Show(string.Format(EX.Message));
-                }
+                MessageBox.Show(string.Format(EX.Message));
             }
         }
         public static string AddQuotesIfRequired(string path)
@@ -1112,10 +1114,7 @@ namespace SQLAgain
             progressBar1.Value = 0;
             progressBar1.Visible = false;
             SessionHistory.Record("***** Foreground Session ended.", 2);
-            if (logFile.EndsWith(".log"))
-                EditLog(logFile, editProgram);
-            else
-                EditLog(logFile, "");
+            EditLog(logFile);
             dbList.Clear();
         }
         
@@ -1142,7 +1141,7 @@ namespace SQLAgain
         }
         private void SessionHistoryEdit(object sender, EventArgs e)
         {
-            EditLog(SessionHistory.traceFile, editProgram);
+            EditLog(SessionHistory.traceFile);
         }
         
         private void SessionHistoryRefresh(object sender, EventArgs e)
@@ -1287,7 +1286,7 @@ namespace SQLAgain
             foreach (ListViewItem listFavorites in listViewFavorites.SelectedItems)
             {
                 Favorite favorite = favorites[Convert.ToInt16(listFavorites.Tag)];
-                EditLog(favorite.File, "");
+                EditLog(favorite.File);
             }
         }
         private void FavoritesUpdate(object sender, EventArgs e)
@@ -1801,27 +1800,7 @@ namespace SQLAgain
         {
             listViewFavorites.Select();
         }
-        private void ShowUpdateDialog(Version appVersion, Version newVersion, XDocument doc)  // showUpdateDialog
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new Action<Version, Version, XDocument>(ShowUpdateDialog), appVersion, newVersion, doc);
-                return;
-            }
-            using (UpdateForm f = new UpdateForm())
-            {
-                //f.Text = string.Format(f.Text, appVersion);
-                //f.Text = "A new version " + newVersion + "was made available on" + appVersion + ".";
-                f.MoreInfoLink = (string)doc.Root.Element("info");
-                f.Info = string.Format(f.Info, newVersion, (DateTime)doc.Root.Element("date"));
-                if (f.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-                {
-                    MessageBox.Show("I am going to update now - Good Bye :-)");
-                    Updater.LaunchUpdater(doc);
-                    this.Close();
-                }
-            }
-        }
+        
     }
     static class Helper
     {

@@ -1,13 +1,15 @@
-﻿using System;
-using System.Data;
-using System.Windows.Forms;
-using System.Configuration;
+﻿using Simplify.Mail;
+using SQLAgain.Properties;
+using System;
 using System.Collections.Specialized;
-using System.Xml;
+using System.Configuration;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
-using Simplify.Mail;
 
 
 namespace SQLAgain
@@ -18,7 +20,9 @@ namespace SQLAgain
         private string dbUser;
         private string dbUserPassword;
         private string dbaFlag;
+        private string check4UpdateInfo;
         private readonly string connectString;
+        private XDocument doc;
 
         //bool isHideStringAvailable = Utils.Compatibility();
         //bool isHidePasswordActive;
@@ -59,18 +63,18 @@ namespace SQLAgain
                 sqlPath.Text = folderDlg.SelectedPath;
             }
         }
-        private void ButtonProgramName(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                Filter = "exe Files|*.exe"
-            };
-            DialogResult result = openFileDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                editProgram.Text = openFileDialog.FileName;
-            }
-        }
+        //private void ButtonProgramName(object sender, EventArgs e)
+        //{
+        //    OpenFileDialog openFileDialog = new OpenFileDialog
+        //    {
+        //        Filter = "exe Files|*.exe"
+        //    };
+        //    DialogResult result = openFileDialog.ShowDialog();
+        //    if (result == DialogResult.OK)
+        //    {
+        //        editProgram.Text = openFileDialog.FileName;
+        //    }
+        //}
         private void ButtonTestMail(object sender, EventArgs e)
         {
             SaveMailSenderSettings();
@@ -113,6 +117,7 @@ namespace SQLAgain
             //string trueOrFalse;
             //trueOrFalse = (hidePasswords.Checked) ? "true" : "false";
             //AddUpdateAppSettingsMail("AntiSpamMessagesPoolOn", trueOrFalse);
+            DeleteAppSettings("APPL_LOG");          // no longer used - delete when found
             if (hidePasswords.Checked)              AddUpdateAppSettings("HidePasswords", "true");
             else                                    DeleteAppSettings(   "HidePasswords");
             if (nlsLang.Text != string.Empty)       AddUpdateAppSettings("NLS_LANG", nlsLang.Text);
@@ -123,8 +128,8 @@ namespace SQLAgain
             else                                    DeleteAppSettings(   "SQLPATH"); 
             if (tnsAdmin.Text != string.Empty)      AddUpdateAppSettings("TNS_ADMIN", tnsAdmin.Text); 
             else                                    DeleteAppSettings(   "TNS_ADMIN"); 
-            if (editProgram.Text != string.Empty)   AddUpdateAppSettings("APPL_LOG", editProgram.Text); 
-            else                                    DeleteAppSettings(   "APPL_LOG");
+            //if (editProgram.Text != string.Empty)   AddUpdateAppSettings("APPL_LOG", editProgram.Text); 
+            //else                                    DeleteAppSettings(   "APPL_LOG");
             if (taskUserId.Text != string.Empty)    AddUpdateAppSettings("TASK_USER", taskUserId.Text);             
             else                                    DeleteAppSettings(   "TASK_USER");             
             if (taskPassword.Text != string.Empty)  AddUpdateAppSettings("TASK_USER_PWD", Utils.Encrypt(taskPassword.Text, hidePasswords.Checked)); 
@@ -207,11 +212,11 @@ namespace SQLAgain
             }
             dataGridView1.DataSource = data_tbl;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells; 
-            sqlPlusPath.Text    = appSettings["SQLPLUS_PATH"];
+            sqlPlusPath.Text  = appSettings["SQLPLUS_PATH"];
             nlsLang.Text      = appSettings["NLS_LANG"];
             tnsAdmin.Text     = appSettings["TNS_ADMIN"];
             sqlPath.Text      = appSettings["SQLPATH"];
-            editProgram.Text  = appSettings["APPL_LOG"];
+            //editProgram.Text  = appSettings["APPL_LOG"];
             taskUserId.Text   = appSettings["TASK_USER"];
             taskPassword.Text = Utils.Decrypt(appSettings["TASK_USER_PWD"], hidePasswords.Checked);
             mailSender.Text   = appSettings["TASK_EMAIL1"];
@@ -409,6 +414,56 @@ namespace SQLAgain
                 xmlDoc.SelectSingleNode("//MailSenderSettings").AppendChild(nodeAdd);
             }
             xmlDoc.Save(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-        }       
+        }
+
+        private void TabControl1SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 2)     // Tab "Ckeck for Update" pressed 
+            {
+                Version appVersion = Assembly.GetEntryAssembly().GetName().Version;
+                string appLastWriteTime = System.IO.File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToString("yyyy'/'MM'/'dd HH:mm:ss");
+                try
+                {
+                    // download manifest
+                    //XDocument doc = XDocument.Load(Settings.Default.RemoteManifest);
+                    doc = XDocument.Load(Settings.Default.RemoteManifest);
+
+        // if newer, display update dialog
+        Version newestVersion = new Version((string)doc.Root.Element("version"));
+                    if (newestVersion > appVersion)
+                    {
+                        label1Check4Update.Text = "Update available";
+                        label2Check4Update.Text = string.Format("{0}   from   {1}   is your current version", appVersion, appLastWriteTime);
+                        label3Check4Update.Text = string.Format("{0}   from   {1}   is the latest version", newestVersion, ((DateTime)doc.Root.Element("date")).ToString("yyyy'/'MM'/'dd HH:mm:ss"));
+                        linkCheck4Update.Visible = true;
+                        button_Update.Visible = true;
+                        check4UpdateInfo = (string)doc.Root.Element("info");
+                    } else
+                    {
+                        label2Check4Update.Text = appVersion.ToString() + " from ";
+                        label2Check4Update.Text = string.Format("{0} from {1} is the latest version",appVersion,appLastWriteTime);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    label1Check4Update.Text = "Unable to check Updates";
+                    label2Check4Update.Text = ex.Message;
+                }
+            }
+        }
+
+        private void LinkInfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            linkCheck4Update.LinkVisited = true;
+            System.Diagnostics.Process.Start(check4UpdateInfo);
+        }
+
+        private void ButtonUpdate(object sender, EventArgs e)
+        {
+            //MessageBox.Show("I am going to update now - Good Bye :-)");
+            Updater.LaunchUpdater(doc);
+            this.Close();
+            Application.Exit();
+        }
     }
 }

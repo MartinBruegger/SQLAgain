@@ -117,21 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MailFooter" xml:space="preserve">
-    <value>&lt;table id="t03"&gt; 
-                &lt;tr&gt;&lt;td&gt; SQLAgain is a Tool to execute SQL-Files against 1 or n Oracle Databases using predefined Database 
-                Users and simplified SQL*Plus formatting Options. 
-                &lt;br&gt; 
-                It runs as a.NET Application, either in Foreground or as a scheduled Task in Background. 
-                &lt;br&gt; 
-                .NET 4.x and Oracle SQL*Plus are required. 
-                &lt;br&gt;&lt;br&gt; 
-                Let me know if you have any questions. 
-                &lt;br&gt; 
-                martin.bruegger@gmail.com  
-&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; &lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</value>
-    <comment>Mail Footer Part</comment>
-  </data>
   <data name="MailHeader" xml:space="preserve">
     <value>&lt;html&gt;&lt;head&gt;
 &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
@@ -161,5 +146,24 @@ table#t03 td { text-align: center;  font-size: 80%; }
 
 &lt;body style="background-color:#262626; max-width: 700px; min-width: 300px;"&gt;</value>
     <comment>Mail Header Part</comment>
+  </data>
+  <data name="MailFooter" xml:space="preserve">
+    <value>&lt;table id="t03"&gt; 
+                &lt;tr&gt;&lt;td&gt; SQLAgain is a Tool to execute SQL-Files against 1 or n Oracle Databases using predefined Database 
+                Users and simplified SQL*Plus formatting Options. 
+                &lt;br&gt; 
+                It runs as a.NET Application, either in Foreground or as a scheduled Task in Background. 
+                &lt;br&gt; 
+                .NET 4.x and Oracle SQL*Plus are required. 
+                &lt;br&gt;&lt;br&gt; 
+                Let me know if you have any questions. 
+                &lt;br&gt; 
+                martin.bruegger@gmail.com  
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; &lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</value>
+    <comment>Mail Footer Part</comment>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Update" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Update.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

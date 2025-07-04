@@ -46,9 +46,6 @@
             this.taskUserId = new System.Windows.Forms.TextBox();
             this.taskPassword = new System.Windows.Forms.TextBox();
             this.button_Save = new System.Windows.Forms.Button();
-            this.label8 = new System.Windows.Forms.Label();
-            this.editProgram = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.mailReceiver = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -91,8 +88,6 @@
             this.label25 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.panel6 = new System.Windows.Forms.Panel();
-            this.buttonEditPgm = new System.Windows.Forms.Button();
             this.panel5 = new System.Windows.Forms.Panel();
             this.label26 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -109,12 +104,17 @@
             this.label30 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.button_Update = new System.Windows.Forms.Button();
+            this.linkCheck4Update = new System.Windows.Forms.LinkLabel();
+            this.label3Check4Update = new System.Windows.Forms.Label();
+            this.label2Check4Update = new System.Windows.Forms.Label();
+            this.label1Check4Update = new System.Windows.Forms.Label();
             this.form3BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.form3BindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.panel6.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -122,6 +122,7 @@
             this.panel8.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form3BindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form3BindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -242,7 +243,7 @@
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(429, 168);
+            this.dataGridView1.Size = new System.Drawing.Size(446, 217);
             this.dataGridView1.TabIndex = 8;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DataGridView1_CellFormatting);
             this.dataGridView1.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.DataGridView1_EditingControlShowing);
@@ -303,39 +304,6 @@
             this.button_Save.TabIndex = 99;
             this.button_Save.UseVisualStyleBackColor = false;
             this.button_Save.Click += new System.EventHandler(this.ButtonSave);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.label8.Location = new System.Drawing.Point(3, 30);
-            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(83, 13);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "- Program Name";
-            // 
-            // editProgram
-            // 
-            this.editProgram.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            this.editProgram.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.editProgram.Location = new System.Drawing.Point(142, 30);
-            this.editProgram.Margin = new System.Windows.Forms.Padding(2);
-            this.editProgram.Name = "editProgram";
-            this.editProgram.Size = new System.Drawing.Size(234, 20);
-            this.editProgram.TabIndex = 19;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.label9.Location = new System.Drawing.Point(3, 3);
-            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(264, 13);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "Edit SLQAgain / SQL*Plus  Outoput .log Files";
             // 
             // label10
             // 
@@ -774,17 +742,18 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(470, 619);
             this.tabControl1.TabIndex = 62;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.TabControl1SelectedIndexChanged);
             // 
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
-            this.tabPage1.Controls.Add(this.panel6);
             this.tabPage1.Controls.Add(this.panel5);
             this.tabPage1.Controls.Add(this.panel4);
             this.tabPage1.Controls.Add(this.panel3);
@@ -795,34 +764,6 @@
             this.tabPage1.Size = new System.Drawing.Size(462, 593);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
-            // 
-            // panel6
-            // 
-            this.panel6.BackColor = System.Drawing.Color.Transparent;
-            this.panel6.Controls.Add(this.buttonEditPgm);
-            this.panel6.Controls.Add(this.label8);
-            this.panel6.Controls.Add(this.label9);
-            this.panel6.Controls.Add(this.editProgram);
-            this.panel6.Location = new System.Drawing.Point(2, 515);
-            this.panel6.Margin = new System.Windows.Forms.Padding(2);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(460, 65);
-            this.panel6.TabIndex = 3;
-            // 
-            // buttonEditPgm
-            // 
-            this.buttonEditPgm.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            this.buttonEditPgm.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonEditPgm.BackgroundImage")));
-            this.buttonEditPgm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.buttonEditPgm.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.buttonEditPgm.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.buttonEditPgm.Location = new System.Drawing.Point(380, 28);
-            this.buttonEditPgm.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonEditPgm.Name = "buttonEditPgm";
-            this.buttonEditPgm.Size = new System.Drawing.Size(76, 22);
-            this.buttonEditPgm.TabIndex = 20;
-            this.buttonEditPgm.UseVisualStyleBackColor = false;
-            this.buttonEditPgm.Click += new System.EventHandler(this.ButtonProgramName);
             // 
             // panel5
             // 
@@ -844,7 +785,7 @@
             this.panel5.Controls.Add(this.label21);
             this.panel5.Controls.Add(this.group1Regexp);
             this.panel5.Controls.Add(this.group1Name);
-            this.panel5.Location = new System.Drawing.Point(2, 339);
+            this.panel5.Location = new System.Drawing.Point(2, 400);
             this.panel5.Margin = new System.Windows.Forms.Padding(2);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(460, 162);
@@ -870,7 +811,7 @@
             this.panel4.Location = new System.Drawing.Point(2, 138);
             this.panel4.Margin = new System.Windows.Forms.Padding(2);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(460, 197);
+            this.panel4.Size = new System.Drawing.Size(460, 247);
             this.panel4.TabIndex = 1;
             // 
             // panel3
@@ -1049,6 +990,78 @@
             this.panel1.Size = new System.Drawing.Size(460, 272);
             this.panel1.TabIndex = 45;
             // 
+            // tabPage3
+            // 
+            this.tabPage3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
+            this.tabPage3.Controls.Add(this.button_Update);
+            this.tabPage3.Controls.Add(this.linkCheck4Update);
+            this.tabPage3.Controls.Add(this.label3Check4Update);
+            this.tabPage3.Controls.Add(this.label2Check4Update);
+            this.tabPage3.Controls.Add(this.label1Check4Update);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(462, 593);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Check for Update";
+            // 
+            // button_Update
+            // 
+            this.button_Update.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.button_Update.BackgroundImage = global::SQLAgain.Properties.Resources.Update;
+            this.button_Update.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.button_Update.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button_Update.Location = new System.Drawing.Point(179, 84);
+            this.button_Update.Name = "button_Update";
+            this.button_Update.Size = new System.Drawing.Size(92, 29);
+            this.button_Update.TabIndex = 4;
+            this.button_Update.UseVisualStyleBackColor = false;
+            this.button_Update.Visible = false;
+            this.button_Update.Click += new System.EventHandler(this.ButtonUpdate);
+            // 
+            // linkCheck4Update
+            // 
+            this.linkCheck4Update.AutoSize = true;
+            this.linkCheck4Update.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.linkCheck4Update.Location = new System.Drawing.Point(3, 95);
+            this.linkCheck4Update.Name = "linkCheck4Update";
+            this.linkCheck4Update.Size = new System.Drawing.Size(52, 13);
+            this.linkCheck4Update.TabIndex = 3;
+            this.linkCheck4Update.TabStop = true;
+            this.linkCheck4Update.Text = "More Info";
+            this.linkCheck4Update.Visible = false;
+            this.linkCheck4Update.VisitedLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.linkCheck4Update.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkInfo_LinkClicked);
+            // 
+            // label3Check4Update
+            // 
+            this.label3Check4Update.AutoSize = true;
+            this.label3Check4Update.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.label3Check4Update.Location = new System.Drawing.Point(3, 56);
+            this.label3Check4Update.Name = "label3Check4Update";
+            this.label3Check4Update.Size = new System.Drawing.Size(0, 13);
+            this.label3Check4Update.TabIndex = 2;
+            // 
+            // label2Check4Update
+            // 
+            this.label2Check4Update.AutoSize = true;
+            this.label2Check4Update.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.label2Check4Update.Location = new System.Drawing.Point(3, 39);
+            this.label2Check4Update.Name = "label2Check4Update";
+            this.label2Check4Update.Size = new System.Drawing.Size(41, 13);
+            this.label2Check4Update.TabIndex = 1;
+            this.label2Check4Update.Text = "label27";
+            // 
+            // label1Check4Update
+            // 
+            this.label1Check4Update.AutoSize = true;
+            this.label1Check4Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1Check4Update.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            this.label1Check4Update.Location = new System.Drawing.Point(3, 12);
+            this.label1Check4Update.Name = "label1Check4Update";
+            this.label1Check4Update.Size = new System.Drawing.Size(125, 13);
+            this.label1Check4Update.TabIndex = 0;
+            this.label1Check4Update.Text = "Nothing to update ...";
+            // 
             // form3BindingSource
             // 
             this.form3BindingSource.DataSource = typeof(SQLAgain.Form3);
@@ -1076,8 +1089,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.panel6.ResumeLayout(false);
-            this.panel6.PerformLayout();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             this.panel4.ResumeLayout(false);
@@ -1091,6 +1102,8 @@
             this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form3BindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.form3BindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -1113,9 +1126,6 @@
         private System.Windows.Forms.TextBox taskUserId;
         private System.Windows.Forms.TextBox taskPassword;
         private System.Windows.Forms.Button button_Save;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox editProgram;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox mailReceiver;
         private System.Windows.Forms.Label label11;
@@ -1163,10 +1173,8 @@
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Button buttonEditPgm;
         private System.Windows.Forms.Panel panel8;
         private System.Windows.Forms.CheckBox hidePasswords;
         private System.Windows.Forms.Label label31;
@@ -1176,5 +1184,11 @@
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.TextBox nlsLang;
         private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Label label1Check4Update;
+        private System.Windows.Forms.Label label2Check4Update;
+        private System.Windows.Forms.Label label3Check4Update;
+        private System.Windows.Forms.LinkLabel linkCheck4Update;
+        private System.Windows.Forms.Button button_Update;
     }
 }
