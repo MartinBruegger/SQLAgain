@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest>
   <version>2.0.0.6</version>
   <date>2025/07/01 07:54:16</date>
   <info>https://raw.githubusercontent.com/MartinBruegger/SQLAgain/refs/heads/master/Update/SQLAgain_changes.txt</info>
-  <download>https://github.com/MartinBruegger/SQLAgain/raw/refs/heads/main/SQLAgain.zip</download>
+  <download>https://raw.githubusercontent.com/MartinBruegger/SQLAgain/refs/heads/master/Update/SQLAgain.zip</download>
 </manifest>
