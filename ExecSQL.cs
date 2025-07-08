@@ -135,7 +135,7 @@ namespace SQLAgain
             }
             try
             {
-                if (sw != null) sw.Close();
+                sw?.Close();
             }
             catch (Exception ex)
             {

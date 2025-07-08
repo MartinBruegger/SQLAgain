@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Form1.cs
+//
+// Copyright 2025 Martin Bruegger
+
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
@@ -95,8 +99,6 @@ namespace SQLAgain
             listViewFavorites.ListViewItemSorter = lvwColumnSorter;
             ReadFavorites();            // Read Favorites, load into listViewFavorites; file: Favorites.xml
             textBoxAbout.LoadFile("SQLAgain_About.rtf");
-            //textBoxAbout.AppendText("\n\n\nProduct Version: " + Assembly.GetEntryAssembly().GetName().Version.ToString());
-            //textBoxAbout.AppendText(", date modified: " + System.IO.File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToString("yyyy'/'MM'/'dd HH:mm:ss"));
             Process currentProcess = Process.GetCurrentProcess();
             processIDFile = Path.GetTempPath() + "sqlagain.ProcID_" + currentProcess.Id + ".tmp";
             SessionHistory.Reorg();
@@ -233,8 +235,11 @@ namespace SQLAgain
             if (nlsLang != null)
             {
                 Environment.SetEnvironmentVariable("NLS_LANG", nlsLang);
+            } else
+            {
+                Environment.SetEnvironmentVariable("NLS_LANG", null);
             }
-            sqlPath = appSettings["SQLPATH"];
+                sqlPath = appSettings["SQLPATH"];
             if (sqlPath != null)
             {
                 Environment.SetEnvironmentVariable("SQLPATH", sqlPath);
@@ -404,7 +409,6 @@ namespace SQLAgain
                 {
                     textBoxSqlFile.ForeColor = System.Drawing.ColorTranslator.FromHtml("#FF3700");
                     t.SetToolTip(textBoxSqlFile, "Missing slash (/) after CREATE (FUNCTION|PACKAGE|PROCEDURE|TRIGGER) detected");
-                    //StatusMessages("", "Task scheduled", string.Format("Task \"{0}\" starts at {1}.", f.taskName.Text, f.startDate.Text));
                     StatusMessages("", Path.GetFileName(sqlFile), "Missing slash (/) after CREATE (FUNCTION|PACKAGE|PROCEDURE|TRIGGER) detected");
 
                 } 
@@ -510,8 +514,11 @@ namespace SQLAgain
                     if (checkBoxOptCSV.Checked)  mimeType = ".csv";
                     logFile = logFileTemporary;
                     logFile = string.Format("{0}\\{1}{2}", Path.GetDirectoryName(logFile), Path.GetFileNameWithoutExtension(logFile), mimeType);
-                } else logFile = textBoxLogFile.Text;
-                //if (!checkBoxLog.Checked == true) { logFile = textBoxLogFile.Text; }
+                }
+                else
+                {
+                    logFile = textBoxLogFile.Text;
+                }
                 tabControl1.SelectedIndex = 0;  // switch always to Tab "Status Message"
                 SessionHistory.Record("***** Foreground Session started.", 2);
                 SessionHistory.Record("SQL-File              : file:\\\\" + sqlFile);
@@ -787,6 +794,7 @@ namespace SQLAgain
                     }
                     return match.Groups[1].Value + "." + match.Groups[2].Value;
                 }
+                MessageBox.Show(text: "Call to \"sqlplus -V\" was not successful - wrong NLS_LANG defined? "  + output);
                 return string.Format("{0}", -1);
             }
             catch

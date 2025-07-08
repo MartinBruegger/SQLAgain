@@ -1,11 +1,13 @@
-﻿using Simplify.Mail;
+﻿// Form3.cs
+//
+// Copyright 2025 Martin Bruegger
+
+using Simplify.Mail;
 using SQLAgain.Properties;
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Data;
-using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
@@ -24,8 +26,6 @@ namespace SQLAgain
         private readonly string connectString;
         private XDocument doc;
 
-        //bool isHideStringAvailable = Utils.Compatibility();
-        //bool isHidePasswordActive;
         private void ButtonSQLCLPATH(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -63,18 +63,6 @@ namespace SQLAgain
                 sqlPath.Text = folderDlg.SelectedPath;
             }
         }
-        //private void ButtonProgramName(object sender, EventArgs e)
-        //{
-        //    OpenFileDialog openFileDialog = new OpenFileDialog
-        //    {
-        //        Filter = "exe Files|*.exe"
-        //    };
-        //    DialogResult result = openFileDialog.ShowDialog();
-        //    if (result == DialogResult.OK)
-        //    {
-        //        editProgram.Text = openFileDialog.FileName;
-        //    }
-        //}
         private void ButtonTestMail(object sender, EventArgs e)
         {
             SaveMailSenderSettings();
@@ -114,9 +102,7 @@ namespace SQLAgain
         }
         private void ButtonSave(object sender, EventArgs e)
         {
-            //string trueOrFalse;
-            //trueOrFalse = (hidePasswords.Checked) ? "true" : "false";
-            //AddUpdateAppSettingsMail("AntiSpamMessagesPoolOn", trueOrFalse);
+            
             DeleteAppSettings("APPL_LOG");          // no longer used - delete when found
             if (hidePasswords.Checked)              AddUpdateAppSettings("HidePasswords", "true");
             else                                    DeleteAppSettings(   "HidePasswords");
@@ -128,8 +114,6 @@ namespace SQLAgain
             else                                    DeleteAppSettings(   "SQLPATH"); 
             if (tnsAdmin.Text != string.Empty)      AddUpdateAppSettings("TNS_ADMIN", tnsAdmin.Text); 
             else                                    DeleteAppSettings(   "TNS_ADMIN"); 
-            //if (editProgram.Text != string.Empty)   AddUpdateAppSettings("APPL_LOG", editProgram.Text); 
-            //else                                    DeleteAppSettings(   "APPL_LOG");
             if (taskUserId.Text != string.Empty)    AddUpdateAppSettings("TASK_USER", taskUserId.Text);             
             else                                    DeleteAppSettings(   "TASK_USER");             
             if (taskPassword.Text != string.Empty)  AddUpdateAppSettings("TASK_USER_PWD", Utils.Encrypt(taskPassword.Text, hidePasswords.Checked)); 
@@ -216,7 +200,6 @@ namespace SQLAgain
             nlsLang.Text      = appSettings["NLS_LANG"];
             tnsAdmin.Text     = appSettings["TNS_ADMIN"];
             sqlPath.Text      = appSettings["SQLPATH"];
-            //editProgram.Text  = appSettings["APPL_LOG"];
             taskUserId.Text   = appSettings["TASK_USER"];
             taskPassword.Text = Utils.Decrypt(appSettings["TASK_USER_PWD"], hidePasswords.Checked);
             mailSender.Text   = appSettings["TASK_EMAIL1"];
@@ -460,7 +443,6 @@ namespace SQLAgain
 
         private void ButtonUpdate(object sender, EventArgs e)
         {
-            //MessageBox.Show("I am going to update now - Good Bye :-)");
             Updater.LaunchUpdater(doc);
             this.Close();
             Application.Exit();

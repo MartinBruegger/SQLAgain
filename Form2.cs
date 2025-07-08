@@ -1,11 +1,14 @@
-﻿using System;
+﻿// Form2.cs
+//
+// Copyright 2025 Martin Bruegger
+
+using System;
 using System.Windows.Forms;
 using Microsoft.Win32.TaskScheduler;
 using System.Drawing;
 using Simplify.Mail;
 using System.Text;
 using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace SQLAgain
 {
@@ -163,6 +166,4 @@ namespace SQLAgain
             this.Close();  
         }
     }
-
-
 }

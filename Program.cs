@@ -1,11 +1,12 @@
-﻿
-using Microsoft.VisualBasic;
+﻿// Program.cs
+//
+// Copyright 2025 Martin Bruegger
+
 using Microsoft.Win32.TaskScheduler;
 using Simplify.Mail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -32,6 +33,7 @@ namespace SQLAgain
             }
             else
             {
+                Updater.UpdateUpdater();    // Update the updater when file not in use.
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new Form1(args));
