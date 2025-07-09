@@ -3,9 +3,9 @@ This file contains latest news about SQLAgain
 Version     Date        Changes  
 ========    ==========  =======
 2.0.0.6     2025/07/08  Move Repository to Github, reactive Auto-Update from Github
-2.0.0.5		  2025/06/20	Detects missing slash (/) in SQL-File when "create (function|pakage|procedure|trigger)" is found
-2.0.0.4		  2025/06/12	Session DoubleClick, "Create Task" error when filename with character "-"  fixed.
-2.0.0.3		  2025/06/12	Session DoubleClick now catches Arguments in "Create Windows Task" Block 
+2.0.0.5		2025/06/20	Detects missing slash (/) in SQL-File when "create (function|pakage|procedure|trigger)" is found
+2.0.0.4		2025/06/12	Session DoubleClick, "Create Task" error when filename with character "-"  fixed.
+2.0.0.3		2025/06/12	Session DoubleClick now catches Arguments in "Create Windows Task" Block 
 2.0.0.2     2024/12/13  Buton "Add Favorites" changed
 2.0.0.1     2024/12/11  Version 2.0.0.1 Production - SQL*Plus replaces SQLcl
 1.1.3.3     2024/11/22  Fixed labelSessionHistory_Message Anchor to  Bottom,Left
