@@ -68,16 +68,19 @@
             // buttonCreateTask
             // 
             this.buttonCreateTask.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            this.buttonCreateTask.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonCreateTask.BackgroundImage")));
             this.buttonCreateTask.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonCreateTask.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonCreateTask.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.buttonCreateTask.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.buttonCreateTask.Image = ((System.Drawing.Image)(resources.GetObject("buttonCreateTask.Image")));
+            this.buttonCreateTask.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCreateTask.Location = new System.Drawing.Point(32, 197);
             this.buttonCreateTask.Margin = new System.Windows.Forms.Padding(2);
             this.buttonCreateTask.Name = "buttonCreateTask";
-            this.buttonCreateTask.Size = new System.Drawing.Size(110, 29);
+            this.buttonCreateTask.Size = new System.Drawing.Size(99, 29);
             this.buttonCreateTask.TabIndex = 6;
+            this.buttonCreateTask.Text = "Create Task";
+            this.buttonCreateTask.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonCreateTask.UseVisualStyleBackColor = false;
             this.buttonCreateTask.Click += new System.EventHandler(this.ButtonCreateTask);
             // 
@@ -121,9 +124,9 @@
             this.checkBoxSendMail.Location = new System.Drawing.Point(32, 134);
             this.checkBoxSendMail.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxSendMail.Name = "checkBoxSendMail";
-            this.checkBoxSendMail.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxSendMail.Size = new System.Drawing.Size(82, 17);
             this.checkBoxSendMail.TabIndex = 11;
-            this.checkBoxSendMail.Text = "Send E-Mail ";
+            this.checkBoxSendMail.Text = "Send Email ";
             this.checkBoxSendMail.UseVisualStyleBackColor = true;
             // 
             // label1
@@ -133,9 +136,9 @@
             this.label1.Location = new System.Drawing.Point(30, 154);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(73, 13);
+            this.label1.Size = new System.Drawing.Size(79, 13);
             this.label1.TabIndex = 12;
-            this.label1.Text = "- Mail receiver";
+            this.label1.Text = "- Email Address";
             // 
             // mailReceiver
             // 
@@ -168,6 +171,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form2";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Schedule Task for later";
             this.Load += new System.EventHandler(this.Form2_load);
             this.ResumeLayout(false);

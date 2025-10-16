@@ -61,16 +61,18 @@ namespace SQLAgain.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;table id=&quot;t03&quot;&gt; 
-        ///                &lt;tr&gt;&lt;td&gt; SQLAgain is a Tool to execute SQL-Files against 1 or n Oracle Databases using predefined Database 
-        ///                Users and simplified SQL*Plus formatting Options. 
-        ///                &lt;br&gt; 
-        ///                It runs as a.NET Application, either in Foreground or as a scheduled Task in Background. 
-        ///                &lt;br&gt; 
-        ///                .NET 4.x and Oracle SQL*Plus are required. 
-        ///                &lt;br&gt;&lt;br&gt; 
-        ///                Let me know if you have any questions. 
-        ///   [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;table id=&quot;t03&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;br&gt;&lt;br&gt; 
+        ///SQLAgain is a Tool to execute SQL-Files against 1 or n Oracle Databases using predefined Database 
+        ///Users and simplified SQL*Plus formatting Options. 
+        ///&lt;br&gt; 
+        ///It runs as a.NET Application, either in Foreground or as a scheduled Task in Background. 
+        ///&lt;br&gt; 
+        ///.NET 4.x and Oracle SQL*Plus are required. 
+        ///&lt;br&gt;&lt;br&gt; 
+        ///Let me know if you have any questions. 
+        ///&lt;br&gt; 
+        ///martin.bruegger@gmail.com  
+        ///&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; &lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;.
         /// </summary>
         internal static string MailFooter {
             get {
@@ -79,22 +81,14 @@ namespace SQLAgain.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html&gt;&lt;head&gt;
-        ///&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;
+        ///   Looks up a localized string similar to &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;
         ///&lt;style&gt; 
-        ///&lt;!--* { font-family:Arial,Verdana,sans-serif; font-size:1em; } --&gt;
         ///* { font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif; font-size:1em ; }
-        ///table { width: 100%; border-collapse: collapse;} 
-        ///table td { 
-        ///	display: table-cell; 
-        ///	vertical-align: top; 
-        ///	color: #f2f2f2;
-        ///	padding: 20px; 
-        ///	text-align: left; 
-        ///	border: 0;
-        ///} 
-        ///table#t02 { width: 98%;  } 
-        ///table#t02 tr:hover td {background-color:#424242}        /// [rest of string was truncated]&quot;;.
+        ///BODY { background-color: White; color: black; max-width: 700px; min-width: 300px;} 
+        ///h3 { margin-top: 10pt; }
+        ///table { width: 100%; border-collapse: collapse; padding: 5px; font-size:10pt;} 
+        ///table td { display: table-cell; vertical-align: top; text-align: left; border: 0; background-color:white;  } 
+        ///table th { width: 1%; white-space: nowrap;  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MailHeader {
             get {

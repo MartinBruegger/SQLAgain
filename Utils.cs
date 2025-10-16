@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -66,6 +67,7 @@ namespace SQLAgain
             try
             {
                 if (!functionAvailable) return textToEncrypt;
+                if (textToEncrypt.Length == 0) return textToEncrypt;
                 string ToReturn = "";
                 byte[] publickeybyte = { };
                 publickeybyte = System.Text.Encoding.UTF8.GetBytes(publicKey);
@@ -123,6 +125,54 @@ namespace SQLAgain
             {
                 throw new Exception(ae.Message, ae.InnerException);
             }
+        }
+        public static void SetColorMode(Control control, bool darkMode)
+        {
+            Color colorText1, colorText2, colorBack1, colorBack2;
+            if (darkMode)
+            {
+                colorText1 = SystemColors.ButtonShadow;
+                colorText2 = SystemColors.ButtonFace;
+                colorBack1 = Color.FromArgb(44, 44, 44);
+                colorBack2 = Color.FromArgb(65, 65, 65);
+            }
+            else
+            {
+                colorBack1 = SystemColors.Control;
+                colorBack2 = SystemColors.Window;
+                colorText1 = SystemColors.ControlText;
+                colorText2 = SystemColors.WindowText;
+            }
+            if ((control is Label) || (control is CheckBox) || (control is GroupBox) || (control is TabPage) || (control is RichTextBox) || (control is StatusStrip))
+            {
+                control.BackColor = colorBack1;
+                control.ForeColor = colorText1;
+            }
+            if ((control is Button) || (control is TextBox) || (control is MaskedTextBox))
+            {
+                control.BackColor = colorBack2;
+                control.ForeColor = colorText2;
+            }
+            if ((control is ListView) || (control is ListBox))
+            {
+                control.BackColor = colorBack1;
+                control.ForeColor = colorText2;
+            }
+            if (control is DataGridView dgView)
+            {
+                dgView.BackgroundColor = colorBack1;
+                dgView.DefaultCellStyle.BackColor = colorBack2;
+                dgView.ColumnHeadersDefaultCellStyle.SelectionBackColor = colorBack2;
+                dgView.ColumnHeadersDefaultCellStyle.BackColor = colorBack2;
+                dgView.ForeColor = colorText2;
+                dgView.DefaultCellStyle.ForeColor = colorText2;
+                dgView.ColumnHeadersDefaultCellStyle.ForeColor = colorText2;
+            }
+            else
+                foreach (Control child in control.Controls)
+                {
+                    SetColorMode(child, darkMode);
+                }
         }
     }
 

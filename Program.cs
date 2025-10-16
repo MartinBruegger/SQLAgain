@@ -2,8 +2,11 @@
 //
 // Copyright 2025 Martin Bruegger
 
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Win32.TaskScheduler;
-using Simplify.Mail;
+using MimeKit;
+using SQLAgain.Properties;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace SQLAgain
 {   
@@ -42,19 +46,20 @@ namespace SQLAgain
         [System.Runtime.InteropServices.DllImport("kernel32.dll")]
         private static extern bool AllocConsole();
         [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool AttachConsole(int pid);  
+        private static extern bool AttachConsole(int pid);
         private static void ConsoleMain(string[] args)
         { 
-            string sqlPlusPath, sqlFile, logFile, userName, oracleSid, options, nlsLang, taskName, mailSender, mailReceiver, dbUserPassword, connectString, sqlResult;
-            _ = sqlFile = logFile = userName = oracleSid = options = taskName = mailReceiver = string.Empty;
-            bool ignoreError = false;
-            int dbaFlag = 0;
+            //string connectString = string.Empty ;
+            string sqlFile, logFile, userName, oracleSid, options, taskName, mailReceiver, sqlPlusPath, tnsAdmin, sqlPath, nlsLang, dbUserPassword, connectString,  sqlResult;
+            _ =    sqlFile= logFile= userName= oracleSid= options= taskName= mailReceiver= sqlPlusPath= tnsAdmin= sqlPath= nlsLang= dbUserPassword= connectString=  sqlResult= string.Empty;
+            string mailServer, mailPort, mailUser, mailPassword, mailSender;
+            _ =    mailServer= mailPort= mailUser= mailPassword= mailSender = string.Empty;
+            bool enableSSL, ignoreError, sysDBA, logFileAppend, removeTask;
+            _=   enableSSL= ignoreError= sysDBA= logFileAppend= removeTask = false;
             int timeout = 0;      // Default: 0 - only passed when > 0
-            bool logFileAppend = false;
-            bool removeTask = false;
             List<string> textList = new List<string>();
             List<string> errorList = new List<string>();
-
+            string settingsFile = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase) + @"\SQLAgainSettings.xml";
 
             DateTime timeStart = DateTime.Now;
             string dateFormat = "yyyy'/'MM'/'dd HH:mm:ss";
@@ -80,7 +85,7 @@ namespace SQLAgain
                         oracleSid = args[ix].Substring(2);
                         SessionHistory.Record("Instance List         : " + oracleSid);
                         break;
-                    case "-u":      // Argument -u USERNAME (from config file, incl. password and sysdba flag)
+                    case "-u":      // Argument -u USERNAME (Read Password and SYSDBA from Settings.xml)
                         userName = args[ix].Substring(2);
                         SessionHistory.Record("DB User               : " + userName);
                         break;
@@ -96,9 +101,9 @@ namespace SQLAgain
                         removeTask = true;
                         SessionHistory.Record("Remove Task           : TRUE");
                         break;
-                    case "-e":      // Argument -e "E-Mail Address"
+                    case "-e":      // Argument -e "Email Address"
                         mailReceiver = args[ix].Substring(2);
-                        SessionHistory.Record("E-Mail Address        : " + mailReceiver);
+                        SessionHistory.Record("Email Address         : " + mailReceiver);
                         break;
                     case "-m":      // Argument -m MARKUP "HTML" or "CSV";
                         if (args[ix].ToLower().Substring(2) == "html")
@@ -127,53 +132,60 @@ namespace SQLAgain
                         break;
                 }
             }
-            var appSettings = ConfigurationManager.AppSettings;
-            sqlPlusPath = appSettings["SQLPLUS_PATH"];
+            try
+            {
+                XDocument doc = XDocument.Load(settingsFile);
+                sqlPlusPath = doc.Root.Element("Environment").Element("SqlPlusPath")?.Value;
+                nlsLang = doc.Root.Element("Environment").Element("NLS_LANG")?.Value;
+                tnsAdmin = doc.Root.Element("Environment").Element("TNS_ADMIN")?.Value;
+                sqlPath = doc.Root.Element("Environment").Element("SQLPATH")?.Value;
+                bool passwordEncrypt = (doc.Root.Element("Environment").Element("PasswordEncrypt")?.Value == "True");
+                if (!string.IsNullOrEmpty(mailReceiver))
+
+                {
+                    mailServer = doc.Root.Element("Mail").Element("SmtpServerAddress")?.Value;
+                    mailPort = doc.Root.Element("Mail").Element("SmtpServerPortNumber")?.Value;
+                    enableSSL = (doc.Root.Element("Mail").Element("EnableSsl")?.Value == "True");
+                    mailUser = doc.Root.Element("Mail").Element("SmtpUserName")?.Value;
+                    mailPassword = Utils.Decrypt(doc.Root.Element("Mail").Element("SmtpUserPassword")?.Value, passwordEncrypt);
+                    mailSender = doc.Root.Element("Mail").Element("Sender")?.Value;
+                }
+                foreach (var dm in doc.Descendants("User"))
+                {
+                    if (userName.ToUpper() == dm.Element("Name").Value.ToUpper())
+                    {
+                        dbUserPassword = dm.Element("Schema").Value + "/" + Utils.Decrypt(dm.Element("Password").Value, passwordEncrypt);
+                        sysDBA = bool.Parse(dm.Element("SYSDBA").Value);
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errorList.Add(ErrorStack("Environment", "Reading configuration: " + ex.Message ));
+            }
+            
             if (string.IsNullOrEmpty(sqlPlusPath))
             {
                 sqlPlusPath = Utils.FindExePath("sqlplus.exe");
-                if (string.IsNullOrEmpty(sqlPlusPath))
-                {
-                    errorList.Add(ErrorStack("Environment", "SQL*Plus not found. Either define the Directory in PATH or set SQL*Plus Path in Options."));
-                }
-            }
-            nlsLang = appSettings["nlsLang"];
-            if (nlsLang != null)
-            {
-                Environment.SetEnvironmentVariable("nlsLang", nlsLang);
-            }
-            if (oracleSid == string.Empty)       { errorList.Add(ErrorStack("Options", "No Oracle SID specified. (Option: -I)")); }
-            if (sqlFile == string.Empty)         { errorList.Add(ErrorStack("Options", "No SQL - file specified. (Option: -F)")); }
-            if (logFile == string.Empty)         { errorList.Add(ErrorStack("Options", "No Output-file specified. (Option: -L)")); }
-            if (!System.IO.File.Exists(sqlFile)) { errorList.Add(ErrorStack("SQL-File", "File \"" + sqlFile  + "\" not found.")); }
-
-            dbUserPassword = GetConnectString(userName);
-            if (dbUserPassword == string.Empty)
-            {
-                errorList.Add(ErrorStack("DB User", "User \"" + userName + "\" not found in AppSettings."));
+                if (string.IsNullOrEmpty(sqlPlusPath))                     errorList.Add(ErrorStack("Environment", "SQL*Plus not found. Either define the Directory in PATH or set SQL*Plus Path in Options."));
             } else
             {
-                if (dbUserPassword.Substring(0, 1) == "-")
-                {
-                    dbaFlag = 1;
-                    dbUserPassword = dbUserPassword.Substring(1);
-                }
+                if (!System.IO.File.Exists(sqlPlusPath)) errorList.Add(ErrorStack("Environment", "sqlplus.exe not found. Options > Environment > SQL*Plus Path: " + sqlPlusPath));
             }
-
+            
+            if (string.IsNullOrEmpty(oracleSid))        errorList.Add(ErrorStack("Options", "No Oracle SID specified. (Option: -I)")); 
+            if (string.IsNullOrEmpty(sqlFile))          errorList.Add(ErrorStack("Options", "No SQL - file specified. (Option: -F)")); 
+            if (string.IsNullOrEmpty(logFile))          errorList.Add(ErrorStack("Options", "No Output-file specified. (Option: -L)")); 
+            if (!System.IO.File.Exists(sqlFile))        errorList.Add(ErrorStack("SQL-File", "File \"" + sqlFile  + "\" not found.")); 
+            if (string.IsNullOrEmpty(dbUserPassword))   errorList.Add(ErrorStack("DB User", "User \"" + userName + "\" not found."));
             if (errorList.Count == 0)
             {
-                string directory;
-                string sqlFilePath, sqlPath;
-                System.IO.FileInfo fileinfo = new System.IO.FileInfo(sqlFile);
-                sqlFilePath = fileinfo.DirectoryName;
-                directory = appSettings["TNS_ADMIN"];
-                if (directory != null) { Environment.SetEnvironmentVariable("TNS_ADMIN", directory); }
-                directory = appSettings["SQLPATH"];
-                if (directory != null) { sqlPath = string.Format("{0};{1}", sqlFilePath, directory); }
-                else { sqlPath = sqlFilePath; }
-                Environment.SetEnvironmentVariable("SQLPATH", sqlPath);
+                if (!string.IsNullOrEmpty(nlsLang))  Environment.SetEnvironmentVariable("NLS_LANG", nlsLang);
+                if (!string.IsNullOrEmpty(tnsAdmin)) Environment.SetEnvironmentVariable("TNS_ADMIN", tnsAdmin);
+                if (!string.IsNullOrEmpty(sqlPath))  Environment.SetEnvironmentVariable("SQLPATH", sqlPath);
 
-                if (logFileAppend == false)
+                if (!logFileAppend)
                 {
                     if (System.IO.File.Exists(logFile)) { File.Delete(logFile); }
                 }
@@ -183,8 +195,8 @@ namespace SQLAgain
                 SessionHistory.Record("", 1, 3);
                 foreach (string db in oracelSids)
                 {
-                    if (dbaFlag == 1) { connectString = string.Format("{0}@{1} as sysdba", dbUserPassword, db); }
-                    else { connectString = string.Format("{0}@{1}", dbUserPassword, db); }
+                    if (sysDBA)  connectString = string.Format("{0}@{1} AS SYSDBA", dbUserPassword, db); 
+                    else         connectString = string.Format("{0}@{1}", dbUserPassword, db);
                     SessionHistory.Record(db.PadRight(24) + Path.GetFileName(sqlFile).PadRight(50), 0, 1);
                     sqlResult = ExecSQL.DoSQL(sqlPlusPath, db, connectString, sqlFile, logFile, options, null, timeout, ignoreError);
                     if (sqlResult.StartsWith("OK"))
@@ -206,66 +218,80 @@ namespace SQLAgain
                 "<br>" +
                 "<i>SQLAgain</i> executed a SQL-File and sends you its Output." +
                 "</td></tr>" +
-                "<tr><td> Job Summary" +
-                "<div style=\"border-style: solid; border-width: thin; border-color:#dadce0; border-radius: 8px; padding: 10px 10px;\" >" +
+                "<tr><td> <h3>Task Summary</h3>" +
                 "<table id=\"t02\" > " +
-                "<tr><td><b> Task Name                  </b></td><td> " + taskName + " </td></tr>" +
-                "<tr><td><b> Executed on Host           </b></td><td> " + System.Environment.MachineName + " </td></tr>" +
-                "<tr><td><b> SQL File                   </b></td><td> " + sqlFile + " </td></tr>" +
-                "<tr><td><b> Logfile from SQL*Plus     </b></td><td> " + logFile + " </td></tr>" +
-                "<tr><td><b> Oracle Databases           </b></td><td> " + oracleSid + " </td></tr>" +
-                "<tr><td><b> DB-User Name               </b></td><td> " + userName + " </td></tr>" +
-                "<tr><td><b> Time started               </b></td><td> " + timeStart.ToString(dateFormat) + " </td></tr>" +
-                "<tr><td><b> Time ended                 </b></td><td> " + timeEnd.ToString(dateFormat) + " </td></tr>" +
+                "<tr><th> Task Name                  </th><td> " + taskName + " </td></tr>" +
+                "<tr><th> Executed on Host           </th><td> " + System.Environment.MachineName + " </td></tr>" +
+                "<tr><th> SQL File                   </th><td> " + sqlFile + " </td></tr>" +
+                "<tr><th> Logfile from SQL*Plus      </th><td> " + logFile + " </td></tr>" +
+                "<tr><th> Oracle Databases           </th><td> " + oracleSid + " </td></tr>" +
+                "<tr><th> DB-User Name               </th><td> " + userName + " </td></tr>" +
+                "<tr><th> Time started               </th><td> " + timeStart.ToString(dateFormat) + " </td></tr>" +
+                "<tr><th> Time ended                 </th><td> " + timeEnd.ToString(dateFormat) + " </td></tr>" +
                 "</table>" +
-                "</div>" +
                 "</td></tr><tr><td>";
                 
                 if (errorList.Count ==0)
                 {
                     mailBody +=
-                    "Database Summary" +
-                    "<div style=\"border-style: solid; border-width: thin; border-color:#dadce0; border-radius: 8px; padding: 10px 10px;\" >" +
+                    "<h3>Database Summary</h3>" +
                     "<table id=\"t02\" > " +
                     string.Join("", textList);
                 } else
                 {
                     mailBody +=
-                    "Errors found - SQL File was NOT executed" +
-                    "<div style=\"border-style: solid; border-width: thin; border-color:#dadce0; border-radius: 8px; padding: 10px 10px;\" >" +
+                    "<h3>Errors found - SQL File was NOT executed</h3>" +
                     "<table id=\"t02\" > " +
                     string.Join("", errorList);
                     logFile = string.Empty;     // Do not attach a (old, existing) logFile when no SQL File was executed 
                 }
                 mailBody +=
                 "</table>" +
-                "</div><br>" +
+                "<br>" +
                 "<table id=\"t03\" > " +
                 "<tr><td>Product Version: " + Assembly.GetEntryAssembly().GetName().Version.ToString() +
                 "<br>Date:    " + Directory.GetLastWriteTime(AppDomain.CurrentDomain.BaseDirectory + "SQLAgain.exe").ToString("yyyy'/'MM'/'dd HH:mm") +
                 "</td></tr></table>" +
                 SQLAgain.Properties.Resources.MailFooter;
-
-                mailSender = appSettings["TASK_EMAIL1"];
-                if (mailSender == null)                
-                    mailSender = System.Environment.UserName + "@" + System.Environment.MachineName;
-                
-                SessionHistory.Record("Sending E-Mail.",2);
+                SessionHistory.Record("Sending Email.", 2);
                 try
                 {
-                    if (logFile == string.Empty) MailSender.Default.Send(mailSender, mailReceiver, "SQLAgain on " + System.Environment.MachineName, mailBody, null);
-                    else                         MailSender.Default.Send(mailSender, mailReceiver, "SQLAgain on " + System.Environment.MachineName, mailBody, null, new System.Net.Mail.Attachment(logFile));
-                }                
+                    var message = new MimeMessage();
+                    message.From.Add(new MailboxAddress(mailSender.Substring(0, mailSender.IndexOf("@")), mailSender));
+                    message.To.Add(new MailboxAddress(mailReceiver.Substring(0, mailReceiver.IndexOf("@")), mailReceiver));
+                    message.Subject = "SQLAgain on " + System.Environment.MachineName;
+                    var builder = new BodyBuilder();
+                    builder.HtmlBody = mailBody;
+                    builder.Attachments.Add(logFile);
+                    message.Body = builder.ToMessageBody();
+                    var client = new SmtpClient();
+                    if (enableSSL)
+                        client.Connect(mailServer, int.Parse(mailPort), true);
+                    else
+                        client.Connect(mailServer, int.Parse(mailPort), SecureSocketOptions.None);
+                    if (!String.IsNullOrEmpty(mailPassword))
+                    {
+                        client.Authenticate(mailUser, mailPassword);
+                    }
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
                 catch (Exception EX)
                 {
-                    SessionHistory.Record("Failed to send E-Mail." + EX.Message);
-                    Console.WriteLine("Failed to send E-Mail to " + mailReceiver);
+                    SessionHistory.Record("Failed to send Email." + EX.Message);
+                    Console.WriteLine("Failed to send Email to " + mailReceiver);
                 }
             }
             if (removeTask)
             {
                 SessionHistory.Record("Deleting Task. ");
-                try { DeleteTask(taskName); }
+                try
+                {
+                    using (TaskService ts = new TaskService())
+                    {
+                        ts.RootFolder.DeleteTask(taskName);
+                    }
+                }
                 catch (Exception)
                 {
                     SessionHistory.Record("Failed to delete Scheduler Task");
@@ -280,38 +306,6 @@ namespace SQLAgain
         {
             SessionHistory.Record("SQLAgain Batch-Mode Error: " + Subject + ": " + Message);
             return "<tr><td> " + Subject + " </td><td class=\"red\"> " + Message + " </td></tr>";
-        }
-        public static string GetConnectString(string userName)
-        {
-            var appSettings = ConfigurationManager.AppSettings;
-            string dbUser, connectString, dbaFlag;
-            connectString = string.Empty;
-            bool isHidePasswordsActive = false;
-
-            if (appSettings["HidePasswords"] == "true") isHidePasswordsActive = true;
-            if (userName == string.Empty) { userName = appSettings["DBUSER1"]; }
-            for (int i = 1; i < 11; i++)
-            {
-                dbUser = appSettings["DBUSER" + i.ToString()];
-                if (dbUser != null)
-                {
-                    if (userName.ToUpper() == dbUser.ToUpper())
-                    {
-                        connectString = Utils.Decrypt(appSettings["DBCONN" + i.ToString()], isHidePasswordsActive);
-                        dbaFlag = appSettings["DBAFLAG" + i.ToString()];
-                        if (dbaFlag == "1") { connectString = "-" + connectString; }
-                        break;
-                    }
-                }
-            }
-            return connectString;
-        }
-        public static void DeleteTask(string TASKNAME)
-        {
-            using (TaskService ts = new TaskService())
-            {
-                ts.RootFolder.DeleteTask(TASKNAME);
-            }
         }
     }
 }

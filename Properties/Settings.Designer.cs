@@ -38,13 +38,49 @@ namespace SQLAgain.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AutoCheckForUpdate {
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState F1State {
             get {
-                return ((bool)(this["AutoCheckForUpdate"]));
+                return ((global::System.Windows.Forms.FormWindowState)(this["F1State"]));
             }
             set {
-                this["AutoCheckForUpdate"] = value;
+                this["F1State"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point F1Location {
+            get {
+                return ((global::System.Drawing.Point)(this["F1Location"]));
+            }
+            set {
+                this["F1Location"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size F1Size {
+            get {
+                return ((global::System.Drawing.Size)(this["F1Size"]));
+            }
+            set {
+                this["F1Size"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool F1DarkMode {
+            get {
+                return ((bool)(this["F1DarkMode"]));
+            }
+            set {
+                this["F1DarkMode"] = value;
             }
         }
     }

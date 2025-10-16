@@ -118,48 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MailHeader" xml:space="preserve">
-    <value>&lt;html&gt;&lt;head&gt;
-&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+    <value>&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
 &lt;style&gt; 
-&lt;!--* { font-family:Arial,Verdana,sans-serif; font-size:1em; } --&gt;
 * { font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif; font-size:1em ; }
-table { width: 100%; border-collapse: collapse;} 
-table td { 
-	display: table-cell; 
-	vertical-align: top; 
-	color: #f2f2f2;
-	padding: 20px; 
-	text-align: left; 
-	border: 0;
-} 
+BODY { background-color: White; color: black; max-width: 700px; min-width: 300px;} 
+h3 { margin-top: 10pt; }
+table { width: 100%; border-collapse: collapse; padding: 5px; font-size:10pt;} 
+table td { display: table-cell; vertical-align: top; text-align: left; border: 0; background-color:white;  } 
+table th { width: 1%; white-space: nowrap;  border:solid 1px #689ED0; text-align:left; background-color:#BBD2EA; font-weight:bold; } 
 table#t02 { width: 98%;  } 
-table#t02 tr:hover td {background-color:#424242}
-table#t02 tr:nth-child(even) { background-color: #333333;}
-table#t02 td { padding: 10px; color: #cccccc; } 
-table#t02 td:nth-child(2)   { color: #f2f2f2; }
-table#t02 td:nth-child(3)   { color: #00802b; }
-table#t02 td:nth-child(3)   { color: #00802b; }
-table#t02 td.red            { color: #cc5200; } 
-table#t03 td { text-align: center;  font-size: 80%; } 
+table#t02 td.red { background-color: #ff6633; } 
+table#t02 td { border:solid 1px #689ED0; line-height: 20px; mso-line-height-rule:exactly; padding-left: 10px;}
+table#t03 td { text-align: center;  font-size: 9pt; } 
 &lt;/style&gt; 
-&lt;/head&gt; 
-
-&lt;body style="background-color:#262626; max-width: 700px; min-width: 300px;"&gt;</value>
+&lt;/head&gt;</value>
     <comment>Mail Header Part</comment>
   </data>
   <data name="MailFooter" xml:space="preserve">
-    <value>&lt;table id="t03"&gt; 
-                &lt;tr&gt;&lt;td&gt; SQLAgain is a Tool to execute SQL-Files against 1 or n Oracle Databases using predefined Database 
-                Users and simplified SQL*Plus formatting Options. 
-                &lt;br&gt; 
-                It runs as a.NET Application, either in Foreground or as a scheduled Task in Background. 
-                &lt;br&gt; 
-                .NET 4.x and Oracle SQL*Plus are required. 
-                &lt;br&gt;&lt;br&gt; 
-                Let me know if you have any questions. 
-                &lt;br&gt; 
-                martin.bruegger@gmail.com  
-&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; &lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</value>
+    <value>&lt;table id="t03"&gt;&lt;tr&gt;&lt;td&gt;&lt;br&gt;&lt;br&gt; 
+SQLAgain is a Tool to execute SQL-Files against 1 or n Oracle Databases using predefined Database 
+Users and simplified SQL*Plus formatting Options. 
+&lt;br&gt; 
+It runs as a.NET Application, either in Foreground or as a scheduled Task in Background. 
+&lt;br&gt; 
+.NET 4.x and Oracle SQL*Plus are required. 
+&lt;br&gt;&lt;br&gt; 
+Let me know if you have any questions. 
+&lt;br&gt; 
+martin.bruegger@gmail.com  
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; &lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;</value>
     <comment>Mail Footer Part</comment>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />

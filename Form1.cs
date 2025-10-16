@@ -2,19 +2,26 @@
 //
 // Copyright 2025 Martin Bruegger
 
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
+using SQLAgain.Properties;
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
 using System.Configuration;
-using System.Threading;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using System.Drawing;
-using System.Text;
 
 namespace SQLAgain
 {
@@ -58,92 +65,89 @@ namespace SQLAgain
                 Text = _Text;
             }
         }
-
-        private readonly List<Favorite> favorites = new List<Favorite>();
+        private readonly string settingsFile = "SQLAgainSettings.xml";
+        private readonly List<Favorite> listFavorites = new List<Favorite>();
+        private readonly List<List<int>> listDBMatches = new List<List<int>>();
         private string sqlPlusPath = string.Empty;
+        private string nlsLang = string.Empty;
+        private string tnsAdmin = string.Empty;
+        private string sqlPath = string.Empty;                                                      // Options / Environment
+        private bool passwordEncrypt = true;
         private string sqlFile = string.Empty;
         private string logFile = string.Empty;
-        public const string favoritesFile = "Favorites.xml";
         private readonly string logFileTemporary;
         private readonly string processIDFile;                      // temporary file containing Proc.ID of SQLcl - option to "Abort SQL"
         private string namesDefaultDomain = string.Empty;           // Default_Domain from sqlnet.ora - suppress this part in the db-list
-        private string dbUser;
-        private string dbUserPassword;
-        private string dbaFlag;
-        private string mailSender;
-        private string mailReceiver;
+        private string dbUser = string.Empty;                                                       // selected DBUser in listBoxUser
+        private string dbSchema;                                                                    // DB Schema (selected in listBoxUser)
+        private string dbUserPassword;                                                              // Password of DB Schema
+        private bool sysDBA;                                                                        // SYSDBA Flag
+        private bool buildDBListPending;
+        private bool inInit = true;
         private string sqlPlusVersion;
         private string tnsNames;
-        private string taskUserId, taskPassword;
-        private string group1Regexp, group2Regexp, group3Regexp;
-        private string group1Name, group2Name, group3Name;
-        private string group1Color, group2Color, group3Color;
-        private string excludeDbs;
         private string sqlResult;
         private int selectedDbCount;
-        private readonly List<string> dbUserList = new List<string>();
-        private readonly List<string> connectStringList = new List<string>();
-        private readonly List<string> dbaFlagList = new List<string>();
         private readonly List<string> dbList = new List<string>();
-        private BindingSource BS ;                                  // Options (Form3) may change DBUSERs Listbox
-        private readonly ListViewColumnSorter lvwColumnSorter;
         private int timeout;
         private bool ignoreError ;
-        private bool pingWithSqlPlus = false;                      // When sqlPlusVersion >= 23, then use "sqlplus -P" instead of tnsping.exe
+        private bool pingWithSqlPlus = false;                                                       // When sqlPlusVersion >= 23, then use "sqlplus -P" instead of tnsping.exe
+        private readonly DataTable tableDBUser = new DataTable();
+        private readonly DataTable tableDBGroups = new DataTable();
+        private XDocument doc;
+        private string check4UpdateInfo;
+        private  Color textColorStatusLabel1 = Color.DarkOrange;                                    // StatusLabel ForegroundColor Text High   (Orange  Mode white: Red)
+        private  Color textColorStatusLabel2 = Color.Gold;                                          // StatusLabel ForegroundColor Text Normal (Gold    Mode white: Green) 
+        private  Color colorBack1 = Color.FromArgb(44, 44, 44);                                     // ListView BackColor - we are changing BackColor SELECTED and normal in a DB loop
+        private readonly Queue<string> pendingMessages = new Queue<string>();
         public Form1(string[] file)
         {
             InitializeComponent();
-            
-            // Create an instance of a ListView column sorter and assign it to the ListView control.
-            lvwColumnSorter = new ListViewColumnSorter();
-            listViewFavorites.ListViewItemSorter = lvwColumnSorter;
-            ReadFavorites();            // Read Favorites, load into listViewFavorites; file: Favorites.xml
+            listBoxOptions.SelectedIndex = 0;
+            tabControloptions.SelectedIndex = 0;
+            tabControloptions.Location = new System.Drawing.Point(-10, -25);
+            ReadSettings();                                                                         // Read Favorites, load into listViewFavorites; file: Favorites.xml
             textBoxAbout.LoadFile("SQLAgain_About.rtf");
             Process currentProcess = Process.GetCurrentProcess();
             processIDFile = Path.GetTempPath() + "sqlagain.ProcID_" + currentProcess.Id + ".tmp";
-            SessionHistory.Reorg();
-            //=== FILE passed as parameter (drag/drop file on SQLAgain Icon)
-            if (file.Length != 0) { textBoxSqlFile.Text = Pathing.GetUNCPath(file[0]); }
+            SessionHistory.Reorg();                                                             
+            if (file.Length != 0) { textBox_SqlFile.Text = Pathing.GetUNCPath(file[0]); }           //=== FILE passed as parameter (drag/drop file on SQLAgain Icon)
             logFileTemporary = Path.GetTempPath() + "sqlagain.txt";
             AllowDrop = true;
             DragEnter += new DragEventHandler(Form1_DragEnter);
             DragDrop += new DragEventHandler(Form1_DragDrop);
-            checkBoxOptSilent.Checked = false;
-            checkBoxLogAppend.Checked = true;
             checkBoxOptIgnoreError.Checked = false;
             buttonViewLog.Enabled = false;
-            InitEnv();              // may be called more than once - at Startup and when Options are changed/saved
+            InitEnv();
+            ShowSessionHistory();                                                                   // init - just to speed up ...
+            inInit = false;                                                                         // init-phase completed
         }
         private void InitEnv()
         {
-            GetConfig();                // Read Options; file: SQLAgain.exe.Config
             sqlPlusVersion = SqlPlusVersion(sqlPlusPath);
             if (sqlPlusVersion != "-1")
             {
-                if (!pingWithSqlPlus)   // if tnsping.exe is required: check tnsping.exe in same dir as sqlplus.exe (instant client without tnsping.exe)
-                {
-                    if (! File.Exists(Regex.Replace(sqlPlusPath, @"\bsqlplus.exe\b", "tnsping.exe")))
-                    {
-                        buttonTNSPing.Visible = false;
-                    }
-                }
-                StatusMessages("", "Environment", string.Format("Detected SQL*Plus Version: {0}", sqlPlusVersion));
                 tnsNames = GetTNSFile();
-                if (!System.IO.File.Exists(tnsNames))
+                if (File.Exists(tnsNames))
                 {
-                    StatusMessages("", "Environment", "Error: File tnsNames.ora not found. Please consult Tab  --> About SQLAgain.");
+                    namesDefaultDomain = GetSqlnetOra(Path.GetDirectoryName(tnsNames));
+                    BuildDBList();
                 }
                 else
                 {
-                    namesDefaultDomain = GetSqlnetOra(Path.GetDirectoryName(tnsNames));
-                    BuildDBList(namesDefaultDomain);
+                    if (!string.IsNullOrEmpty(dbUser))
+                        SetMessage("", "Startup", "Error: File tnsNames.ora not found. Please configure your settings in Options.", true);
                 }
             }
             else
             {
-                StatusMessages("", "Environment", "SQL*Plus Version Detection failed. Please consult About SQLAgain.");
+                if (!string.IsNullOrEmpty(dbUser))
+                    SetMessage("", "Startup", "SQL*Plus Version Detection failed. Please configure your settings in Options.", true);
             }
-                
+            if (string.IsNullOrEmpty(dbUser))
+            {
+                SetMessage("", "Startup", "No DB-User found. Please configure your settings in Options.", true);
+            }
         }
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
@@ -152,274 +156,136 @@ namespace SQLAgain
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) textBoxSqlFile.Text = Pathing.GetUNCPath(file);
+            foreach (string file in files) textBox_SqlFile.Text = Pathing.GetUNCPath(file);
         }
-        private void GetConfig()
+        private void BuildDBList()
         {
-            try
+            bool colorSet;
+            int iDB = 0;
+            int iGroup;
+            labelDB.Text = "Oracle Databases from file \"" + tnsNames + "\"";            
+            listView_DBs.Clear();
+            listDBMatches.Clear();
+            List<Regex> dbGroupRegex = new List<Regex>();
+            List<int> dbGroupMatches = new List<int>();
+            for (iGroup = 0; iGroup < tableDBGroups.Rows.Count; iGroup++)
             {
-                var appSettingsTest = ConfigurationManager.AppSettings;
-            }
-            catch (ConfigurationErrorsException)
-            {
-                MessageBox.Show("Error reading app settings.");
-                Thread.Sleep(5000);                                 // wait 5 seconds - hope the user gets the message above ?
-                Application.Exit();
-            }
-            string nlsLang;
-            string tnsAdmin ;
-            string sqlPath ;
-            string dbUser;
-            string connectString;
-            string dbaFlag;
-            bool isHidePasswordsActive = false;
-            var appSettings = ConfigurationManager.AppSettings;
-            dbUserList.Clear();
-            connectStringList.Clear();
-            dbaFlagList.Clear();
-            if (appSettings["HidePasswords"] == "true") isHidePasswordsActive = true;
-            if (string.IsNullOrEmpty(appSettings["DBS_EXCLUDE"]))
-            { excludeDbs = "^$"; }     // DBS_EXCLUDE not set: exclude empty lines
-            else { excludeDbs = appSettings["DBS_EXCLUDE"]; }
-            if (string.IsNullOrEmpty(appSettings["DBG1_REGEXP"]))
-            {
-                group1Regexp = "^$";
-                buttonSelectGroup1.Visible = false;
-            } else
-            {
-                group1Regexp = appSettings["DBG1_REGEXP"];
-                group1Name   = appSettings["DBG1_TEXT"];
-                group1Color  = appSettings["DBG1_COLOR"];
-                buttonSelectGroup1.Visible = true;
-            }
-            if (string.IsNullOrEmpty(appSettings["DBG2_REGEXP"]))
-            {
-                group2Regexp = "^$";
-                buttonSelectGroup2.Visible = false;
-            }
-            else
-            {
-                group2Regexp = appSettings["DBG2_REGEXP"];
-                group2Name   = appSettings["DBG2_TEXT"];
-                group2Color  = appSettings["DBG2_COLOR"];
-                buttonSelectGroup2.Visible = true;
-            }
-            if (string.IsNullOrEmpty(appSettings["DBG3_REGEXP"]))
-            {
-                group3Regexp = "^$";
-                buttonSelectGroup3.Visible = false;
-            }
-            else
-            {
-                group3Regexp = appSettings["DBG3_REGEXP"];
-                group3Name   = appSettings["DBG3_TEXT"];
-                group3Color  = appSettings["DBG3_COLOR"];
-                buttonSelectGroup3.Visible = true;
-            }
-            mailSender   = appSettings["TASK_EMAIL1"];
-            mailReceiver = appSettings["TASK_EMAIL2"];
-            tnsAdmin     = appSettings["TNS_ADMIN"];
-            if (tnsAdmin != null)
-            {
-                Environment.SetEnvironmentVariable("TNS_ADMIN", tnsAdmin);
-            }
-            sqlPlusPath = appSettings["SQLPLUS_PATH"];
-            if (string.IsNullOrEmpty (sqlPlusPath))
-            {
-                sqlPlusPath = Utils.FindExePath("sqlplus.exe");
-                if (string.IsNullOrEmpty(sqlPlusPath)) {
-                    StatusMessages("", "Environment", "SQL*Plus not found. Either define the Directory in PATH or set SQL*Plus Path in Options.");
-                }
-            }
-            nlsLang = appSettings["NLS_LANG"];
-            if (nlsLang != null)
-            {
-                Environment.SetEnvironmentVariable("NLS_LANG", nlsLang);
-            } else
-            {
-                Environment.SetEnvironmentVariable("NLS_LANG", null);
-            }
-                sqlPath = appSettings["SQLPATH"];
-            if (sqlPath != null)
-            {
-                Environment.SetEnvironmentVariable("SQLPATH", sqlPath);
-            }
-            for (int i = 1; i < 11; i++)
-            {
-                dbUser = appSettings["DBUSER" + i.ToString()];
-                if (dbUser == null)
+                try
                 {
-                    break;
+                    dbGroupRegex.Add(new Regex(tableDBGroups.Rows[iGroup][1].ToString(), RegexOptions.IgnorePatternWhitespace));
                 }
-                connectString  = Utils.Decrypt(appSettings["DBCONN" + i.ToString()], isHidePasswordsActive);
-                dbaFlag = appSettings["DBAFLAG" + i.ToString()];
-                dbUserList.Add(dbUser);
-                connectStringList.Add(connectString);
-                dbaFlagList.Add(dbaFlag);
+                catch {
+                    dbGroupRegex.Add(new Regex("^$", RegexOptions.IgnorePatternWhitespace));
+                }
+                dbGroupMatches.Add(0);
             }
-            //editProgram  = appSettings["APPL_LOG"];
-            taskUserId   = appSettings["TASK_USER"];
-            taskPassword = Utils.Decrypt(appSettings["TASK_USER_PWD"], isHidePasswordsActive);
-            BindingSource bindingSource = new BindingSource();
-            BS = bindingSource;  // required when Options changed
-            BS.DataSource = dbUserList;
-            listBoxUser.DataSource = BS;
-            listBoxUser.SelectedIndex = 0;
-        }
-        private void BuildDBList( string namesDefaultDomain)
-        {
-            labelDB.Text = "Oracle Databases (from file " + tnsNames + ")";            
-            listView1.Clear();
-            int countAll = 0;
-            int group1Count = 0;
-            int group2Count = 0;
-            int group3Count = 0;
-
-            try
-            {Regex test_Regex = new Regex(group1Regexp, RegexOptions.IgnorePatternWhitespace);}
-            catch (Exception ex)
-            {
-                MessageBox.Show("Options Regular Expression is in Error: "+ Environment.NewLine + ex.Message);
-                group1Regexp = "";
-            }
-            try
-            { Regex test_Regex = new Regex(group2Regexp, RegexOptions.IgnorePatternWhitespace); }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Options Regular Expression is in Error: " + Environment.NewLine + ex.Message);
-                group2Regexp = "";
-            }
-            try
-            { Regex test_Regex = new Regex(group3Regexp, RegexOptions.IgnorePatternWhitespace); }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Options Regular Expression is in Error: " + Environment.NewLine + ex.Message);
-                group3Regexp = "";
-            }
-            try
-            { Regex test_Regex = new Regex(excludeDbs, RegexOptions.IgnorePatternWhitespace); }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Options Regular Expression is in Error: " + Environment.NewLine + ex.Message);
-                excludeDbs = "";
-            }
-            Regex group1Search = new Regex(group1Regexp, RegexOptions.IgnorePatternWhitespace);
-            Regex group2Search = new Regex(group2Regexp, RegexOptions.IgnorePatternWhitespace);
-            Regex group3Search = new Regex(group3Regexp, RegexOptions.IgnorePatternWhitespace);
-            Regex excludeDbSearch = new Regex(excludeDbs, RegexOptions.IgnorePatternWhitespace); 
-            listView1.Columns.Add("DB", 200);
+            Regex excludeDbSearch = new Regex(textBox_OptDBGroup_ExcludeDBs.Text, RegexOptions.IgnorePatternWhitespace); 
+            listView_DBs.Columns.Add("DB", 200);
+            
             foreach (string DB in ListTNSAlias(tnsNames, namesDefaultDomain))
             {
-                if (!excludeDbSearch.IsMatch(DB))
+                if ((string.IsNullOrEmpty(textBox_OptDBGroup_ExcludeDBs.Text)) || (!excludeDbSearch.IsMatch(DB)))
                 {
-                    countAll++;
-                    ListViewItem item1 = new ListViewItem(DB);
-                    item1.SubItems[0].ForeColor = System.Drawing.ColorTranslator.FromHtml("ButtonFace");
-                    if (group1Search.IsMatch(DB))
+                    colorSet = false;
+                    List<int> Data = new List<int>();
+                    ListViewItem item1 = new ListViewItem(DB)
                     {
-                        group1Count++;
-                        item1.SubItems.Add(".");
-                        item1.SubItems[0].ForeColor = System.Drawing.ColorTranslator.FromHtml(group1Color);
-                    }
-                    else { item1.SubItems.Add(" "); }
-                    if (group2Search.IsMatch(DB))
+                        Text = DB
+                    };
+                    for (iGroup = 0; iGroup < dbGroupRegex.Count; iGroup++)
                     {
-                        group2Count++;
-                        item1.SubItems.Add(".");
-                        item1.SubItems[0].ForeColor = System.Drawing.ColorTranslator.FromHtml(group2Color);
+                        if (dbGroupRegex[iGroup].IsMatch(DB))
+                        {
+                            Data.Add(1);
+                            dbGroupMatches[iGroup]++;
+                            if (!colorSet)
+                            {
+                                try
+                                {
+                                    item1.ForeColor = ColorTranslator.FromHtml(tableDBGroups.Rows[iGroup][2].ToString());
+                                    colorSet = true;
+                                }
+                                catch (Exception) 
+                                {
+                                    tableDBGroups.Rows[iGroup][2] = "#666666";
+                                }
+                            }
+                        } else
+                        {
+                            Data.Add(0);
+                        }
                     }
-                    else { item1.SubItems.Add(" "); }
-                    if (group3Search.IsMatch(DB))
-                    {
-                        group3Count++;
-                        item1.SubItems.Add(".");
-                        item1.SubItems[0].ForeColor = System.Drawing.ColorTranslator.FromHtml(group3Color);
-                    }
-                    else { item1.SubItems.Add(" "); }
-                    item1.UseItemStyleForSubItems = false;
-                    Color color = item1.SubItems[0].ForeColor;
-                    item1.SubItems.Add(System.Drawing.ColorTranslator.ToHtml(color));
-                    listView1.Items.Add(item1);
+                    iDB++;
+                    listView_DBs.Items.Add(item1);
+                    listDBMatches.Add(Data);
                 }
-            }            
-            buttonSelectAll.Text = "Select All   (" + countAll + ")";
-            buttonSelectGroup1.Text = group1Name + "   (" + group1Count + ")";
-            buttonSelectGroup1.ForeColor = System.Drawing.ColorTranslator.FromHtml(group1Color);
-            buttonSelectGroup2.Text = group2Name + "   (" + group2Count + ")";
-            buttonSelectGroup2.ForeColor = System.Drawing.ColorTranslator.FromHtml(group2Color);
-            buttonSelectGroup3.Text = group3Name + "   (" + group3Count + ")";
-            buttonSelectGroup3.ForeColor = System.Drawing.ColorTranslator.FromHtml(group3Color);
+            }
+            listView_DBGroups.BeginUpdate();
+            listView_DBGroups.Items.Clear();
+            for (iGroup = 0; iGroup < tableDBGroups.Rows.Count; iGroup++)
+            {
+                if (dbGroupMatches[iGroup] > 0)                                                     // skip DBGroups where no DB was matched
+                {
+                    ListViewItem item = new ListViewItem(new string[]
+                        {
+                        tableDBGroups.Rows[iGroup][0].ToString() ,
+                        dbGroupMatches[iGroup].ToString()
+                        })
+                    {
+                        Tag = iGroup,
+                        ForeColor = ColorTranslator.FromHtml(tableDBGroups.Rows[iGroup][2].ToString())
+                    };
+                    listView_DBGroups.Items.Add(item);
+                }
+            }
+            listView_DBGroups.EndUpdate();
+            buildDBListPending = false;
         }
         public System.Diagnostics.Process p = new System.Diagnostics.Process();
         private void ListBoxUserChanged(object sender, EventArgs e)
         {
-            if (listBoxUser.SelectedIndex > -1) // no items are selected
-            {
-                dbUserPassword = connectStringList[listBoxUser.SelectedIndex];
-                dbaFlag = dbaFlagList[listBoxUser.SelectedIndex];
-                dbUser = dbUserList[listBoxUser.SelectedIndex];
-            }
+            dbUser         = tableDBUser.Rows[listBox_User.SelectedIndex].Field<string>(0);
+            dbSchema       = tableDBUser.Rows[listBox_User.SelectedIndex].Field<string>(1);
+            dbUserPassword = tableDBUser.Rows[listBox_User.SelectedIndex].Field<string>(2);
+            sysDBA        = tableDBUser.Rows[listBox_User.SelectedIndex].Field<bool>(3);
         }
         private void ButtonTNSPing(object sender, EventArgs e)
         {
-            if (listView1.CheckedItems.Count == 0)
+            if (listView_DBs.CheckedItems.Count == 0)
             {
-                MessageBox.Show("No Database selected. Please select at least one Database in the List.");
+                SetMessage("", "Ping DB", "No Database selected. Please select at least one Database in the List.", true);
             }
             else
             {
+                tabControl1.SelectedIndex = 0;                                                      // switch always to Tab "Status Message"
                 string db;
-                foreach (ListViewItem listItem in listView1.CheckedItems)
+                foreach (ListViewItem listItem in listView_DBs.CheckedItems)
                 {
                     listItem.EnsureVisible();
-                    listItem.BackColor = System.Drawing.ColorTranslator.FromHtml("#0078d7");
+                    listItem.BackColor = ColorTranslator.FromHtml("Highlight");
                     db = listItem.SubItems[0].Text;
                     if (pingWithSqlPlus)
-                            StatusMessages(db, "sqlplus -P", TnsPing(db));
-                    else    StatusMessages(db, "tnsping", TnsPing(db));
-                    listItem.BackColor = System.Drawing.ColorTranslator.FromHtml("#414141");
+                            SetMessage(db, "sqlplus -P", TnsPing(db));
+                    else    SetMessage(db, "tnsping", TnsPing(db));
+                    listItem.BackColor = colorBack1;
                 }
             }
         }
-        private void StatusMessages(string db, string action, string result)
+        private void SetMessage(string db, string action, string message, bool error = false)
         {
-            string[] array = new string[4] { DateTime.Now.ToString("yyyy'/'MM'/'dd HH:mm:ss"), db, action, result };
+            string[] array = new string[4] { DateTime.Now.ToString("yyyy'/'MM'/'dd HH:mm:ss"), db, action, message };
             var itm = new ListViewItem(array);
             listViewStatusMessages.Items.Add(itm);
             listViewStatusMessages.EnsureVisible(listViewStatusMessages.Items.Count - 1); /* Ensure last element visible */
             listViewStatusMessages.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             listViewStatusMessages.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+            if (error)
+                toolStripStatusLabel.ForeColor = textColorStatusLabel1;
+            else
+                toolStripStatusLabel.ForeColor = textColorStatusLabel2;
+            pendingMessages.Enqueue(message);
         }
         
-        private void SqlFileTextChanged(object sender, EventArgs e)
-        {
-            ToolTip t = new ToolTip() ;
-            t.SetToolTip(textBoxSqlFile, "Enter the Filename with your SQL Statements to execute.");
-            if (File.Exists(textBoxSqlFile.Text))
-            {
-                textBoxSqlFile.ForeColor = System.Drawing.ColorTranslator.FromHtml("#F0F0F0");
-                sqlFile = Pathing.GetUNCPath(textBoxSqlFile.Text);
-                string mimeType = ".log";
-                if (checkBoxOptHTML.Checked) mimeType = ".html";
-                if (checkBoxOptCSV.Checked) mimeType = ".csv";
-                logFile = string.Format("{0}\\{1}{2}", Path.GetDirectoryName(sqlFile), Path.GetFileNameWithoutExtension(sqlFile), mimeType);
-                textBoxLogFile.Text = logFile;
-                EnableDisableViewLogfile();
-                if (Utils.CheckPLSQLBlock(sqlFile) == false)
-                {
-                    textBoxSqlFile.ForeColor = System.Drawing.ColorTranslator.FromHtml("#FF3700");
-                    t.SetToolTip(textBoxSqlFile, "Missing slash (/) after CREATE (FUNCTION|PACKAGE|PROCEDURE|TRIGGER) detected");
-                    StatusMessages("", Path.GetFileName(sqlFile), "Missing slash (/) after CREATE (FUNCTION|PACKAGE|PROCEDURE|TRIGGER) detected");
-
-                } 
-            }
-            else
-            {                
-                sqlFile = string.Empty;
-                textBoxSqlFile.ForeColor = System.Drawing.ColorTranslator.FromHtml("#FF3700");
-                t.SetToolTip(textBoxSqlFile, "File does not exist");
-            }
-        }
         private void ButtonSqlFile(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog
@@ -436,24 +302,16 @@ namespace SQLAgain
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 sqlFile = Pathing.GetUNCPath(openFileDialog1.FileName);
-                textBoxSqlFile.Text = sqlFile;
+                textBox_SqlFile.Text = sqlFile;
             }
         }
         private void CheckBoxLogChanged(object sender, EventArgs e)
         {
             if (checkBoxLog.Checked == false) checkBoxLogAppend.Checked = false;
         }
-        private void TextBoxLogfileTextChanged(object sender, EventArgs e)
+        private string TestAccessLogFile(string logFile)
         {
-            if (sqlFile.Equals(textBoxSqlFile.Text))   // test only when sqlFile is valid
-            {
-                logFile = Pathing.GetUNCPath(textBoxLogFile.Text);
-                if (checkBoxLog.Checked == true)  TestAccessLogFile(logFile);
-                EnableDisableViewLogfile();
-                textBoxLogFile.ForeColor = System.Drawing.ColorTranslator.FromHtml("#F0F0F0");             }
-        }
-        private void TestAccessLogFile(string logFile)
-        {
+            string message = string.Empty;
             StreamWriter sw = null;
             try
             {
@@ -461,27 +319,25 @@ namespace SQLAgain
             }
             catch (Exception ex)
             {
-                textBoxLogFile.ForeColor = System.Drawing.ColorTranslator.FromHtml("#FF3700");
-                textBoxLogFile.Select();
-                MessageBox.Show("WRITE-Access to Log File failed: " + Environment.NewLine + ex.Message);
-                //this.ActiveControl = textBoxLogFile;
+                message = "WRITE - Access to Log File failed: " + ex.Message;
             }
             finally
             {
                 sw?.Close();
-                if (System.IO.File.Exists(logFile))
+                if (File.Exists(logFile))
                 {
                     FileInfo file_info = new FileInfo(logFile);
                     if (file_info.Length < 1) File.Delete(logFile);     // delete only when file is empty (Length=0)
                 }
             }
+            return message;
         }
         private void EnableDisableViewLogfile()
         {
             if (File.Exists(logFile))
             {
-                DateTime last_modified = System.IO.File.GetLastWriteTime(logFile);
-                toolTip1.SetToolTip(buttonViewLog, string.Format("View the logfile with SQLcl Output from " + last_modified.ToString("yyyy'/'MM'/'dd HH:mm:ss")));
+                DateTime last_modified = File.GetLastWriteTime(logFile);
+                toolTip1.SetToolTip(buttonViewLog, string.Format("View the logfile with Output from " + last_modified.ToString("yyyy'/'MM'/'dd HH:mm:ss")));
                 buttonViewLog.Enabled = true;
             }
             else
@@ -493,7 +349,7 @@ namespace SQLAgain
                 MessageBox.Show("No Logfile defined.");
             else
             {
-                if (System.IO.File.Exists(logFile))
+                if (File.Exists(logFile))
                 {
                     if (logFile.EndsWith(".log"))
                         EditLog(logFile);
@@ -505,7 +361,7 @@ namespace SQLAgain
         }
         private void ButtonRunSQL(object sender, EventArgs e)
         {
-            if (ValidateInput() == true)
+            if (ValidateInput())
             {
                 if (checkBoxLog.Checked == false)
                 {
@@ -514,18 +370,16 @@ namespace SQLAgain
                     if (checkBoxOptCSV.Checked)  mimeType = ".csv";
                     logFile = logFileTemporary;
                     logFile = string.Format("{0}\\{1}{2}", Path.GetDirectoryName(logFile), Path.GetFileNameWithoutExtension(logFile), mimeType);
+                } else {
+                    logFile = textBox_LogFile.Text;
                 }
-                else
-                {
-                    logFile = textBoxLogFile.Text;
-                }
-                tabControl1.SelectedIndex = 0;  // switch always to Tab "Status Message"
+                tabControl1.SelectedIndex = 0;                                                      // switch always to Tab "Status Message"
                 SessionHistory.Record("***** Foreground Session started.", 2);
                 SessionHistory.Record("SQL-File              : file:\\\\" + sqlFile);
                 SessionHistory.Record("Log File              : file:\\\\" + logFile);
                 if (checkBoxLogAppend.Checked == false)
                 {
-                    if (System.IO.File.Exists(logFile))
+                    if (File.Exists(logFile))
                     {
                         try
                         {
@@ -533,26 +387,23 @@ namespace SQLAgain
                         }
                         catch { }                        
                     }
-                } else
-                {
+                } else {
                     SessionHistory.Record("Append to Log File    : TRUE");
                 }                    
-                if (listView1.CheckedItems.Count > 1)
+                if (listView_DBs.CheckedItems.Count > 1)
                 {
                     progressBar1.Style = ProgressBarStyle.Blocks;
                     progressBar1.Maximum = 100;
                     progressBar1.Step = 1;
                     progressBar1.Value = 0;
-                }
-                else
-                {
+                } else {
                     progressBar1.Style = ProgressBarStyle.Marquee;
                 }                
                 buttonRunSQL.Visible = false;
                 buttonScheduleSQL.Visible = false;
                 buttonCancelSQL.Visible = true;
                 progressBar1.Visible = true;
-                foreach (ListViewItem listItem in listView1.CheckedItems)
+                foreach (ListViewItem listItem in listView_DBs.CheckedItems)
                 {
                     dbList.Add(listItem.SubItems[0].Text);
                 }
@@ -564,11 +415,11 @@ namespace SQLAgain
         {
             string form2Parms = "-F\"" + sqlFile + "\"";
             string dbs;
-            if (ValidateInput() == true)
+            if (ValidateInput())
             {
                 form2Parms = form2Parms + " -L\"" + logFile + "\"";
                 form2Parms += " -I\"";
-                foreach (ListViewItem listItem in listView1.CheckedItems)
+                foreach (ListViewItem listItem in listView_DBs.CheckedItems)
                 {
                     dbs = listItem.SubItems[0].Text;
                     form2Parms = form2Parms + dbs + " ";
@@ -580,28 +431,30 @@ namespace SQLAgain
                 if (checkBoxOptCSV.Checked == true)    { form2Parms += " -Mcsv "; }
                 if (timeout > 0) form2Parms += " -T" + timeout;
                 if (ignoreError) form2Parms += " -b";
-                Form2 f = new Form2(form2Parms, Path.GetFileName(sqlFile), taskUserId, taskPassword, mailSender, mailReceiver);
+                Form2 f = new Form2(form2Parms, Path.GetFileName(sqlFile), textBox_OptTask_Username.Text, textBox_OptTask_Password.Text, textBox_OptMail_MailSender.Text, textBox_OptMail_MailReceiver.Text, 
+                    textBox_OptMail_Server.Text, maskedTextBox_OptMail_Port.Text, checkBox_OptMail_EnableSSL.Checked,textBox_OptMail_User.Text, textBox_OptMail_Password.Text, checkBox_OptEnv_Mode.Checked);
+                //f.StartPosition = FormStartPosition.CenterParent;
                 if (f.ShowDialog(this) == DialogResult.OK)
                 {
-                    tabControl1.SelectedIndex = 0;  // switch always to Tab "Status Message"
-                    StatusMessages("", "Task scheduled", string.Format("Task \"{0}\" starts at {1}.", f.taskName.Text, f.startDate.Text));
+                    WriteSettings();                                                                // Save current Settings for future Scheduler Tasks 
+                    tabControl1.SelectedIndex = 0;                                                  // switch always to Tab "Status Message"
+                    SetMessage("", "Task scheduled", string.Format("Task \"{0}\" starts at {1}.", f.taskName.Text.Trim(), f.startDate.Text));
                 }
                 f.Dispose();
             }
         }
         private void Button_CancelSQL_Click(object sender, EventArgs e)
         {
-            backgroundWorker1.CancelAsync();   
-            // if SQLcl is active (maybe hanging because of a missing character ?)
-            // we're going to kill the SQLcl process ID, wait for the exit and write a 
-            // corresponding message into the SQLcl logfile
+            backgroundWorker1.CancelAsync();
+            // if SQL*Plus is active (maybe hanging because of a missing character ?)
+            // we're going to kill the SQL*Plus process ID, wait for the exit and write a corresponding message into the SQL logfile
             if (backgroundWorker1.IsBusy)
             {
                 try
                 {
-                    string sqlclProcID = File.ReadAllText(processIDFile);
-                    Process p = Process.GetProcessById(Convert.ToInt32(sqlclProcID));
-                    if (!string.IsNullOrEmpty(sqlclProcID))
+                    string sqlPlusProcID = File.ReadAllText(processIDFile);
+                    Process p = Process.GetProcessById(Convert.ToInt32(sqlPlusProcID));
+                    if (!string.IsNullOrEmpty(sqlPlusProcID))
                     {
                         ExecSQL.EndProcessTree(p.Id);
                         p.WaitForExit();
@@ -624,40 +477,59 @@ namespace SQLAgain
         }
         private bool ValidateInput()
         {
-            bool isFormValid = true;
-            if (string.IsNullOrEmpty(sqlFile)) // when textBoxSqlFile.Text contains an invalid file or is empty
+            // DB selected ?   ---------------------------------------------------------------------------------------------
+            if (listView_DBs.CheckedItems.Count == 0)
             {
-                isFormValid = false;
-                textBoxSqlFile.ForeColor = System.Drawing.ColorTranslator.FromHtml("#FF3700");
-                textBoxSqlFile.Select();
-                MessageBox.Show("SQL File does not exist.\n Please enter or select a SQL File to execute.");
-            }  
-            if (isFormValid == true)
+                SetMessage("", "Execute/Schedule", "No Database selected. Please select one or more Database in the List above.", true);
+                return false;
+            }
+            // SQL File valid ?   ------------------------------------------------------------------------------------------
+            bool valid = true;
+            string message = string.Empty;
+            if (string.IsNullOrEmpty(textBox_SqlFile.Text))                                         // Empty Textbox
             {
-                if (checkBoxLog.Checked == true)
+                valid = false;
+                message = "Please enter a Filename";
+            } else {
+                if (File.Exists(textBox_SqlFile.Text))                                              // existing File
                 {
-                    if (string.IsNullOrEmpty(logFile))
+                    if (Utils.CheckPLSQLBlock(sqlFile) == false)                                    // validate Contents
                     {
-                        isFormValid = false;
-                        MessageBox.Show("Please enter a Logfile or de-select the Loging Option.");
+                        valid = false;
+                        message = "File Contents: Missing slash (/) after CREATE (FUNCTION|PACKAGE|PROCEDURE|TRIGGER) detected";
                     }
-                }
-                else
-                {
-                    logFile = logFileTemporary;
-                    DeleteTempFile(logFileTemporary);
+                } else {
+                    valid = false;
+                    message = "File does not exist";
                 }
             }
-            if (isFormValid == true)
+            if (!valid)
             {
-                if (listView1.CheckedItems.Count == 0)
+                SetMessage("", "Execute/Schedule", "SQL Filename: " + message, true);
+                return false;
+            }
+            // Log File valid ?   ------------------------------------------------------------------------------------------
+            if (checkBoxLog.Checked == true)                                                         // Log to File checked
+            {
+                if (!string.IsNullOrEmpty(textBox_LogFile.Text))
                 {
-                    isFormValid = false;
-                    MessageBox.Show("No Database selected.\nPlease select at least one Database in the List.");
-                }
+                    logFile = Pathing.GetUNCPath(textBox_LogFile.Text);
+                    message = TestAccessLogFile(logFile);                                           // Test WRITE Access
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        SetMessage("", "Execute/Schedule", "Log Filename: " + message, true);
+                        return false;
+                    }
+                } else {                                                                            // Log File is empty (erased by User)
+                    SetMessage("", "Execute/Schedule", "Log Filename: Please enter a Logfile or de-select the Loging Option.", true);
+                    return false;
+                } 
+            } else {                                                                                // Log to File not checked
+                logFile = logFileTemporary;                                                         // use TEMPFILE
+                DeleteTempFile(logFileTemporary);                                                   // delete existing TEMPFILE
             }
             timeout = decimal.ToInt32(timeoutHH.Value) * 3600 + decimal.ToInt32(timeoutMM.Value) * 60 + decimal.ToInt32(timeoutSS.Value);
-            return isFormValid;
+            return true;
         }
         private string GetTNSFile()
         {
@@ -788,10 +660,18 @@ namespace SQLAgain
                 Match match = Regex.Match(output, @"Version (\d{1,2}).(\d{1,2})\.*", RegexOptions.IgnoreCase);
                 if (match.Success)
                 {
-                    if (int.Parse(match.Groups[1].Value) >= 23)        // SQL*Plus Version 23 introduced Option -P to ping DB
+                    if (int.Parse(match.Groups[1].Value) >= 23)                                     // SQL*Plus Version 23 introduced Option -P to ping DB
                     {
                         pingWithSqlPlus = true;
                     }
+                    else                                                                            // older Version: instant client without tnsping ?
+                    {
+                        if (!File.Exists(Regex.Replace(sqlPlusPath, @"\bsqlplus.exe\b", "tnsping.exe")))
+                        {
+                            buttonTNSPing.Visible = false;                                          // disable Button TNS-Ping
+                        }
+                    }
+                    SetMessage("", "Environment", string.Format("Detected SQL*Plus Version: {0}", match.Groups[1].Value + "." + match.Groups[2].Value));
                     return match.Groups[1].Value + "." + match.Groups[2].Value;
                 }
                 MessageBox.Show(text: "Call to \"sqlplus -V\" was not successful - wrong NLS_LANG defined? "  + output);
@@ -817,7 +697,6 @@ namespace SQLAgain
                 p.StartInfo.FileName = "tnsping";
                 p.StartInfo.Arguments = db;
             }
-           
             string standardOutput;
             string lastLine = "failed";
             bool tnspingFailed = false;
@@ -843,27 +722,14 @@ namespace SQLAgain
                     }
                 }
             }
-            //return string.Format("{ 0}", lastLine);
             return lastLine;
         }
-        //public static void EditLog(string logfile, string editProgram)
         public static void EditLog(string logfile)
         {
             if (string.IsNullOrEmpty(logfile))
             {
                 throw new ArgumentException($"'{nameof(logfile)}' cannot be null or empty.", nameof(logfile));
             }
-            //if (string.IsNullOrEmpty(editProgram) == false)
-            //{
-            //    try { Process.Start(editProgram, AddQuotesIfRequired(logfile));  }
-            //    catch (Exception EX)
-            //    {
-            //        MessageBox.Show(string.Format("Application APPL_LOG in config file is not able to edit the logfile. " + EX.Message));
-            //    }
-            //}
-            //else
-            //{
-            //}
             Process p = new Process();
             p.StartInfo.UseShellExecute = true;
             p.StartInfo.FileName = logfile;
@@ -884,7 +750,7 @@ namespace SQLAgain
         {
             try
             {
-                if (File.Exists(tempFile))                
+                if (File.Exists(tempFile))
                     File.Delete(tempFile);                
             }
             catch (Exception ex)
@@ -914,132 +780,43 @@ namespace SQLAgain
         private void SetLogfileSuffix()
         {
             string mimeType = ".log";
-            if ( ! string.IsNullOrEmpty(logFile ))
-            {
-                if(checkBoxOptHTML.Checked) mimeType = ".html";
-                if (checkBoxOptCSV.Checked) mimeType = ".csv";
-                logFile = string.Format("{0}\\{1}{2}", Path.GetDirectoryName(logFile), Path.GetFileNameWithoutExtension(logFile), mimeType);
-                textBoxLogFile.Text = logFile;
-                EnableDisableViewLogfile();
-            }
-        }
-        
-        
-        private void ButtonOptions(object sender, EventArgs e)
-        {
-            List<string> selectedDBs = new List<string>();                  // Save the selected DBs in List selectedDBs
-            foreach (ListViewItem listItem in listView1.CheckedItems)
-            {
-                selectedDBs.Add(listItem.SubItems[0].Text);
-            }
-            Form3 F = new Form3();
-            if (F.ShowDialog(this) == DialogResult.OK)
-            {
-                ConfigurationManager.RefreshSection("appSettings");
-                InitEnv();
-                foreach (var selectedDB in selectedDBs)                     // InitEnv reloads the DB List; restore using selectedDBs 
-                {
-                    foreach (ListViewItem listDB in listView1.Items)
-                    {
-                        if (listDB.SubItems[0].Text == selectedDB)
-                        {
-                            listDB.Checked = true;
-                            break;
-                        }                            
-                    }
-                }
-            }
-            F.Dispose();
-        }
-        
-        private void ButtonSelectAll(object sender, EventArgs e)
-        {
-            if (buttonSelectAll.Font.Style == FontStyle.Bold)
-                ResetSelectAll(false);
-            else
-                ResetSelectAll(true);
-            buttonSelectAll.SwtichToBoldRegular();
-        }
-        private void ResetSelectAll( bool x)
-        {
-            if (buttonSelectGroup1.Font.Style == FontStyle.Bold)
-                buttonSelectGroup1.SwtichToBoldRegular();
-            if (buttonSelectGroup2.Font.Style == FontStyle.Bold)
-                buttonSelectGroup2.SwtichToBoldRegular();
-            if (buttonSelectGroup3.Font.Style == FontStyle.Bold)
-                buttonSelectGroup3.SwtichToBoldRegular();
-            foreach (ListViewItem listItem in listView1.Items)
-                listItem.Checked = x;
-        }
-        private void ButtonSelectGroup1(object sender, EventArgs e)
-        {
-            if (buttonSelectGroup1.Font.Style == FontStyle.Regular)
-                SelectGroup(1, true);
-            else
-                SelectGroup(1, false);
-            buttonSelectGroup1.SwtichToBoldRegular();
-        }
-        private void ButtonSelectGroup2(object sender, EventArgs e)
-        {
-            if (buttonSelectGroup2.Font.Style == FontStyle.Regular)
-                SelectGroup(2, true);
-            else
-                SelectGroup(2, false);
-            buttonSelectGroup2.SwtichToBoldRegular();
-        }
-        private void ButtonSelectGroup3(object sender, EventArgs e)
-        {
-            if (buttonSelectGroup3.Font.Style == FontStyle.Regular)
-                SelectGroup(3, true);
-            else
-                SelectGroup(3, false);
-            buttonSelectGroup3.SwtichToBoldRegular();
-        }
-        private void SelectGroup(int x, bool y)
-        {
-            foreach (ListViewItem listItem in listView1.Items)
-            {
-                if (listItem.SubItems[x].Text == ".") listItem.Checked = y;
-            }
-        }
-        private void Form1FormClosing(object sender, FormClosingEventArgs e)
-        {
-            WriteFavorites();
-            File.Delete(processIDFile);
+            logFile = sqlFile;
+            if (checkBoxOptHTML.Checked) mimeType = ".html";
+            if (checkBoxOptCSV.Checked) mimeType = ".csv";
+            logFile = string.Format("{0}\\{1}{2}", Path.GetDirectoryName(logFile), Path.GetFileNameWithoutExtension(logFile), mimeType);
+            textBox_LogFile.Text = logFile;
+            textBox_LogFile.CausesValidation = true;
+            EnableDisableViewLogfile();
         }
         private void BackgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {            
             string connectString;
-            string sqlclOptions = string.Empty;
+            string sqlPlusOptions = string.Empty;
             string oracleSIDList = string.Empty;
             int percentage;
-            string sqlpathOldValue ;
-            string sqlPath ;
-            string sqlFilePath ;
+            string sqlPathNew ;
             selectedDbCount = 0;
             // SQLPATH: add directory of SQLFILE in front of SQLPATH; reset after calling SQL*Plus
-            sqlpathOldValue = Environment.GetEnvironmentVariable("SQLPATH");
-            System.IO.FileInfo fileinfo = new System.IO.FileInfo(sqlFile);
-            sqlFilePath = fileinfo.DirectoryName;
-            if (sqlpathOldValue != string.Empty)
-                sqlPath = string.Format("{0};{1}", sqlFilePath, sqlpathOldValue);
+            string sqlFileDirectory = new System.IO.FileInfo(sqlFile).DirectoryName;
+            if (sqlPath != string.Empty)
+                sqlPathNew = string.Format("{0};{1}", sqlFileDirectory, sqlPath);
             else
-                sqlPath = sqlFilePath;
-            Environment.SetEnvironmentVariable("SQLPATH", sqlPath);
+                sqlPathNew = sqlFileDirectory;
+            Environment.SetEnvironmentVariable("SQLPATH", sqlPathNew);
             if (checkBoxOptSilent.Checked == true)
             {
-                sqlclOptions = "-S";
+                sqlPlusOptions = "-S";
                 SessionHistory.Record("SQL*Plus Option       : -S");
             }
             if (checkBoxOptHTML.Checked == true)
             {
                 SessionHistory.Record("SQL*Plus Format Option: HTML");
-                sqlclOptions = string.Format("{0} HTML", sqlclOptions);
+                sqlPlusOptions = string.Format("{0} HTML", sqlPlusOptions);
             }
             if (checkBoxOptCSV.Checked == true)
             {
                 SessionHistory.Record("SQL*Plus Format Option: CSV");
-                sqlclOptions = string.Format("{0} CSV", sqlclOptions);
+                sqlPlusOptions = string.Format("{0} CSV", sqlPlusOptions);
             }
             if (checkBoxOptIgnoreError.Checked == true)
             {
@@ -1062,16 +839,16 @@ namespace SQLAgain
                 {
                     e.Cancel = true;
                     return;
-                }
+                } 
                 selectedDbCount++;
                 percentage = selectedDbCount * 100 / dbList.Count;
-                backgroundWorker1.ReportProgress((percentage), db);   
-                if (dbaFlag == "1") { connectString = string.Format("{0}@{1} as sysdba", dbUserPassword, db); }
-                else { connectString = string.Format("{0}@{1}", dbUserPassword, db); }
+                backgroundWorker1.ReportProgress((percentage), db);
+                connectString = string.Format("{0}/{1}@{2}", dbSchema, dbUserPassword, db);
+                if (sysDBA) connectString += " AS SYSDBA";
                 SessionHistory.Record(db.PadRight(24) + Path.GetFileName(sqlFile).PadRight(50), 0,1);
-                sqlResult = ExecSQL.DoSQL(sqlPlusPath, db, connectString, sqlFile, logFile, sqlclOptions, processIDFile, timeout, ignoreError);
+                sqlResult = ExecSQL.DoSQL(sqlPlusPath, db, connectString, sqlFile, logFile, sqlPlusOptions, processIDFile, timeout, ignoreError);
             }
-            Environment.SetEnvironmentVariable("SQLPATH", sqlpathOldValue);
+            Environment.SetEnvironmentVariable("SQLPATH", sqlPath);
         }
         private void BackgroundWorker1_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
@@ -1083,27 +860,25 @@ namespace SQLAgain
                 ListViewItem itm = listViewStatusMessages.Items[listViewStatusMessages.Items.Count - 1];
                 itm.SubItems[3].Text = sqlResult;
             }
-            foreach (ListViewItem listItem in listView1.Items)
+            foreach (ListViewItem listItem in listView_DBs.Items)
             {
                 x++;
                 if (listItem.Text == db)
                 {
                     listItem.Focused = true;
-                    listItem.BackColor = System.Drawing.ColorTranslator.FromHtml("Highlight");
-                    listItem.ForeColor = System.Drawing.ColorTranslator.FromHtml("ButtonFace");
+                    listItem.BackColor = ColorTranslator.FromHtml("Highlight");
                     listItem.EnsureVisible();
                 }
                 else
                 {
-                    listItem.BackColor = System.Drawing.ColorTranslator.FromHtml("#414141");
-                    listItem.ForeColor = System.Drawing.ColorTranslator.FromHtml(listItem.SubItems[4].Text);
+                    listItem.BackColor = colorBack1;
                 }
                     
             }
             progressBar1.Value = e.ProgressPercentage;
-            StatusMessages(db, Path.GetFileName(sqlFile), "");
+            SetMessage(db, Path.GetFileName(sqlFile), "");
         }
-        private void BackgroundWorker1__RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        private void BackgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             EnableDisableViewLogfile();
             if (selectedDbCount > 0)
@@ -1111,10 +886,10 @@ namespace SQLAgain
                 ListViewItem itm = listViewStatusMessages.Items[listViewStatusMessages.Items.Count - 1];
                 itm.SubItems[3].Text = sqlResult;
             }
-            foreach (ListViewItem listItem in listView1.Items)
-            {                
-                listItem.BackColor = System.Drawing.ColorTranslator.FromHtml("#414141");
-                listItem.ForeColor = System.Drawing.ColorTranslator.FromHtml(listItem.SubItems[4].Text);
+            foreach (ListViewItem listItem in listView_DBs.Items)
+            {
+                listItem.BackColor = colorBack1;
+                //listItem.ForeColor = System.Drawing.ColorTranslator.FromHtml(listItem.SubItems[4].Text);
             }
             buttonRunSQL.Visible = true;
             buttonScheduleSQL.Visible = true;
@@ -1164,7 +939,7 @@ namespace SQLAgain
         {
             try
             {
-                p = System.Diagnostics.Process.Start(e.LinkText);
+                p = Process.Start(e.LinkText);
             }
             catch (Exception ex)
             {
@@ -1176,7 +951,7 @@ namespace SQLAgain
             if (e.LinkText.Substring(0, 7) == "file:\\")
                 try
                 {
-                    p = System.Diagnostics.Process.Start(e.LinkText.Substring(6));
+                    p = Process.Start(e.LinkText.Substring(6));
                 }
                 catch (Exception ex)
                 {
@@ -1186,70 +961,22 @@ namespace SQLAgain
             else
                 try
                 {
-                    p = System.Diagnostics.Process.Start(e.LinkText);
+                    p = Process.Start(e.LinkText);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
         }
-        private void ButtonAddFavorites(object sender, EventArgs e)
-        {
-            int i ;
-            string text = Microsoft.VisualBasic.Interaction.InputBox("Add description for the actual selection (File, DBs, DB User, Format options)", "Add favorite", "", -1, -1);
-            if (!string.IsNullOrEmpty(text))
-            {
-                int optFormat = 0;
-                if (checkBoxOptHTML.Checked)
-                    optFormat = 1;
-                if (checkBoxOptCSV.Checked)
-                    optFormat = 2;
-                string dbList ;       
-                StringBuilder builder = new StringBuilder();
-                foreach (ListViewItem listItem in listView1.CheckedItems)
-                {
-                    builder.Append(listItem.SubItems[0].Text + " ");
-                }
-                dbList = builder.ToString();
-
-                favorites.Add(new Favorite(
-                    sqlFile,
-                    (checkBoxLog.Checked),
-                    (checkBoxLogAppend.Checked),
-                    logFile,
-                    dbUser,
-                    (checkBoxOptSilent.Checked),
-                    optFormat,
-                    String.Format("{0}:{1}:{2}", timeoutHH.Value, timeoutMM.Value, timeoutSS.Value),
-                    (checkBoxOptIgnoreError.Checked),
-                    dbList,
-                    text)); 
-                i = favorites.Count() - 1;
-                ListViewItem item2 = new ListViewItem(new string[]
-                    {
-                    text,
-                    Path.GetFileNameWithoutExtension( sqlFile),
-                    dbUser,
-                    dbList
-                    })
-                {
-                    Tag = i
-                };
-                listViewFavorites.Items.Add(item2);
-                listViewFavorites.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-                listViewFavorites.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-                StatusMessages("", "Favorites", "added \"" + text + "\".");
-            }
-        }
         private void FavoritesLoad(object sender, EventArgs e)
         {
-            foreach (ListViewItem listFavorites in listViewFavorites.SelectedItems)
+            foreach (ListViewItem lVFavorite in listViewFavorites.SelectedItems)
             {               
-                Favorite favorite = favorites[Convert.ToInt16(listFavorites.Tag)];
-                textBoxSqlFile.Text = favorite.File;                
+                Favorite favorite = listFavorites[Convert.ToInt16(lVFavorite.Tag)];
+                textBox_SqlFile.Text = favorite.File;                
                 checkBoxLog.Checked = (favorite.Log2File);
                 checkBoxLogAppend.Checked = (favorite.LogAppend);
-                textBoxLogFile.Text = favorite.LogFile;
+                textBox_LogFile.Text = favorite.LogFile;
                 checkBoxOptSilent.Checked = (favorite.OptSilent);
                 checkBoxOptHTML.Checked = (favorite.OptFormat == 1);
                 checkBoxOptCSV.Checked = (favorite.OptFormat == 2);
@@ -1258,16 +985,16 @@ namespace SQLAgain
                 timeoutMM.Value = Convert.ToInt16(words[1]);
                 timeoutSS.Value = Convert.ToInt16(words[2]);
                 checkBoxOptIgnoreError.Checked = (favorite.IgnoreError);
-                for (int i = 0; i < listBoxUser.Items.Count; i++)  // listBox_User: select favorite.DBUser
+                for (int i = 0; i < listBox_User.Items.Count; i++)  // listBox_User: select favorite.DBUser
                 {
-                    if (listBoxUser.Items[i].ToString() == favorite.DBUser)
+                    if (listBox_User.Items[i].ToString() == favorite.DBUser)
                     {
-                        listBoxUser.SetSelected(i, true);
+                        listBox_User.SetSelected(i, true);
                         break;
                     }                        
                 } 
-                string[] dbs = favorite.DBList.Split(' ');           // ListView1 (DBs): select favorite.DBList
-                foreach (ListViewItem listDB in listView1.Items)
+                string[] dbs = favorite.DBList.Split(' ');           // ListView_DBs (DBs): select favorite.DBList
+                foreach (ListViewItem listDB in listView_DBs.Items)
                 {
                     listDB.Checked = false;                         // uncheck all DBs
                     foreach (string db in dbs)
@@ -1277,7 +1004,7 @@ namespace SQLAgain
                             listDB.Checked = true;                  // check when in favorite.DBList 
                     }
                 }
-                StatusMessages("", "Favorites", "loaded \"" + favorite.Text + "\".");
+                SetMessage("", "Favorites", "loaded \"" + favorite.Text + "\".");
             }     
         }
         private void FavoritesDelete(object sender, EventArgs e)
@@ -1285,55 +1012,29 @@ namespace SQLAgain
             foreach (ListViewItem item in listViewFavorites.SelectedItems)
             {
                 listViewFavorites.Items.Remove(item);
-                StatusMessages("", "Favorites", "deleted \"" + item.SubItems[0].Text + "\".");
+                SetMessage("", "Favorites", "deleted \"" + item.SubItems[0].Text + "\".");
             }
         }
 
         private void FavoritesEditFile_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem listFavorites in listViewFavorites.SelectedItems)
+            foreach (ListViewItem lVFavorite in listViewFavorites.SelectedItems)
             {
-                Favorite favorite = favorites[Convert.ToInt16(listFavorites.Tag)];
+                Favorite favorite = listFavorites[Convert.ToInt16(lVFavorite.Tag)];
                 EditLog(favorite.File);
             }
         }
         private void FavoritesUpdate(object sender, EventArgs e)
         {
-            int optFormat = 0;
-            if (checkBoxOptHTML.Checked)
-                optFormat = 1;
-            if (checkBoxOptCSV.Checked)
-                optFormat = 2;
-            string dbList;
-            StringBuilder builder = new StringBuilder();
-            foreach (ListViewItem listItem in listView1.CheckedItems)
+            FavoritesLoad(sender, e);
+            foreach (ListViewItem lVFavorite in listViewFavorites.SelectedItems)
             {
-                builder.Append(listItem.SubItems[0].Text + " ");
-            }
-            dbList = builder.ToString();
-            foreach (ListViewItem listFavorites in listViewFavorites.SelectedItems)
-            {
-                string text = Microsoft.VisualBasic.Interaction.InputBox("Modify description of selected item", "Edit favorite", listFavorites.SubItems[0].Text, -1, -1);
-                if (!string.IsNullOrEmpty(text))
-                {
-                    listFavorites.SubItems[0].Text = text;
-                    listFavorites.SubItems[1].Text = Path.GetFileNameWithoutExtension(sqlFile);
-                    listFavorites.SubItems[2].Text = dbUser;
-                    listFavorites.SubItems[3].Text = dbList;
-                    Favorite favorite = favorites[Convert.ToInt16(listFavorites.Tag)];
-                    favorite.File = sqlFile;
-                    favorite.Log2File = (checkBoxLog.Checked);
-                    favorite.LogAppend = (checkBoxLogAppend.Checked);
-                    favorite.LogFile = logFile;
-                    favorite.DBUser = dbUser;
-                    favorite.OptSilent = (checkBoxOptSilent.Checked);
-                    favorite.OptFormat = optFormat;
-                    favorite.Timeout = String.Format("{0}:{1}:{2}", timeoutHH.Value, timeoutMM.Value, timeoutSS.Value);
-                    favorite.IgnoreError = (checkBoxOptIgnoreError.Checked);
-                    favorite.DBList = dbList;
-                    favorite.Text = text;
-                    StatusMessages("", "Favorites", "modified description to \"" + listFavorites.SubItems[0].Text + "\".");
-                }
+                textBox_Favorites_NewDesc.Text = lVFavorite.SubItems[0].Text;
+                textBox_Favorites_NewFile.Text = lVFavorite.SubItems[1].Text; 
+                textBox_Favorites_NewUser.Text = lVFavorite.SubItems[2].Text;
+                textBox_Favorites_NewDBs.Text  = lVFavorite.SubItems[3].Text;
+                button_Favorites_Add.Text = "Update";
+                textBox_Favorites_NewDesc.Focus();
             }
         }
         private void FavoritesRun(object sender, EventArgs e)
@@ -1361,9 +1062,9 @@ namespace SQLAgain
             FavoritesRun(sender, e);
         }
                 
-        private void ListView1MouseLeave(object sender, EventArgs e)
+        private void ListView_DBs_MouseLeave(object sender, EventArgs e)
         {
-            listView1.SelectedItems.Clear();
+            listView_DBs.SelectedItems.Clear();
         }
 
         private void TextBoxSessionHistory_KeyDown(object sender, KeyEventArgs e)
@@ -1386,9 +1087,9 @@ namespace SQLAgain
             }
         }
                         
-        private void ListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
+        private void ListView_DBs_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            switch (listView1.CheckedItems.Count)
+            switch (listView_DBs.CheckedItems.Count)
             {
                 case 0:
                     labelDBsSelected.Text = string.Empty;
@@ -1397,7 +1098,7 @@ namespace SQLAgain
                     labelDBsSelected.Text = "1 Database selected.";
                     break;
                 default:
-                    labelDBsSelected.Text = listView1.CheckedItems.Count + " Databases selected.";
+                    labelDBsSelected.Text = listView_DBs.CheckedItems.Count + " Databases selected.";
                     break;
             }
         }
@@ -1476,12 +1177,12 @@ namespace SQLAgain
                                         switch (arg1.ToLower().Substring(0, 1))
                                         {
                                             case "f":       // Argument -f "SQLFILE"
-                                                textBoxSqlFile.Text = taskArgs[ix].Substring(2, taskArgs[ix].Length-3);
+                                                textBox_SqlFile.Text = taskArgs[ix].Substring(2, taskArgs[ix].Length-3);
                                                 break;
                                             case "l":       // Argument -l LOGFILE
-                                                textBoxLogFile.Text = taskArgs[ix].Substring(2, taskArgs[ix].Length-3);
+                                                textBox_LogFile.Text = taskArgs[ix].Substring(2, taskArgs[ix].Length-3);
                                                 checkBoxLog.Checked = true;
-                                                string logFileShort = textBoxLogFile.Text.Substring(0, textBoxLogFile.Text.LastIndexOf('.'));
+                                                string logFileShort = textBox_LogFile.Text.Substring(0, textBox_LogFile.Text.LastIndexOf('.'));
                                                 string tempFileShort = logFileTemporary.Substring(0, logFileTemporary.LastIndexOf('.'));
                                                 if (logFileShort == tempFileShort)
                                                 {
@@ -1493,7 +1194,7 @@ namespace SQLAgain
                                                 break;
                                             case "i":       // Argument -i "DB1 DB2 DB3"
                                                 string[] dbs = taskArgs[ix].Substring(1).Split(' ');
-                                                foreach (ListViewItem listDB in listView1.Items)
+                                                foreach (ListViewItem listDB in listView_DBs.Items)
                                                 {
                                                     listDB.Checked = false;
                                                     foreach (string db in dbs)
@@ -1509,11 +1210,11 @@ namespace SQLAgain
                                                 break;
                                         
                                             case "u":       // Argument -u USERNAME (ListBoxUser)
-                                                for (int i = 0; i < listBoxUser.Items.Count; i++)
+                                                for (int i = 0; i < listBox_User.Items.Count; i++)
                                                 {
-                                                    if (listBoxUser.Items[i].ToString() == taskArgs[ix].Substring(1).Trim())
+                                                    if (listBox_User.Items[i].ToString() == taskArgs[ix].Substring(1).Trim())
                                                     {
-                                                        listBoxUser.SetSelected(i, true);
+                                                        listBox_User.SetSelected(i, true);
                                                         break;
                                                     }
                                                 }
@@ -1570,16 +1271,16 @@ namespace SQLAgain
                                     Match match = Regex.Match(selectedArgument, @"SQL-File.*: file:\\\\(.*)", RegexOptions.IgnoreCase);
                                     if (match.Success)
                                     {
-                                        textBoxSqlFile.Text = match.Groups[1].Value;
+                                        textBox_SqlFile.Text = match.Groups[1].Value;
                                     }
                                     break;
                                 case "Log File           ":
                                     match = Regex.Match(selectedArgument, @"Log File.*: file:\\\\(.*)", RegexOptions.IgnoreCase);
                                     if (match.Success)
                                     {
-                                        textBoxLogFile.Text = match.Groups[1].Value;
+                                        textBox_LogFile.Text = match.Groups[1].Value;
                                         checkBoxLog.Checked = true;
-                                        string logFileShort = textBoxLogFile.Text.Substring(0, textBoxLogFile.Text.LastIndexOf('.'));
+                                        string logFileShort = textBox_LogFile.Text.Substring(0, textBox_LogFile.Text.LastIndexOf('.'));
                                         string tempFileShort = logFileTemporary.Substring(0, logFileTemporary.LastIndexOf('.'));
                                         if (logFileShort == tempFileShort)
                                         {
@@ -1641,7 +1342,7 @@ namespace SQLAgain
                                     if (match.Success)
                                     {
                                         string[] dbs = match.Groups[1].Value.Split(' ');
-                                        foreach (ListViewItem listDB in listView1.Items)
+                                        foreach (ListViewItem listDB in listView_DBs.Items)
                                         {
                                             listDB.Checked = false;
                                             foreach (string db in dbs)
@@ -1657,11 +1358,11 @@ namespace SQLAgain
                                     match = Regex.Match(selectedArgument, @"DB User .*: (.*)$", RegexOptions.IgnoreCase);
                                     if (match.Success)
                                     {
-                                        for (int i = 0; i < listBoxUser.Items.Count; i++)
+                                        for (int i = 0; i < listBox_User.Items.Count; i++)
                                         {
-                                            if (listBoxUser.Items[i].ToString() == match.Groups[1].Value.Trim())
+                                            if (listBox_User.Items[i].ToString() == match.Groups[1].Value.Trim())
                                             {
-                                                listBoxUser.SetSelected(i, true);
+                                                listBox_User.SetSelected(i, true);
                                                 break;
                                             }
                                         }
@@ -1670,7 +1371,10 @@ namespace SQLAgain
                                 case "Remove Task        ":         // Batch Session started - stop at the Remove Task
                                     searchLines = false;
                                     break;
-                                case "E-Mail Address     ":         // Batch Session started - stop at the E-Mail 
+                                case "Email Address      ":         // Batch Session started - stop at the Email (new format)
+                                    searchLines = false;
+                                    break;
+                                case "E-Mail Address     ":         // Batch Session started - stop at the E-Mail (old format) 
                                     searchLines = false;
                                     break;
                             }
@@ -1679,7 +1383,7 @@ namespace SQLAgain
                 }
                 textBoxSessionHistory.SelectionLength = textBoxSessionHistory.GetFirstCharIndexFromLine(startLine) - textBoxSessionHistory.SelectionStart;
                 textBoxSessionHistory.Select(textBoxSessionHistory.SelectionStart, textBoxSessionHistory.SelectionLength);
-                labelSessionHistory_Message.Text = "Selected Session-Parameters copyed.";
+                SetMessage("", "Session History", "Selected Session-Parameters copyed.");
             } else
             {
                 MessageBox.Show("Unable to Select Text - String \"Session started.\" not found in the selected Block.");
@@ -1687,23 +1391,659 @@ namespace SQLAgain
             
         }
 
-        private void ListViewFavoritesColumnClick(object sender, ColumnClickEventArgs e)
+        private void ListBoxOptions_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == lvwColumnSorter.SortColumn)
+            tabControloptions.SelectedIndex = listBoxOptions.SelectedIndex;
+            if (listBoxOptions.SelectedIndex == 1)                                                  // Database Groups
             {
-                // Reverse the current sort direction for this column.
-                if (lvwColumnSorter.Order == SortOrder.Ascending)   lvwColumnSorter.Order = SortOrder.Descending;
-                else                                                lvwColumnSorter.Order = SortOrder.Ascending;
+                try
+                {
+                    if (dataGridView_DBGroups.ColumnCount > 0)
+                    {
+                        DataGridViewColumn col1 = dataGridView_DBGroups.Columns[0];
+                        DataGridViewColumn col2 = dataGridView_DBGroups.Columns[1];
+                        DataGridViewColumn col3 = dataGridView_DBGroups.Columns[2];
+                        col1.Width = 100;
+                        col2.Width = 525;
+                        col3.Width = 60;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
-            else
+            if (listBoxOptions.SelectedIndex == 5)                                                  // Check for Update
             {
-                // Set the column number that is to be sorted; default to ascending.
-                lvwColumnSorter.SortColumn = e.Column;
-                lvwColumnSorter.Order = SortOrder.Ascending;
+                Version appVersion = Assembly.GetEntryAssembly().GetName().Version;
+                string appLastWriteTime = File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToString("yyyy'/'MM'/'dd HH:mm:ss");
+                label_OptUpdate_Message1.Text = string.Empty;
+                label_OptUpdate_Message2.Text = string.Empty;
+                label_OptUpdate_Message3.Text = string.Empty;
+                try
+                {
+                    // download manifest
+                    //XDocument doc = XDocument.Load(Settings.Default.RemoteManifest);
+                    doc = XDocument.Load(Settings.Default.RemoteManifest);
+
+                    // if newer, display update dialog
+                    Version newestVersion = new Version((string)doc.Root.Element("version"));
+                    if (newestVersion > appVersion)
+                    {
+                        label_OptUpdate_Message1.Text = "Update available";
+                        label_OptUpdate_Message2.Text = string.Format("{0}   from   {1}   is your current version", appVersion, appLastWriteTime);
+                        label_OptUpdate_Message3.Text = string.Format("{0}   from   {1}   is the latest version", newestVersion, ((DateTime)doc.Root.Element("date")).ToString("yyyy'/'MM'/'dd HH:mm:ss"));
+                        linkCheck4Update.Visible = true;
+                        button_OptUpdate_Update.Visible = true;
+                        check4UpdateInfo = (string)doc.Root.Element("info");
+                    }
+                    else
+                    {
+                        label_OptUpdate_Message1.Text = "Nothing to update ...";
+                        label_OptUpdate_Message2.Text = appVersion.ToString() + " from ";
+                        label_OptUpdate_Message2.Text = string.Format("{0} from {1} is the latest version", appVersion, appLastWriteTime);
+                        button_OptUpdate_Update.Visible = false;
+                        linkCheck4Update.Visible = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    label_OptUpdate_Message1.Text = "Unable to check Updates";
+                    label_OptUpdate_Message2.Text = ex.Message;
+                }
+
             }
-            // Perform the sort with these new sort options.
-            listViewFavorites.Sort();
+        }
+
+        private void DataGridViewDBUsers_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView_DBUsers.Columns[e.ColumnIndex].Name == "Password" && e.Value != null)
+            {
+                dataGridView_DBUsers.Rows[e.RowIndex].Tag = e.Value;
+                e.Value = new String('●', e.Value.ToString().Length);
+            }
+        }
+        private enum MoveDirection { Up = -1, Down = 1 };
+        private void MoveItems_DBUser(MoveDirection direction)
+        {
+            int rowIndex = dataGridView_DBUsers.SelectedCells[0].OwningRow.Index;
+
+            bool valid = dataGridView_DBUsers.RowCount > 0 &&
+                        ((direction == MoveDirection.Down && (rowIndex - 1 < dataGridView_DBUsers.RowCount - 1))
+                        || (direction == MoveDirection.Up && (rowIndex > 0)));
+            if (valid)
+            {
+                DataRow row = tableDBUser.NewRow();
+                row.ItemArray = tableDBUser.Rows[rowIndex].ItemArray;
+                tableDBUser.Rows.RemoveAt(rowIndex);
+                tableDBUser.Rows.InsertAt(row, rowIndex + (int)direction);
+                Reload_listBoxUser();
+                try 
+                {
+                    dataGridView_DBUsers.Rows[rowIndex + (int)direction].Selected = true;
+                }
+                catch { }
+                
+            }
+        }
+        private void ToolStripMenuOptDBUser_Up_Click(object sender, EventArgs e)
+        {
+            MoveItems_DBUser(MoveDirection.Up);
+        }
+        private void ToolStripMenuOptDBUser_Down_Click(object sender, EventArgs e)
+        {
+            MoveItems_DBUser(MoveDirection.Down);
+        }
+        private void Reload_listBoxUser()
+        {
+            listBox_User.BeginUpdate();
+            listBox_User.Items.Clear();
+            int i = 0;
+            foreach (DataRow row1 in tableDBUser.Rows)
+            {
+                listBox_User.Items.Add(row1.Field<string>(0));
+                if (row1.Field<string>(0) == dbUser)
+                    listBox_User.SetSelected(i, true);
+                dataGridView_DBUsers.Rows[i].Selected = false;
+                i++;
+            }
+            listBox_User.EndUpdate();
+            if (listBox_User.Items.Count == 0)
+                dbUser = string.Empty;
+            if (listBox_User.SelectedIndex == -1)
+                listBox_User.SelectedIndex = 0;
+        }
+        private void ButtonOptDBUser_Add_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataRow row = tableDBUser.NewRow();
+                row[0] = textBox_OptDBUser_NewUser.Text;
+                row[1] = textBox_OptDBUser_NewSchema.Text;
+                row[2] = textBox_OptDBUser_NewPassword.Text;
+                row[3] = (checkBox_OptDBUser_NewSYSDBA.Checked) ? "True" : "False";
+                tableDBUser.Rows.Add(row);
+                listBox_User.Items.Add(row.Field<string>(0));
+            }
+            catch (Exception ex)
+            {
+                textBoxSessionHistory.Text = "Add new DB User failed: " + ex.Message;
+                return;
+            }
+            textBox_OptDBUser_NewUser.Text = string.Empty;
+            textBox_OptDBUser_NewSchema.Text = string.Empty;
+            textBox_OptDBUser_NewPassword.Text = string.Empty;
+            checkBox_OptDBUser_NewSYSDBA.Checked = false;
+            if (String.IsNullOrEmpty(dbUser))
+            {
+                listBox_User.SelectedIndex = 0;
+            }
+        }
+        private void DataGridViewDBUsers_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            try
+            {
+                Reload_listBoxUser();
+            }
+            catch (Exception ex)
+            {
+                textBoxSessionHistory.Text = "Delete DB User failed: " + ex.Message;
+                return;
+            }
+        }
+        private void dataGridView_DBUsers_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            DataGridViewRow row = dataGridView_DBUsers.Rows[e.RowIndex];
+            if ((String.IsNullOrEmpty(row.Cells[0].Value.ToString())) ||
+                (String.IsNullOrEmpty(row.Cells[1].Value.ToString())) ||
+                (String.IsNullOrEmpty(row.Cells[2].Value.ToString())))
+            {
+                SetMessage("", "Options/DB User", "Column USER or SCHEMA or PASSWORD is empty.", true);
+            } else
+                Reload_listBoxUser();
+        }
+        private void HidePasswords_CheckedChanged(object sender, EventArgs e)
+        {
+            if (hidePasswords.Checked) { passwordEncrypt = true; } else { passwordEncrypt = false; }
+        }
+        private void Button_OptEnv_SqlPlusPath_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "exe Files|sqlplus.exe"
+            };
+            DialogResult result = openFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBox_OptEnv_SqlPlusPath.Text = openFileDialog.FileName;
+            }
+        }
+        private void Button_OptEnv_TNS_ADMIN_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderDlg = new FolderBrowserDialog
+            {
+                ShowNewFolderButton = false,
+                RootFolder = Environment.SpecialFolder.MyComputer
+            };
+            DialogResult result = folderDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBox_OptEnv_TNS_ADMIN.Text = folderDlg.SelectedPath;
+                TextBox_OptEnv_TNS_ADMIN_Validating(sender, null);
+            }
+        }
+        private void Button_OptEnv_SQLPATH_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            FolderBrowserDialog folderDlg = folderBrowserDialog;
+            folderDlg.ShowNewFolderButton = false;
+            folderDlg.RootFolder = Environment.SpecialFolder.MyComputer;
+            DialogResult result = folderDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBox_OptEnv_SQLPATH.Text = folderDlg.SelectedPath;
+                TextBox_OptEnv_SQLPATH_Validating(sender, null);
+            }
+        }
+
+        private void ListView_DBs_KeyDown(object sender, KeyEventArgs e)                            // ListView_DBs: Ctrl+A selects all rows
+        {
+            if (e.KeyCode == Keys.A && e.Control)
+            {
+                listView_DBs.MultiSelect = true;
+                foreach (ListViewItem item in listView_DBs.Items)
+                {
+                    item.Selected = true;
+                }
+            }
+        }
+
+        private void Button_OptDBGroup_Add_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataRow row = tableDBGroups.NewRow();
+                row[0] = textBox_OptDBGroup_NewName.Text;
+                row[1] = textBox_OptDBGroup_NewRegExp.Text;
+                row[2] = textBox_OptDBGroup_NewColor.Text;
+                tableDBGroups.Rows.Add(row);
+                int rowIndex = dataGridView_DBGroups.RowCount - 1;                                  // new rows always at the end
+                dataGridView_DBGroups.Rows[rowIndex].Cells[0].Style.ForeColor = ColorTranslator.FromHtml(textBox_OptDBGroup_NewColor.Text);
+                dataGridView_DBGroups.Rows[rowIndex].Cells[2].Style.BackColor = ColorTranslator.FromHtml(textBox_OptDBGroup_NewColor.Text);
+                dataGridView_DBGroups.Rows[rowIndex].Cells[2].Style.ForeColor = Color.Black;
+            }
+            catch (Exception ex)
+            {
+                textBoxSessionHistory.Text = "Add new DB Group failed: " + ex.Message;
+                return;
+            }
+            textBox_OptDBGroup_NewName.Text = string.Empty;
+            //textBox_OptDBGroup_NewName.ForeColor = SystemColors.ButtonFace;
+            textBox_OptDBGroup_NewRegExp.Text = string.Empty;
+            textBox_OptDBGroup_NewColor.Text = string.Empty;
+            //textBox_OptDBGroup_NewColor.BackColor = colorBack1;
+            //textBox_OptDBGroup_NewColor.ForeColor = color
+            buildDBListPending = true;                                                              // call BuildDBList when leaving this TabPage
+        }
+        private String SelectColor()
+        {
+            ColorDialog colorDlg = new ColorDialog
+            {
+                AllowFullOpen = true,
+                AnyColor = true,
+                SolidColorOnly = false,
+                ShowHelp = false,
+                CustomColors = new int[] {  ColorTranslator.ToOle(ColorTranslator.FromHtml("#D34C00")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#a5d46a")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#ffff80")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#ffdf80")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#ffc080")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#ffa080")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#f5ce89")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#e4a331")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#cc8014")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#b17900")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#996100")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#ff6f00")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#db6a00")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#c45f00")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#934e00")),
+                                            ColorTranslator.ToOle(ColorTranslator.FromHtml("#633a00"))
+                                            }
+            };
+            if (colorDlg.ShowDialog() == DialogResult.OK)
+            {
+                string str = ColorTranslator.ToHtml(colorDlg.Color);
+                return str;
+            }
+            return null;
+        }
+
+        private void DataGridView_DBGroups_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView_DBGroups.Columns[e.ColumnIndex].Name == "Color" && e.Value != null)
+            {
+                string color = e.Value.ToString();
+                try 
+                {
+                    dataGridView_DBGroups.Rows[e.RowIndex].Cells[0].Style.ForeColor = ColorTranslator.FromHtml(color);
+                    dataGridView_DBGroups.Rows[e.RowIndex].Cells[2].Style.BackColor = ColorTranslator.FromHtml(color);
+                    dataGridView_DBGroups.Rows[e.RowIndex].Cells[2].Style.ForeColor = Color.Black;
+                }
+                catch { }
+            }
+        }
+
+        private void DataGridView_DBGroups_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            buildDBListPending = true;                                                              // call BuildDBList when leaving this TabPage
+        }
+
+        private void TextBox_OptDBGroup_NewColor_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            textBox_OptDBGroup_NewColor.Text = SelectColor();
+        }
+        
+
+        private void DataGridView_DBGroups_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if ((dataGridView_DBGroups.Columns[e.ColumnIndex].Name == "Color") && (e.RowIndex > -1))
+            {
+                string color = SelectColor();
+                tableDBGroups.Rows[e.RowIndex][e.ColumnIndex] = color;
+                dataGridView_DBGroups.Rows[e.RowIndex].Cells[0].Style.ForeColor = ColorTranslator.FromHtml(color);
+                dataGridView_DBGroups.Rows[e.RowIndex].Cells[2].Style.BackColor = ColorTranslator.FromHtml(color);
+                dataGridView_DBGroups.Rows[e.RowIndex].Cells[2].Style.ForeColor = Color.Black;
+            }
+            buildDBListPending = true;                                                              // call BuildDBList when leaving this TabPage
+        }
+
+
+        private void TextBox_OptDBGroup_NewRegExp_Leave(object sender, EventArgs e)
+        {
+            try
+            { Regex test_Regex = new Regex(textBox_OptDBGroup_NewRegExp.Text, RegexOptions.IgnorePatternWhitespace); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Regular Expression is in Error: " + Environment.NewLine + ex.Message);
+                textBox_OptDBGroup_NewRegExp.Focus();
+            }
+            buildDBListPending = true;                                                              // call BuildDBList when leaving this TabPage
+        }
+
+
+        private void DataGridView_DBGroups_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            string value;
+            if (dataGridView_DBGroups.Columns[e.ColumnIndex].Name == "Regular Expression")
+            {
+                value = dataGridView_DBGroups.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+                try
+                { Regex test_Regex = new Regex(value, RegexOptions.IgnorePatternWhitespace); }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Regular Expression is in Error: " + Environment.NewLine + ex.Message);
+                    dataGridView_DBGroups.CurrentCell = dataGridView_DBGroups.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                }
+            }
+            buildDBListPending = true;                                                              // call BuildDBList when leaving this TabPage
+        }
+
+        private void TextBox_OptDBGroup_ExcludeDBs_Leave(object sender, EventArgs e)
+        {
+            try
+            { Regex test_Regex = new Regex(textBox_OptDBGroup_ExcludeDBs.Text, RegexOptions.IgnorePatternWhitespace); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Regular Expression is in Error: " + Environment.NewLine + ex.Message);
+                textBox_OptDBGroup_ExcludeDBs.Focus();
+            }
+            buildDBListPending = true;
+        }
+
+        private void TabControloptions_Leave(object sender, EventArgs e)
+        {
+            if (tabControloptions.SelectedIndex == 1)                                               // Options: Database Groups
+            {
+                if (buildDBListPending) 
+                    BuildDBList();
+            }
+        }
+
+        private void ToolStripMenuOptDBGroup_Up_Click(object sender, EventArgs e)
+        {
+            MoveItems_DBGroup(MoveDirection.Up);
+        }
+        private void ToolStripMenuOptDBGroup_Down_Click(object sender, EventArgs e)
+        {
+            MoveItems_DBGroup(MoveDirection.Down);
+        }
+        private void MoveItems_DBGroup(MoveDirection direction)
+        {
+            int rowIndex = dataGridView_DBGroups.SelectedCells[0].OwningRow.Index;
+
+            bool valid = dataGridView_DBGroups.RowCount > 0 &&
+                        ((direction == MoveDirection.Down && (rowIndex - 1 < dataGridView_DBGroups.RowCount - 1))
+                        || (direction == MoveDirection.Up && (rowIndex > 0)));
+            if (valid)
+            {
+                DataRow row = tableDBGroups.NewRow();
+                row.ItemArray = tableDBGroups.Rows[rowIndex].ItemArray;
+                tableDBGroups.Rows.RemoveAt(rowIndex);
+                tableDBGroups.Rows.InsertAt(row, rowIndex + (int)direction);
+                try
+                {
+                    dataGridView_DBGroups.Rows[rowIndex + (int)direction].Selected = true;
+                }
+                catch { }
+                buildDBListPending = true;                                                              // call BuildDBList when leaving this TabPage
+            }
+        }
+        private void MoveItems_Favorites(MoveDirection direction)
+        {
+            int rowIndex = 0;
+            foreach (ListViewItem item2 in listViewFavorites.SelectedItems)
+            {
+                rowIndex = (int)item2.Tag;
+            }
+            bool valid = listViewFavorites.Items.Count > 0 &&
+                        ((direction == MoveDirection.Down && (rowIndex - 1 < listViewFavorites.Items.Count - 1))
+                        || (direction == MoveDirection.Up && (rowIndex > 0)));
+            if (valid)
+            {
+                Favorite item1 = listFavorites[rowIndex];
+                listFavorites.RemoveAt(rowIndex);
+                listFavorites.Insert(rowIndex + (int)direction, new Favorite(
+                        item1.File,
+                        item1.Log2File,
+                        item1.LogAppend,
+                        item1.LogFile,
+                        item1.DBUser,
+                        item1.OptSilent,
+                        item1.OptFormat,
+                        item1.Timeout,
+                        item1.IgnoreError,
+                        item1.DBList,
+                        item1.Text
+                        )
+                    );
+                Reload_listViewFavorites();
+            }
+        }
+        private void Reload_listViewFavorites()
+        {
+            listViewFavorites.BeginUpdate();
+            listViewFavorites.Items.Clear();
+            for (int i = 0; i < listFavorites.Count(); i++)
+            {
+                ListViewItem item = new ListViewItem(new string[]
+                {
+                        listFavorites[i].Text,
+                        Path.GetFileNameWithoutExtension(listFavorites[i].File),
+                        listFavorites[i].DBUser,
+                        listFavorites[i].DBList
+                }
+                )
+                { Tag = i };
+                listViewFavorites.Items.Add(item);
+            }
+            listViewFavorites.EndUpdate();
+        }
+
+
+        private void ListView_DBGroups_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listView_DBGroups.SelectedItems)
+            {
+                int i = (int)item.Tag;
+                
+                if (item.Checked)
+                    item.Checked = false;
+               else
+                    item.Checked = true;
+                SelectDBGroup(i, item.Checked);
+            }
+        }
+        private void SelectDBGroup(int iGroup, bool selected)
+        {
+            int iDB;
+            listView_DBs.BeginUpdate();
+            for (iDB = 0; iDB < listDBMatches.Count; iDB++)
+            {
+                if (listDBMatches[iDB][iGroup] == 1)
+                {
+                    if (selected)
+                        listView_DBs.Items[iDB].Checked = true;
+                    else
+                        listView_DBs.Items[iDB].Checked = false;
+                }
+            }
+            listView_DBs.EndUpdate();
+        }
+
+        private void Button_OptMailTest_Click(object sender, EventArgs e)
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(textBox_OptMail_MailSender.Text.Substring(0, textBox_OptMail_MailSender.Text.IndexOf("@")), textBox_OptMail_MailSender.Text));
+            message.To.Add(new MailboxAddress(textBox_OptMail_MailReceiver.Text.Substring(0, textBox_OptMail_MailReceiver.Text.IndexOf("@")), textBox_OptMail_MailReceiver.Text));
+            message.Subject = "SQLAgain Test Email";
+            message.Body = new TextPart("html")
+            {
+                Text = Resources.MailHeader + "<table id=\"t01\" > <tr><td>" +
+                "Dear Oracle DBA" +
+                "<br>" +
+                "<i>SQLAgain</i> sends you a Test Email with the following settings " +
+                "<h3>Options / Email</h3>" +
+                "</td></tr>" +
+                "<tr><td> " +
+                "<table id=\"t02\" > " +
+                "<tr><th> SMTP Server      </th><td> " + textBox_OptMail_Server.Text + " </td></tr>" +
+                "<tr><th> SMTP Server Port </th><td> " + maskedTextBox_OptMail_Port.Text + " </td></tr>" +
+                "<tr><th> Enable SSL       </th><td> " + checkBox_OptMail_EnableSSL.Checked + " </td></tr>" +
+                "<tr><th> User             </th><td> " + textBox_OptMail_User.Text + " </td></tr>" +
+                "<tr><th> Password         </th><td> " + new string('●', textBox_OptMail_Password.TextLength) + "</td></tr>" +
+                "<tr><th> Email Sender     </th><td> " + textBox_OptMail_MailSender.Text + " </td></tr>" +
+                "<tr><th> Email Receiver   </th><td> " + textBox_OptMail_MailReceiver.Text + " </td></tr>" +
+                "<tr><th> Executed on Host </th><td> " + Environment.MachineName + " </td></tr>" +
+                "<tr><th> Time sent        </th><td> " + DateTime.Now.ToString("yyyy'/'MM'/'dd HH:mm:ss") + " </td></tr>" +
+                "</table>" +
+                "</td></tr>" +
+                "<tr><td> " +
+                Resources.MailFooter
+            };
+            try
+            {
+                using (var client = new SmtpClient())
+                {
+                    if (checkBox_OptMail_EnableSSL.Checked)
+                        client.Connect(textBox_OptMail_Server.Text, int.Parse(maskedTextBox_OptMail_Port.Text), true);
+                    else
+                        client.Connect(textBox_OptMail_Server.Text, int.Parse(maskedTextBox_OptMail_Port.Text), SecureSocketOptions.None);
+                    if (!string.IsNullOrEmpty(textBox_OptMail_Password.Text))
+                    {
+                        client.Authenticate(textBox_OptMail_User.Text, textBox_OptMail_Password.Text);
+                    }
+                    client.Send(message);
+                    client.Disconnect(true);
+                } ;
+                
+                SetMessage("", "Options", "Test Email sent to \"" + textBox_OptMail_MailReceiver.Text + "\".");
+            }
+            catch (Exception ex)
+            {
+                SetMessage("", "Options", "Test Email: " + ex.Message, true);
+            }
+        }
+        private void TextBox_Favorites_NewDesc_Enter(object sender, EventArgs e)
+        {
+            if (button_Favorites_Add.Text == "Add")
+            {
+                textBox_Favorites_NewFile.Text = Path.GetFileNameWithoutExtension(textBox_SqlFile.Text);
+                textBox_Favorites_NewUser.Text = dbUser;
+                StringBuilder builder = new StringBuilder();
+                foreach (ListViewItem listItem in listView_DBs.CheckedItems)
+                {
+                    builder.Append(listItem.SubItems[0].Text + " ");
+                }
+                textBox_Favorites_NewDBs.Text = builder.ToString(); ;
+            }
+        }
+
+        private void Button_Favorites_Add(object sender, EventArgs e)
+        {
+            if (ValidateInput())
+            {
+                if (string.IsNullOrEmpty(textBox_Favorites_NewDesc.Text))
+                {
+                    SetMessage("", "Favorites", "Please enter a Description", true);
+                    return;
+                }
+                int optFormat = 0;
+                if (checkBoxOptHTML.Checked)
+                    optFormat = 1;
+                if (checkBoxOptCSV.Checked)
+                    optFormat = 2;
+                string dbList;
+                StringBuilder builder = new StringBuilder();
+                foreach (ListViewItem listItem in listView_DBs.CheckedItems)
+                {
+                    builder.Append(listItem.SubItems[0].Text + " ");
+                }
+                dbList = builder.ToString();
+                if (button_Favorites_Add.Text == "Add")                                             // Add new Favorite
+                {
+                    int i;
+                    listFavorites.Add(new Favorite(
+                        sqlFile,
+                        (checkBoxLog.Checked),
+                        (checkBoxLogAppend.Checked),
+                        logFile,
+                        dbUser,
+                        (checkBoxOptSilent.Checked),
+                        optFormat,
+                        String.Format("{0}:{1}:{2}", timeoutHH.Value, timeoutMM.Value, timeoutSS.Value),
+                        (checkBoxOptIgnoreError.Checked),
+                        dbList,
+                        textBox_Favorites_NewDesc.Text)
+                    );
+                    i = listFavorites.Count() - 1;
+                    ListViewItem item2 = new ListViewItem(new string[]
+                        {
+                        textBox_Favorites_NewDesc.Text,
+                        Path.GetFileNameWithoutExtension( sqlFile),
+                        dbUser,
+                        dbList
+                        }
+                        )
+                    { Tag = i };
+                    listViewFavorites.Items.Add(item2);
+                    SetMessage("", "Favorites", "added \"" + textBox_Favorites_NewDesc.Text + "\".");
+                }
+                else                                                                                // Update Favorite (after ContextMenuStrup FavoritesUpdate/FavoritesLoad)
+                {
+                    foreach (ListViewItem lVFavorite in listViewFavorites.SelectedItems)
+                    {
+                        lVFavorite.SubItems[0].Text = textBox_Favorites_NewDesc.Text;
+                        lVFavorite.SubItems[1].Text = Path.GetFileNameWithoutExtension(textBox_SqlFile.Text);
+                        lVFavorite.SubItems[2].Text = dbUser;
+                        lVFavorite.SubItems[3].Text = dbList;
+                        Favorite favorite = listFavorites[Convert.ToInt16(lVFavorite.Tag)];
+                        favorite.File = sqlFile;
+                        favorite.Log2File = (checkBoxLog.Checked);
+                        favorite.LogAppend = (checkBoxLogAppend.Checked);
+                        favorite.LogFile = logFile;
+                        favorite.DBUser = dbUser;
+                        favorite.OptSilent = (checkBoxOptSilent.Checked);
+                        favorite.OptFormat = optFormat;
+                        favorite.Timeout = String.Format("{0}:{1}:{2}", timeoutHH.Value, timeoutMM.Value, timeoutSS.Value);
+                        favorite.IgnoreError = (checkBoxOptIgnoreError.Checked);
+                        favorite.DBList = dbList;
+                        favorite.Text = textBox_Favorites_NewDesc.Text;
+                        SetMessage("", "Favorites", "updated \"" + favorite.Text + "\".");
+                        button_Favorites_Add.Text = "Add";
+                        textBox_Favorites_NewDesc.Text = string.Empty;
+                        textBox_Favorites_NewFile.Text = string.Empty;
+                        textBox_Favorites_NewUser.Text = string.Empty;
+                        textBox_Favorites_NewDBs.Text = string.Empty;
+                    }
+                }
+            }
+        }
+
+        private void FavoritesMoveUp_Click(object sender, EventArgs e)
+        {
+            MoveItems_Favorites(MoveDirection.Up);
+        }
+
+        private void FavoritesMoveDown_Click(object sender, EventArgs e)
+        {
+            MoveItems_Favorites(MoveDirection.Down);
+        }
+
+        private void LinkCheck4Update_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            linkCheck4Update.LinkVisited = true;
+            Process.Start(check4UpdateInfo);
         }
         private void ListViewFavoritesKeyDown(object sender, KeyEventArgs e)
         {
@@ -1712,7 +2052,7 @@ namespace SQLAgain
                 foreach (ListViewItem item in listViewFavorites.SelectedItems)
                 {
                     listViewFavorites.Items.Remove(item);   
-                    StatusMessages("", "Favorites", "deleted \"" + item.SubItems[0].Text + "\".");
+                    SetMessage("", "Favorites", "deleted \"" + item.SubItems[0].Text + "\".");
                 }
             }
         }
@@ -1725,10 +2065,8 @@ namespace SQLAgain
         {
             try
             {
-                labelSessionHistory_Message.Text = string.Empty;
                 textBoxSessionHistory.Text = File.ReadAllText(SessionHistory.traceFile);
                 textBoxSessionHistory.SelectionStart = textBoxSessionHistory.TextLength;
-                //textBoxSessionHistory.ScrollBars = RichTextBoxScrollBars.Both; 
                 textBoxSessionHistory.ScrollToCaret();
             }
             catch (Exception ex)
@@ -1736,34 +2074,134 @@ namespace SQLAgain
                 textBoxSessionHistory.Text = "Error reading Trace file: " + ex.Message;
             }
         }
-        private void ReadFavorites()
+        private void ReadSettings()
         {
-            int i = 0;
-            if (File.Exists(favoritesFile))
+            int i;
+            tableDBGroups.Columns.Add("Name", typeof(string));                                      // DB Groups
+            tableDBGroups.Columns.Add("Regular Expression", typeof(string));                        //   define tableDBGroups Columns
+            tableDBGroups.Columns.Add("Color", typeof(string));
+            BindingSource bindingSourceDBGroups = new BindingSource                                 //   define BindingSource
             {
-                XDocument doc = XDocument.Load(favoritesFile);
-                foreach (var dm in doc.Descendants("Favorite"))
+                DataSource = tableDBGroups                                                          //   set DataSource of BindingSource to table
+            };                              
+            dataGridView_DBGroups.DataSource = bindingSourceDBGroups;                               //   set dataGridView DataSource in Options>DBs
+            foreach (DataGridViewColumn column in dataGridView_DBGroups.Columns)                    //   disable Column Sort-Mode
+            {
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+            listView_DBGroups.Items.Clear();
+            tableDBUser.Columns.Add("User", typeof(string));                                        // DB Users
+            tableDBUser.Columns.Add("Schema", typeof(string));                                      //   define tableDBGroups Columns
+            tableDBUser.Columns.Add("Password", typeof(string));
+            tableDBUser.Columns.Add("SYSDBA", typeof(bool));
+            BindingSource bindingSourceDBUser = new BindingSource                                   //   define BindingSource
+            {
+                DataSource = tableDBUser                                                            //   set DataSource of BindingSource to table
+            };                                
+            dataGridView_DBUsers.DataSource = bindingSourceDBUser;                                  //   set dataGridView DataSource in Options>DBs
+            foreach (DataGridViewColumn column in dataGridView_DBUsers.Columns)                     //   disable Column Sort-Mode
+            {
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+            listBox_User.Items.Clear();
+            try
+            {
+                XDocument doc = XDocument.Load(settingsFile);
+                sqlPlusPath = doc.Root.Element("Environment").Element("SqlPlusPath")?.Value;        // =Start=> Environment
+                nlsLang = doc.Root.Element("Environment").Element("NLS_LANG")?.Value;
+                tnsAdmin = doc.Root.Element("Environment").Element("TNS_ADMIN")?.Value;
+                sqlPath = doc.Root.Element("Environment").Element("SQLPATH")?.Value;
+                passwordEncrypt = (doc.Root.Element("Environment").Element("PasswordEncrypt")?.Value == "True");
+                if (!string.IsNullOrEmpty(nlsLang))
+                {
+                    Environment.SetEnvironmentVariable("NLS_LANG", nlsLang);
+                    textBox_OptEnv_NLS_LANG.Text = nlsLang;
+                }
+                else
+                    Environment.SetEnvironmentVariable("NLS_LANG", null);
+                if (!string.IsNullOrEmpty(tnsAdmin))
+                {
+                    Environment.SetEnvironmentVariable("TNS_ADMIN", tnsAdmin);
+                    textBox_OptEnv_TNS_ADMIN.Text = tnsAdmin;
+                }
+                if (!string.IsNullOrEmpty(sqlPath))
+                {
+                    Environment.SetEnvironmentVariable("SQLPATH", sqlPath);
+                    textBox_OptEnv_SQLPATH.Text = sqlPath;
+                }
+                if (string.IsNullOrEmpty(sqlPlusPath))
+                {
+                    sqlPlusPath = Utils.FindExePath("sqlplus.exe");
+                    if (string.IsNullOrEmpty(sqlPlusPath))
+                        SetMessage("", "Environment", "SQL*Plus not found. Please configure your settings in Options.",true);
+                }
+                else
+                    textBox_OptEnv_SqlPlusPath.Text = sqlPlusPath;
+                if (passwordEncrypt)
+                    hidePasswords.Checked = true;
+                else hidePasswords.Checked = false;                                                 // <==End== Environment
+                                                                                                    // =Start=> DBGroups
+                textBox_OptDBGroup_ExcludeDBs.Text = doc.Root.Element("DBGroups").Element("ExcludeDBs")?.Value;
+                i = 0;
+                foreach (var dm in doc.Descendants("DBGroup"))                                      // .. =Start=> DBGroup                    
+                {
+                    tableDBGroups.Rows.Add(dm.Element("Name").Value, dm.Element("RegExp").Value,
+                        dm.Element("Color").Value);
+                    listView_DBGroups.Items.Add(dm.Element("Name").Value);
+                    listView_DBGroups.Items[i].ForeColor = ColorTranslator.FromHtml(dm.Element("Color").Value);
+                    i++;
+                }                                                                                   // .. <==End== DBGroup
+                foreach (var dm in doc.Descendants("User"))                                         // =Start=> User
+                {
+                    dbUserPassword = dm.Element("Password").Value;
+                    tableDBUser.Rows.Add(dm.Element("Name").Value, dm.Element("Schema").Value,
+                        Utils.Decrypt(dm.Element("Password").Value, passwordEncrypt),
+                        bool.Parse(dm.Element("SYSDBA").Value));
+                    listBox_User.Items.Add(dm.Element("Name").Value);
+                }
+                if (tableDBUser.Rows.Count > 0)
+                    listBox_User.SelectedIndex = 0; 
+                else
+                {
+                    SetMessage("", "Startup", "No DB User found. Please configure your settings in Options.", true);
+                }
+                //                                                                                  // <==End== User
+                //                                                                                  // =Start=> TaskScheduler
+                textBox_OptTask_Username.Text = doc.Root.Element("TaskScheduler").Element("Name")?.Value;
+                textBox_OptTask_Password.Text = Utils.Decrypt(doc.Root.Element("TaskScheduler").Element("Password")?.Value, passwordEncrypt);
+                //                                                                                  // =End=> TaskScheduler
+                //                                                                                  // =Start=> Mail
+                textBox_OptMail_Server.Text = doc.Root.Element("Mail").Element("SmtpServerAddress")?.Value;
+                maskedTextBox_OptMail_Port.Text = doc.Root.Element("Mail").Element("SmtpServerPortNumber")?.Value;
+                checkBox_OptMail_EnableSSL.Checked = (doc.Root.Element("Mail").Element("EnableSsl")?.Value == "True");
+                textBox_OptMail_User.Text = doc.Root.Element("Mail").Element("SmtpUserName")?.Value;
+                textBox_OptMail_Password.Text = Utils.Decrypt(doc.Root.Element("Mail").Element("SmtpUserPassword")?.Value, passwordEncrypt);
+                textBox_OptMail_MailSender.Text = doc.Root.Element("Mail").Element("Sender")?.Value;
+                textBox_OptMail_MailReceiver.Text = doc.Root.Element("Mail").Element("Receiver")?.Value;
+                //                                                                                  // =End=> Mail
+                i = 0;
+                foreach (var dm in doc.Descendants("Favorite"))                                     // =Start=> Favorite
                 {
                     var item = new Favorite(
-                    dm.Element("File").Value,
-                    Convert.ToBoolean(dm.Element("Log2File").Value),
-                    Convert.ToBoolean(dm.Element("LogAppend").Value),
-                    dm.Element("LogFile").Value,
-                    dm.Element("DBUser").Value,
-                    Convert.ToBoolean(dm.Element("OptSilent").Value),
-                    Convert.ToInt16(dm.Element("OptFormat").Value),
-                    dm.Element("Timeout").Value,
-                    Convert.ToBoolean(dm.Element("IgnoreError").Value),
-                    dm.Element("DBList").Value,                    
-                    dm.Element("Text").Value);
-                    favorites.Add(item);
+                        dm.Element("File").Value,
+                        Convert.ToBoolean(dm.Element("Log2File").Value),
+                        Convert.ToBoolean(dm.Element("LogAppend").Value),
+                        dm.Element("LogFile").Value,
+                        dm.Element("DBUser").Value,
+                        Convert.ToBoolean(dm.Element("OptSilent").Value),
+                        Convert.ToInt16(dm.Element("OptFormat").Value),
+                        dm.Element("Timeout").Value,
+                        Convert.ToBoolean(dm.Element("IgnoreError").Value),
+                        dm.Element("DBList").Value,
+                        dm.Element("Text").Value);
+                    listFavorites.Add(item);
                     // listViewFavorites is a sub-select of favorites. Tag references favorites index -> favorites[Convert.ToInt16(listFavorites.Tag)]
                     ListViewItem item2 = new ListViewItem(new string[]
                     {
-                    dm.Element("Text").Value,
-                    Path.GetFileNameWithoutExtension( dm.Element("File").Value),
-                    dm.Element("DBUser").Value,
-                    dm.Element("DBList").Value
+                        dm.Element("Text").Value,
+                        Path.GetFileNameWithoutExtension( dm.Element("File").Value),
+                        dm.Element("DBUser").Value,
+                        dm.Element("DBList").Value
                     })
                     {
                         Tag = i             // Tag in listViewFavorites is index to favorites
@@ -1771,53 +2209,270 @@ namespace SQLAgain
                     listViewFavorites.Items.Add(item2);
                     i++;
                 }
-                listViewFavorites.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-                listViewFavorites.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+                
+            }
+            catch (Exception)
+            {
+                if (string.IsNullOrEmpty(nlsLang))                                                  // no config, nlsLang empty:
+                {                                                                                   // set "Default" .UTF8
+                    nlsLang = ".UTF8";                                                              // assume SQL-Files use .UTF8
+                    Environment.SetEnvironmentVariable("NLS_LANG", nlsLang);
+                    textBox_OptEnv_NLS_LANG.Text = nlsLang;
+                }
+                else
+                    Environment.SetEnvironmentVariable("NLS_LANG", null);
+                sqlPlusPath = Utils.FindExePath("sqlplus.exe");
+                if (string.IsNullOrEmpty(sqlPlusPath))
+                    SetMessage("", "Startup", "SQL*Plus not found. Please configure your settings in Options.", true);
+            }
+            
+        }
+        private void WriteSettings()
+        {
+            using (XmlWriter writer = XmlWriter.Create(settingsFile))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Settings");                                           // Start Settings
+                writer.WriteStartElement("Environment");                                        // Start Environment
+                writer.WriteElementString("SqlPlusPath", textBox_OptEnv_SqlPlusPath.Text);
+                writer.WriteElementString("NLS_LANG", textBox_OptEnv_NLS_LANG.Text);
+                writer.WriteElementString("TNS_ADMIN", textBox_OptEnv_TNS_ADMIN.Text);
+                writer.WriteElementString("SQLPATH", textBox_OptEnv_SQLPATH.Text);
+                writer.WriteElementString("PasswordEncrypt", (passwordEncrypt) ? "True" : "False");
+                writer.WriteEndElement();                                                       // End Environment
+                writer.WriteStartElement("DBGroups");                                           // Start DBGroups
+                writer.WriteElementString("ExcludeDBs", textBox_OptDBGroup_ExcludeDBs.Text);
+                foreach (DataRow row in tableDBGroups.Rows)
+                {
+                    writer.WriteStartElement("DBGroup");                                        // .. Start DBGroup
+                    writer.WriteElementString("Name", row[0].ToString());
+                    writer.WriteElementString("RegExp", row[1].ToString());
+                    writer.WriteElementString("Color", row[2].ToString());
+                    writer.WriteEndElement();                                                   // .. End DBGroup
+                }
+                writer.WriteEndElement();                                                       // End DBGroups
+                writer.WriteStartElement("Users");                                              // Start Users
+                foreach (DataRow row in tableDBUser.Rows)
+                {
+                    writer.WriteStartElement("User");                                           // .. Start User
+                    writer.WriteElementString("Name", row[0].ToString());
+                    writer.WriteElementString("Schema", row[1].ToString());
+                    writer.WriteElementString("Password", Utils.Encrypt(row[2].ToString(), passwordEncrypt));
+                    writer.WriteElementString("SYSDBA", (row[3].ToString() == "True") ? "True" : "False");
+                    writer.WriteEndElement();                                                   // .. End User
+                }
+                writer.WriteEndElement();                                                       // End Users
+                writer.WriteStartElement("TaskScheduler");                                      // Start TaskScheduler
+                writer.WriteElementString("Name", textBox_OptTask_Username.Text);
+                writer.WriteElementString("Password", Utils.Encrypt(textBox_OptTask_Password.Text, passwordEncrypt));
+                writer.WriteEndElement();                                                       // End TaskScheduler
+                writer.WriteStartElement("Mail");                                               // Start Mail
+                writer.WriteElementString("SmtpServerAddress", textBox_OptMail_Server.Text);
+                writer.WriteElementString("SmtpServerPortNumber", maskedTextBox_OptMail_Port.Text);
+                writer.WriteElementString("EnableSsl", (checkBox_OptMail_EnableSSL.Checked) ? "True" : "False");
+                writer.WriteElementString("SmtpUserName", textBox_OptMail_User.Text);
+                writer.WriteElementString("SmtpUserPassword", Utils.Encrypt(textBox_OptMail_Password.Text, passwordEncrypt));
+                writer.WriteElementString("Sender", textBox_OptMail_MailSender.Text);
+                writer.WriteElementString("Receiver", textBox_OptMail_MailReceiver.Text);
+                writer.WriteEndElement();                                                       // End Mail
+                writer.WriteStartElement("Favorites");                                          // Start Favorites
+                foreach (ListViewItem lVFavorite in listViewFavorites.Items)
+                {
+                    Favorite favorite = listFavorites[Convert.ToInt16(lVFavorite.Tag)];
+                    writer.WriteStartElement("Favorite");
+                    writer.WriteElementString("Text", favorite.Text);
+                    writer.WriteElementString("File", favorite.File);
+                    writer.WriteElementString("Log2File", favorite.Log2File.ToString());
+                    writer.WriteElementString("LogAppend", favorite.LogAppend.ToString());
+                    writer.WriteElementString("LogFile", favorite.LogFile);
+                    writer.WriteElementString("DBUser", favorite.DBUser);
+                    writer.WriteElementString("OptSilent", favorite.OptSilent.ToString());
+                    writer.WriteElementString("OptFormat", favorite.OptFormat.ToString());
+                    writer.WriteElementString("Timeout", favorite.Timeout);
+                    writer.WriteElementString("IgnoreError", favorite.IgnoreError.ToString());
+                    writer.WriteElementString("DBList", favorite.DBList);
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();                                                       // End Favorites
+                writer.WriteEndElement();                                                       // End Settings
+                writer.WriteEndDocument();
+                writer.Close();
             }
         }
-        private void WriteFavorites()
+        
+        
+        private async void Timer1_Tick(object sender, EventArgs e)
         {
-            if (favorites.Count > 0)
-                using (XmlWriter writer = XmlWriter.Create(favoritesFile))
-                {
-                    writer.WriteStartDocument();
-                    writer.WriteStartElement("Favorites");
+            timer1.Stop();
 
-                    foreach (ListViewItem listFavorites in listViewFavorites.Items)
-                    {
-                        Favorite favorite = favorites[Convert.ToInt16(listFavorites.Tag)];
-                        writer.WriteStartElement("Favorite");
-                        writer.WriteElementString("File", favorite.File);
-                        writer.WriteElementString("Log2File", favorite.Log2File.ToString());
-                        writer.WriteElementString("LogAppend", favorite.LogAppend.ToString());
-                        writer.WriteElementString("LogFile", favorite.LogFile);
-                        writer.WriteElementString("DBUser", favorite.DBUser);
-                        writer.WriteElementString("OptSilent", favorite.OptSilent.ToString());
-                        writer.WriteElementString("OptFormat", favorite.OptFormat.ToString());
-                        writer.WriteElementString("Timeout", favorite.Timeout);
-                        writer.WriteElementString("IgnoreError", favorite.IgnoreError.ToString());
-                        writer.WriteElementString("DBList", favorite.DBList);
-                        writer.WriteElementString("Text", favorite.Text);
-                        writer.WriteEndElement();
-                    }
-                    writer.WriteEndElement();
-                    writer.WriteEndDocument();
-                }
+            while (pendingMessages.Count > 0)
+            {
+                toolStripStatusLabel.Text = pendingMessages.Dequeue();
+                await Task.Delay(5000);                                                             // Show Message 5 seconds
+            }
+
+            toolStripStatusLabel.Text = "";
+            timer1.Start();
         }
+
+
+        private void TextBox_SqlFile_TextChanged(object sender, EventArgs e)
+        {
+            if (File.Exists(textBox_SqlFile.Text))
+            {
+                sqlFile = Pathing.GetUNCPath(textBox_SqlFile.Text);
+                SetLogfileSuffix();
+            }
+        }
+
         private void ShowFavorites()
         {
             listViewFavorites.Select();
         }
-        
-    }
-    static class Helper
-    {
-        public static void SwtichToBoldRegular(this Button c)
+
+        private void CheckBox_OptEnv_Mode_CheckedChanged(object sender, EventArgs e)
         {
-            if (c.Font.Style != FontStyle.Bold)
-                c.Font = new Font(c.Font, FontStyle.Bold);
+            Color colorText1;
+            if (checkBox_OptEnv_Mode.Checked)
+            {
+                colorBack1 = Color.FromArgb(44, 44, 44);
+                colorText1 = SystemColors.ButtonShadow;
+                textColorStatusLabel1 = Color.DarkOrange;
+                textColorStatusLabel2 = Color.Gold;
+            }
+                
             else
-                c.Font = new Font(c.Font, FontStyle.Regular);
+            {
+                colorBack1 = SystemColors.Control;
+                colorText1 = SystemColors.ControlText;
+                textColorStatusLabel1 = Color.Red;
+                textColorStatusLabel2 = Color.Green;
+            }
+                
+            this.BackColor = colorBack1;
+            toolStripStatusLabel.BackColor = colorBack1;
+            toolStripStatusLabel.ForeColor = colorText1;
+            foreach (ListViewItem listItem in listView_DBs.Items)
+                    listItem.BackColor = colorBack1;
+
+            Utils.SetColorMode(this, checkBox_OptEnv_Mode.Checked);
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // Upgrade?
+            string configPath = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+            if (!File.Exists(configPath))
+            {
+                //Existing user config does not exist, so load settings from previous assembly
+                Settings.Default.Upgrade();
+                Settings.Default.Reload();
+                Settings.Default.Save();
+            }
+            if (Settings.Default.F1Size.Width == 0 || Settings.Default.F1Size.Height == 0)
+            {
+                // first start
+                // optional: add default values
+            }
+            else
+            {
+                this.WindowState = Settings.Default.F1State;
+
+                // we don't want a minimized window at startup
+                if (this.WindowState == FormWindowState.Minimized) this.WindowState = FormWindowState.Normal;
+
+                this.Location = Settings.Default.F1Location;
+                this.Size = Settings.Default.F1Size;
+            }
+            checkBox_OptEnv_Mode.Checked = (Settings.Default.F1DarkMode);
+        }
+
+        private void Form1_Closing(object sender, FormClosingEventArgs e)
+        {
+            WriteSettings();
+            File.Delete(processIDFile);
+            Settings.Default.F1State = this.WindowState;
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                Settings.Default.F1Location = this.Location;                             // save location and size if the state is normal
+                Settings.Default.F1Size = this.Size;
+            }
+            else
+            {
+                Settings.Default.F1Location = this.RestoreBounds.Location;               // save the RestoreBounds if the form is minimized or maximized!
+                Settings.Default.F1Size = this.RestoreBounds.Size;
+            }
+            Settings.Default.F1DarkMode = checkBox_OptEnv_Mode.Checked;
+            Settings.Default.Save();
+        }
+        private void TextBox_OptEnv_TNS_ADMIN_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (Directory.Exists(textBox_OptEnv_TNS_ADMIN.Text))
+            {
+                tnsAdmin = textBox_OptEnv_TNS_ADMIN.Text;
+                if (File.Exists(textBox_OptEnv_TNS_ADMIN.Text + "\\tnsnames.ora"))
+                {
+                    tnsNames = textBox_OptEnv_TNS_ADMIN.Text + "\\tnsnames.ora";
+                    if (!inInit)
+                    {
+                        Environment.SetEnvironmentVariable("TNS_ADMIN", tnsAdmin);
+                        namesDefaultDomain = GetSqlnetOra(textBox_OptEnv_TNS_ADMIN.Text);
+                        BuildDBList();
+                    }
+                }
+                else
+                    SetMessage("", "Options", "TNS_ADMIN: File tnsnames.ora in Directory " + textBox_OptEnv_TNS_ADMIN.Text + " not found.", true);
+            }
+            else
+                if (String.IsNullOrEmpty(textBox_OptEnv_TNS_ADMIN.Text))
+            {
+                Environment.SetEnvironmentVariable("TNS_ADMIN", null);
+                tnsNames = GetTNSFile();                                                            // try to get tnsnames.ora from default PATH
+                if ((File.Exists(tnsNames)) && (!inInit))
+                {
+                    Environment.SetEnvironmentVariable("TNS_ADMIN", tnsAdmin);
+                    namesDefaultDomain = GetSqlnetOra(Path.GetDirectoryName(tnsNames));
+                    BuildDBList();
+                }
+                else
+                {
+                    SetMessage("", "Options", "TNS_ADMIN: unable to detect a default TNS_ADMIN directory - Please define in Options > Environment", true);
+                }
+            }
+        }
+
+        private void TextBox_OptEnv_SqlPlusPath_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!inInit)
+            {
+                if (File.Exists(textBox_OptEnv_SqlPlusPath.Text))
+                {
+                    SqlPlusVersion(textBox_OptEnv_SqlPlusPath.Text);
+                    sqlPlusPath = textBox_OptEnv_SqlPlusPath.Text;
+                }
+            }
+            else
+                SetMessage("", "Options", "SQL*Plus Path: File sqlplus.exe not found.", true);
+        }
+
+        private void TextBox_OptEnv_NLS_LANG_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!inInit)
+            {
+                nlsLang = textBox_OptEnv_NLS_LANG.Text;
+                Environment.SetEnvironmentVariable("NLS_LANG", nlsLang);
+            }
+        }
+
+        private void TextBox_OptEnv_SQLPATH_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!inInit)
+            {
+                sqlPath = textBox_OptEnv_SQLPATH.Text ;
+                Environment.SetEnvironmentVariable("SQLPATH", sqlPath);
+            }
+        }
+
+      
     }
 }

@@ -2,13 +2,14 @@
 //
 // Copyright 2025 Martin Bruegger
 
-using System;
-using System.Windows.Forms;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Win32.TaskScheduler;
+using MimeKit;
+using System;
 using System.Drawing;
-using Simplify.Mail;
 using System.Text;
-using System.IO;
+using System.Windows.Forms;
 
 namespace SQLAgain
 {
@@ -19,15 +20,20 @@ namespace SQLAgain
         private readonly string taskUserId;
         private readonly string taskPassword;
         private readonly string mailSender;
+        private readonly string mailServer;
+        private readonly string mailPort;
+        private readonly bool   enableSSL;
+        private readonly string mailUser;
+        private readonly string mailPassword;
 
         private void Form2_load(object sender, EventArgs e)
         {
             if (Owner != null)
-                Location = new Point(Owner.Location.X + Owner.Width / 2 - Width / 2 -105,
-                    Owner.Location.Y + Owner.Height / 2 - Height / 2 + 265);
+                Location = new Point(Owner.Location.X + Owner.Width - 370, Owner.Location.Y + 480); // Below Button "Schedule"
         }
 
-        public Form2(string parmArguments, string sqlFile, string parmUserId, string parmPassword, string parmMailSender, string parmMailReceiver)
+        public Form2(string parmArguments, string sqlFile, string parmUserId, string parmPassword, string parmMailSender, string parmMailReceiver, 
+            string parmMailServer, string parmMailPort, bool parmEnableSSL, string parmMailUser, string parmMailPassword, bool darkMode)
         {
             InitializeComponent();
             taskUserId                 = parmUserId;
@@ -45,7 +51,17 @@ namespace SQLAgain
             {
                 mailReceiver.Text = null;
                 checkBoxSendMail.Checked = false;
-            }            
+            }      
+            mailServer = parmMailServer;
+            mailPort = parmMailPort;
+            enableSSL = parmEnableSSL;
+            mailUser = parmMailUser;
+            mailPassword = parmMailPassword;
+            if (!darkMode)
+            {
+                this.BackColor = SystemColors.Control;
+                Utils.SetColorMode(this, darkMode);
+            }
         }
 
         private void ButtonCreateTask(object sender, EventArgs e)
@@ -58,24 +74,24 @@ namespace SQLAgain
             TaskDefinition td = TaskService.Instance.NewTask();
             TimeTrigger timeTrigger = new TimeTrigger();
             TimeTrigger tt = timeTrigger;
-            tt.StartBoundary = startDate.Value ;
+            tt.StartBoundary = startDate.Value;
             td.Triggers.Add(tt);
             // Create an action that will launch SQLAgain in Batch-Mode whenever the trigger fires
             if (checkBoxDeleteTask.Checked == true)
             {
-                SessionHistory.Record("Delete Task           : TRUE" );              
-                taskArguments +=  " -r" ;
+                SessionHistory.Record("Delete Task           : TRUE");
+                taskArguments += " -r";
             }
             if (checkBoxSendMail.Checked == true)
             {
                 SessionHistory.Record("Send E-Mail to        : " + mailReceiver.Text);
-                taskArguments +=  " -E\"" + mailReceiver.Text + "\"";
+                taskArguments += " -E\"" + mailReceiver.Text + "\"";
             }
             td.Actions.Add(programPath, taskArguments);
             SessionHistory.Record("Task Action/Program   : " + programPath);
             SessionHistory.Record("Task Action/Arguments : " + taskArguments);
             // Register the task in the root folder of the local machine
-            if (taskPassword == null )
+            if (taskPassword == null)
             {
                 try
                 {
@@ -92,8 +108,8 @@ namespace SQLAgain
                 {
                     TaskService.Instance.RootFolder.RegisterTaskDefinition(taskName.Text, td,
                     TaskCreation.CreateOrUpdate, taskUserId, taskPassword, TaskLogonType.Password);
-                }                
-                catch (Exception ex)    
+                }
+                catch (Exception ex)
                 {
                     MessageBox.Show("Unable to create Windows Scheduler Task:\n " + ex.Message);
                 }
@@ -101,69 +117,78 @@ namespace SQLAgain
             SessionHistory.Record("***** Create Windows Task ended.");
             if (checkBoxSendMail.Checked == true)
             {
-                string formatDate = "yyyy'/'MM'/'dd HH:mm:ss";
-                string mailBody = SQLAgain.Properties.Resources.MailHeader +
-                "<table id=\"t01\" > <tr><td>" +
-                "Dear Oracle DBA" +
-                "<br>" +
-                "<i>SQLAgain</i> confirms that the following task has been scheduled:" +
-                "</td></tr>" +
-                "<tr><td> " +
-                "<div style = \"border-style: solid; border-width: thin; border-color:#dadce0; border-radius: 8px; padding: 10px 10px;\" >" +
-                "<table id=\"t02\" > " +
-                "<tr><td><b> Host Name                    </b></td><td> " + System.Environment.MachineName + " </td></tr>" +
-                "<tr><td><b> Task Name                    </b></td><td> " + taskName.Text + " </td></tr>" +
-                "<tr><td><b> Task Start Date              </b></td><td> " + startDate.Text + " </td></tr>" +               
-                "<tr><td><b> Task Action/Program          </b></td><td> " + programPath + " </td></tr>" +
-                "<tr><td><b> Task Action/Arguments        </b></td><td> " +  taskArguments + " </td></tr>" +
-                "<tr><td><b> Delete Task after execution  </b></td><td> " + checkBoxDeleteTask.Checked + "</td></tr>" +
-                "<tr><td><b> Task Creation Date           </b></td><td> " + System.DateTime.Now.ToString(formatDate) + " </td></tr>" +
-                "</table>" +
-                "</div>" +
-                "</td></tr>" +
-                "<tr><td> " +
-                SQLAgain.Properties.Resources.MailFooter;
-                StringBuilder sb = new StringBuilder();
-                string calendarDateFormat = "yyyyMMddTHHmmss";
-
-                sb.AppendLine("BEGIN: VCALENDAR");
-                sb.AppendLine("PRODID:-//martin.bruegger@gmail.com//SQLAgain//EN");       
-                sb.AppendLine("VERSION:2.0");
-                sb.AppendLine("METHOD: PUBLISH");
-                sb.AppendLine("BEGIN:VEVENT");
-                sb.AppendLine("SUMMARY:" + taskName.Text);
-                sb.AppendLine("PRIORITY: 0");                   // A value of 0 specifies an undefined priority.
-                sb.AppendLine("CLASS: PRIVATE");                // PUBLIC, PRIVATE, CONFIDENTIAL; Default: PUBLIC 
-                sb.AppendLine("TRANSP: TRANSPARENT");           // Time Transparency, TRANSPARENT or OPAQUE: Blocks or opaque on busy time searches.
-                sb.AppendLine("X-MICROSOFT-CDO-BUSYSTATUS:FREE");  // Microsoft Outlook: "Show As" Free/Busy/Tentative/Out of Office
-                sb.AppendLine("DTSTART:" + DateTime.Parse( startDate.Text).ToString(calendarDateFormat));
-                sb.AppendLine("DTEND:" + DateTime.Parse(startDate.Text).ToString(calendarDateFormat));
-                sb.AppendLine("DESCRIPTION: Task " + taskName.Text + " on Server " + System.Environment.MachineName);
-                sb.AppendLine("LOCATION: " + System.Environment.MachineName);
-                sb.AppendLine("END:VEVENT");
-                sb.AppendLine("BEGIN: VALARM");
-                sb.AppendLine("TRIGGER:-PT0M");                 // set VALARM to DTSTART
-                sb.AppendLine("ACTION:DISPLAY");
-                sb.AppendLine("DESCRIPTION:SQLAgain Task " + taskName.Text + " on Server " + System.Environment.MachineName);
-                sb.AppendLine("END: VALARM");
-                sb.AppendLine("END:VCALENDAR");
-
-                var calendarBytes = Encoding.UTF8.GetBytes(sb.ToString());
-                MemoryStream ms = new MemoryStream(calendarBytes);
-                System.Net.Mail.Attachment attachment = new System.Net.Mail.Attachment(ms, "SQLAgain_event.ics", "text/calendar");
-                
                 try
                 {
-                    MailSender.Default.Send(mailSender, mailReceiver.Text, "SQLAgain Task scheduled", mailBody, null, attachment);
-                    //MessageBox.Show("Task scheduled, confirmation E-Mail and Calendar Event sent.");
-                }
+                    var message = new MimeMessage();
+                    message.From.Add(new MailboxAddress(mailSender.Substring(0, mailSender.IndexOf("@")), mailSender));
+                    message.To.Add(new MailboxAddress(mailReceiver.Text.Substring(0, mailReceiver.Text.IndexOf("@")), mailReceiver.Text));
+                    message.Subject = "SQLAgain Task scheduled";
+                    var builder = new BodyBuilder();
+                    builder.HtmlBody =
+                        SQLAgain.Properties.Resources.MailHeader +
+                            "<table id=\"t01\" > <tr><td>" +
+                            "Dear Oracle DBA" +
+                            "<br>" +
+                            "<i>SQLAgain</i> confirms that the following task has been scheduled:" +
+                            "</td></tr>" +
+                            "<tr><td> " +
+                            "<table id=\"t02\"> " +
+                            "<tr><th> Host Name                    </th><td> " + System.Environment.MachineName                          + " </td></tr>" +
+                            "<tr><th> Task Name                    </th><td> " + taskName.Text                                           + " </td></tr>" +
+                            "<tr><th> Task Start Date              </th><td> " + startDate.Text                                          + " </td></tr>" +
+                            "<tr><th> Task Action/Program          </th><td> " + programPath                                             + " </td></tr>" +
+                            "<tr><th> Task Action/Arguments        </th><td> " + taskArguments                                           + " </td></tr>" +
+                            "<tr><th> Delete Task after execution  </th><td> " + checkBoxDeleteTask.Checked                              + " </td></tr>" +
+                            "<tr><th> Task Creation Date           </th><td> " + System.DateTime.Now.ToString("yyyy'/'MM'/'dd HH:mm:ss") + " </td></tr>" +
+                            "</table>" +
+                            "</td></tr>" +
+                            "<tr><td> " +
+                            SQLAgain.Properties.Resources.MailFooter;
 
+                    var calendarDateFormat = "yyyyMMddTHHmmss";
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("BEGIN: VCALENDAR");
+                    sb.AppendLine("PRODID: -//martin.bruegger@gmail.com//SQLAgain//EN");
+                    sb.AppendLine("VERSION: 2.0");
+                    sb.AppendLine("METHOD: PUBLISH");
+                    sb.AppendLine("BEGIN: VEVENT");
+                    sb.AppendLine("SUMMARY:" + taskName.Text);
+                    sb.AppendLine("PRIORITY: 0");                                                       // A value of 0 specifies an undefined priority.
+                    sb.AppendLine("CLASS: PRIVATE");                                                    // PUBLIC, PRIVATE, CONFIDENTIAL; Default: PUBLIC 
+                    sb.AppendLine("TRANSP: TRANSPARENT");                                               // Time Transparency, TRANSPARENT or OPAQUE: Blocks or opaque on busy time searches.
+                    sb.AppendLine("X-MICROSOFT-CDO-BUSYSTATUS: FREE");                                   // Microsoft Outlook: "Show As" Free/Busy/Tentative/Out of Office
+                    sb.AppendLine("DTSTART: " + DateTime.Parse(startDate.Text).ToString(calendarDateFormat));
+                    sb.AppendLine("DTEND: " + DateTime.Parse(startDate.Text).ToString(calendarDateFormat));
+                    sb.AppendLine("DESCRIPTION: SQLAgain Task \"" + taskName.Text.Trim() + "\" on Server " + System.Environment.MachineName);
+                    sb.AppendLine("LOCATION: " + System.Environment.MachineName);
+                    sb.AppendLine("END: VEVENT");
+                    sb.AppendLine("BEGIN: VALARM");
+                    sb.AppendLine("TRIGGER:-PT0M");                                                     // set VALARM to DTSTART
+                    sb.AppendLine("ACTION: DISPLAY");
+                    sb.AppendLine("DESCRIPTION: SQLAgain Task \"" + taskName.Text.Trim() + "\" on Server " + System.Environment.MachineName);
+                    sb.AppendLine("END: VALARM");
+                    sb.AppendLine("END: VCALENDAR");
+                    builder.Attachments.Add("SQLAgain-calendar.ics", Encoding.UTF8.GetBytes(sb.ToString()));
+                    message.Body = builder.ToMessageBody();
+                
+                    var client = new SmtpClient();
+                    if (enableSSL)
+                        client.Connect(mailServer, int.Parse(mailPort), true);
+                    else
+                        client.Connect(mailServer, int.Parse(mailPort), SecureSocketOptions.None);
+                    if (!String.IsNullOrEmpty(mailPassword))
+                    {
+                        client.Authenticate(mailUser, mailPassword);
+                    }
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
                 catch (Exception EX)
                 {
                     MessageBox.Show(string.Format("Mail Delivery failed: " + EX.Message));
                 }
             }
-            this.Close();  
+            this.Close();
         }
     }
 }
