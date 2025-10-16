@@ -169,7 +169,6 @@
     <Compile Include="Form2.Designer.cs">
       <DependentUpon>Form2.cs</DependentUpon>
     </Compile>
-    <Compile Include="ListViewColumnSorter.cs" />
     <Compile Include="Pathing.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -229,6 +228,7 @@
     <Content Include="Update\SQLAgain.manifest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Update\SQLAgain.zip" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

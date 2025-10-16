@@ -687,8 +687,9 @@
             this.button_OptUpdate_Update.TabIndex = 23;
             this.button_OptUpdate_Update.Text = "Update";
             this.button_OptUpdate_Update.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip1.SetToolTip(this.button_OptUpdate_Update, "Creates a Windows Task Scheduler Job to execute the SQL File later");
+            this.toolTip1.SetToolTip(this.button_OptUpdate_Update, "Download and Update to latest Version");
             this.button_OptUpdate_Update.UseVisualStyleBackColor = false;
+            this.button_OptUpdate_Update.Click += new System.EventHandler(this.Button_OptUpdate_Update_Click);
             // 
             // textBox_Favorites_NewDBs
             // 

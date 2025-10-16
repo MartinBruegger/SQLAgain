@@ -1451,8 +1451,13 @@ namespace SQLAgain
                     label_OptUpdate_Message1.Text = "Unable to check Updates";
                     label_OptUpdate_Message2.Text = ex.Message;
                 }
-
             }
+        }
+
+        private void Button_OptUpdate_Update_Click(object sender, EventArgs e)
+        {
+            Updater.LaunchUpdater(doc);
+            this.Close();
         }
 
         private void DataGridViewDBUsers_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -2473,6 +2478,5 @@ namespace SQLAgain
             }
         }
 
-      
     }
 }
