@@ -1539,10 +1539,7 @@ namespace SQLAgain
             textBox_OptDBUser_NewSchema.Text = string.Empty;
             textBox_OptDBUser_NewPassword.Text = string.Empty;
             checkBox_OptDBUser_NewSYSDBA.Checked = false;
-            if (String.IsNullOrEmpty(dbUser))
-            {
-                listBox_User.SelectedIndex = 0;
-            }
+            Reload_listBoxUser();
         }
         private void DataGridViewDBUsers_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
@@ -1556,7 +1553,7 @@ namespace SQLAgain
                 return;
             }
         }
-        private void dataGridView_DBUsers_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
+        private void DataGridView_DBUsers_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
         {
             DataGridViewRow row = dataGridView_DBUsers.Rows[e.RowIndex];
             if ((String.IsNullOrEmpty(row.Cells[0].Value.ToString())) ||

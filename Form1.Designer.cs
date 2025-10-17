@@ -1552,7 +1552,7 @@
             this.dataGridView_DBUsers.Size = new System.Drawing.Size(713, 200);
             this.dataGridView_DBUsers.TabIndex = 8;
             this.dataGridView_DBUsers.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DataGridViewDBUsers_CellFormatting);
-            this.dataGridView_DBUsers.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView_DBUsers_RowValidating);
+            this.dataGridView_DBUsers.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.DataGridView_DBUsers_RowValidating);
             this.dataGridView_DBUsers.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.DataGridViewDBUsers_UserDeletedRow);
             // 
             // contextMenuOptDBUser
