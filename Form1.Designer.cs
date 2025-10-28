@@ -60,6 +60,9 @@
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPageHistory = new System.Windows.Forms.TabPage();
             this.textBoxSessionHistory = new System.Windows.Forms.RichTextBox();
+            this.contextMenuSessionHistory = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.sessionHistoryEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.sessionHistoryRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.timeoutHH = new System.Windows.Forms.NumericUpDown();
             this.timeoutMM = new System.Windows.Forms.NumericUpDown();
             this.timeoutSS = new System.Windows.Forms.NumericUpDown();
@@ -173,9 +176,6 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.buttonCancelSQL = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.contextMenuSessionHistory = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.sessionHistoryEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.sessionHistoryRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStatusMessages = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.statusMessagesClear = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
@@ -197,6 +197,7 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabPageMessages.SuspendLayout();
             this.tabPageHistory.SuspendLayout();
+            this.contextMenuSessionHistory.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutHH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutMM)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutSS)).BeginInit();
@@ -227,7 +228,6 @@
             this.tabPageOptionsCheckForUpdates.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.tabPageAbout.SuspendLayout();
-            this.contextMenuSessionHistory.SuspendLayout();
             this.contextMenuStatusMessages.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox8.SuspendLayout();
@@ -557,6 +557,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxSessionHistory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
+            this.textBoxSessionHistory.ContextMenuStrip = this.contextMenuSessionHistory;
             this.textBoxSessionHistory.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxSessionHistory.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.textBoxSessionHistory.Location = new System.Drawing.Point(2, 0);
@@ -569,6 +570,34 @@
             this.textBoxSessionHistory.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.TextBoxSessionHistoryLinkClicked);
             this.textBoxSessionHistory.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxSessionHistory_KeyDown);
             this.textBoxSessionHistory.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TextBoxSessionHistory_MouseDoubleClick);
+            // 
+            // contextMenuSessionHistory
+            // 
+            this.contextMenuSessionHistory.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuSessionHistory.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sessionHistoryEdit,
+            this.sessionHistoryRefresh});
+            this.contextMenuSessionHistory.Name = "contextMenuStrip1";
+            this.contextMenuSessionHistory.Size = new System.Drawing.Size(175, 48);
+            this.contextMenuSessionHistory.Text = "Edit SessionHistory";
+            // 
+            // sessionHistoryEdit
+            // 
+            this.sessionHistoryEdit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.sessionHistoryEdit.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.sessionHistoryEdit.Name = "sessionHistoryEdit";
+            this.sessionHistoryEdit.Size = new System.Drawing.Size(174, 22);
+            this.sessionHistoryEdit.Text = "Edit SessionHistory";
+            this.sessionHistoryEdit.Click += new System.EventHandler(this.SessionHistoryEdit);
+            // 
+            // sessionHistoryRefresh
+            // 
+            this.sessionHistoryRefresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.sessionHistoryRefresh.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.sessionHistoryRefresh.Name = "sessionHistoryRefresh";
+            this.sessionHistoryRefresh.Size = new System.Drawing.Size(174, 22);
+            this.sessionHistoryRefresh.Text = "Refresh";
+            this.sessionHistoryRefresh.Click += new System.EventHandler(this.SessionHistoryRefresh);
             // 
             // timeoutHH
             // 
@@ -1844,7 +1873,7 @@
             // linkCheck4Update
             // 
             this.linkCheck4Update.AutoSize = true;
-            this.linkCheck4Update.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.linkCheck4Update.LinkColor = System.Drawing.SystemColors.Highlight;
             this.linkCheck4Update.Location = new System.Drawing.Point(14, 103);
             this.linkCheck4Update.Name = "linkCheck4Update";
             this.linkCheck4Update.Size = new System.Drawing.Size(52, 13);
@@ -1997,34 +2026,6 @@
             this.progressBar1.Size = new System.Drawing.Size(926, 4);
             this.progressBar1.TabIndex = 23;
             this.progressBar1.Visible = false;
-            // 
-            // contextMenuSessionHistory
-            // 
-            this.contextMenuSessionHistory.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenuSessionHistory.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.sessionHistoryEdit,
-            this.sessionHistoryRefresh});
-            this.contextMenuSessionHistory.Name = "contextMenuStrip1";
-            this.contextMenuSessionHistory.Size = new System.Drawing.Size(175, 48);
-            this.contextMenuSessionHistory.Text = "Edit SessionHistory";
-            // 
-            // sessionHistoryEdit
-            // 
-            this.sessionHistoryEdit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.sessionHistoryEdit.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.sessionHistoryEdit.Name = "sessionHistoryEdit";
-            this.sessionHistoryEdit.Size = new System.Drawing.Size(174, 22);
-            this.sessionHistoryEdit.Text = "Edit SessionHistory";
-            this.sessionHistoryEdit.Click += new System.EventHandler(this.SessionHistoryEdit);
-            // 
-            // sessionHistoryRefresh
-            // 
-            this.sessionHistoryRefresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.sessionHistoryRefresh.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.sessionHistoryRefresh.Name = "sessionHistoryRefresh";
-            this.sessionHistoryRefresh.Size = new System.Drawing.Size(174, 22);
-            this.sessionHistoryRefresh.Text = "Refresh";
-            this.sessionHistoryRefresh.Click += new System.EventHandler(this.SessionHistoryRefresh);
             // 
             // contextMenuStatusMessages
             // 
@@ -2270,6 +2271,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabPageMessages.ResumeLayout(false);
             this.tabPageHistory.ResumeLayout(false);
+            this.contextMenuSessionHistory.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.timeoutHH)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutMM)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutSS)).EndInit();
@@ -2312,7 +2314,6 @@
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
             this.tabPageAbout.ResumeLayout(false);
-            this.contextMenuSessionHistory.ResumeLayout(false);
             this.contextMenuStatusMessages.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);

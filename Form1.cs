@@ -265,13 +265,13 @@ namespace SQLAgain
                     listItem.BackColor = ColorTranslator.FromHtml("Highlight");
                     db = listItem.SubItems[0].Text;
                     if (pingWithSqlPlus)
-                            SetMessage(db, "sqlplus -P", TnsPing(db));
-                    else    SetMessage(db, "tnsping", TnsPing(db));
+                            SetMessage(db, "sqlplus -P", TnsPing(db),false,true);                   // Show Message in Message/Log - but not in toolStripStatus
+                    else    SetMessage(db, "tnsping", TnsPing(db),false,true);                      // because tnsping is normally faster than "await Task.Delay(5000);" - 5 seconds
                     listItem.BackColor = colorBack1;
                 }
             }
         }
-        private void SetMessage(string db, string action, string message, bool error = false)
+        private void SetMessage(string db, string action, string message, bool error = false, bool skipStatus = false)
         {
             string[] array = new string[4] { DateTime.Now.ToString("yyyy'/'MM'/'dd HH:mm:ss"), db, action, message };
             var itm = new ListViewItem(array);
@@ -279,11 +279,15 @@ namespace SQLAgain
             listViewStatusMessages.EnsureVisible(listViewStatusMessages.Items.Count - 1); /* Ensure last element visible */
             listViewStatusMessages.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             listViewStatusMessages.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-            if (error)
-                toolStripStatusLabel.ForeColor = textColorStatusLabel1;
-            else
-                toolStripStatusLabel.ForeColor = textColorStatusLabel2;
-            pendingMessages.Enqueue(message);
+            if(!skipStatus)
+            {
+                if (error)
+                    toolStripStatusLabel.ForeColor = textColorStatusLabel1;
+                else
+                    toolStripStatusLabel.ForeColor = textColorStatusLabel2;
+                pendingMessages.Enqueue(message);
+            }
+            
         }
         
         private void ButtonSqlFile(object sender, EventArgs e)
@@ -845,7 +849,7 @@ namespace SQLAgain
                 backgroundWorker1.ReportProgress((percentage), db);
                 connectString = string.Format("{0}/{1}@{2}", dbSchema, dbUserPassword, db);
                 if (sysDBA) connectString += " AS SYSDBA";
-                SessionHistory.Record(db.PadRight(24) + Path.GetFileName(sqlFile).PadRight(50), 0,1);
+                SessionHistory.Record(db.PadRight(24) + Path.GetFileName(sqlFile).PadRight(50), 0, 1);
                 sqlResult = ExecSQL.DoSQL(sqlPlusPath, db, connectString, sqlFile, logFile, sqlPlusOptions, processIDFile, timeout, ignoreError);
             }
             Environment.SetEnvironmentVariable("SQLPATH", sqlPath);
@@ -876,7 +880,7 @@ namespace SQLAgain
                     
             }
             progressBar1.Value = e.ProgressPercentage;
-            SetMessage(db, Path.GetFileName(sqlFile), "");
+            SetMessage(db, Path.GetFileName(sqlFile), string.Empty,false,true);
         }
         private void BackgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
@@ -1271,14 +1275,14 @@ namespace SQLAgain
                                     Match match = Regex.Match(selectedArgument, @"SQL-File.*: file:\\\\(.*)", RegexOptions.IgnoreCase);
                                     if (match.Success)
                                     {
-                                        textBox_SqlFile.Text = match.Groups[1].Value;
+                                        textBox_SqlFile.Text = match.Groups[1].Value.Trim();
                                     }
                                     break;
                                 case "Log File           ":
                                     match = Regex.Match(selectedArgument, @"Log File.*: file:\\\\(.*)", RegexOptions.IgnoreCase);
                                     if (match.Success)
                                     {
-                                        textBox_LogFile.Text = match.Groups[1].Value;
+                                        textBox_LogFile.Text = match.Groups[1].Value.Trim();
                                         checkBoxLog.Checked = true;
                                         string logFileShort = textBox_LogFile.Text.Substring(0, textBox_LogFile.Text.LastIndexOf('.'));
                                         string tempFileShort = logFileTemporary.Substring(0, logFileTemporary.LastIndexOf('.'));
@@ -1383,7 +1387,7 @@ namespace SQLAgain
                 }
                 textBoxSessionHistory.SelectionLength = textBoxSessionHistory.GetFirstCharIndexFromLine(startLine) - textBoxSessionHistory.SelectionStart;
                 textBoxSessionHistory.Select(textBoxSessionHistory.SelectionStart, textBoxSessionHistory.SelectionLength);
-                SetMessage("", "Session History", "Selected Session-Parameters copyed.");
+                SetMessage("", "Session History", "Selected Session-Parameters copied.");
             } else
             {
                 MessageBox.Show("Unable to Select Text - String \"Session started.\" not found in the selected Block.");

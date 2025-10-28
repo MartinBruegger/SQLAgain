@@ -2,6 +2,7 @@ This file contains latest news about SQLAgain
 
 Version     Date        Changes  
 ========    ==========  =======
+2.0.1.2     2025/10/28  SetMessage:no toolStripStatus when called from DB-Loop (TNS-Ping / Execute); other minor fixes
 2.0.1.1     2025/10/16  Updater failed to update
 2.0.1.0     2025/10/16  Re-design, Options included in TabControl, Dark/Light Mode implemented
 2.0.0.6     2025/07/08  Move Repository to Github, reactive Auto-Update from Github
