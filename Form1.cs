@@ -920,7 +920,7 @@ namespace SQLAgain
                     case 0:
                         this.contextMenuStatusMessages.Show(this.tabControl1, e.Location);
                         break;
-                    case 2:
+                    case 3:
                         this.contextMenuSessionHistory.Show(this.tabControl1, e.Location);
                         break;                    
                 }                
@@ -2065,7 +2065,7 @@ namespace SQLAgain
         private void TabControl1SelectedIndexChanged(Object sender, EventArgs e)
         {
             if (tabControl1.SelectedIndex == 1) ShowFavorites();
-            if (tabControl1.SelectedIndex == 2) ShowSessionHistory();
+            if (tabControl1.SelectedIndex == 3) ShowSessionHistory();
         }
         private void ShowSessionHistory()
         {
