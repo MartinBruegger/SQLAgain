@@ -2,6 +2,7 @@ This file contains latest news about SQLAgain
 
 Version     Date        Changes  
 ========    ==========  =======
+2.0.1.4	    2026/09/17  Minor fixes and improvements (new TabControlOptions_DrawItem)
 2.0.1.3     2026/01/29  SessionHistory: refresh fixed when switching tabs
 2.0.1.2     2025/10/28  SetMessage:no toolStripStatus when called from DB-Loop (TNS-Ping / Execute); other minor fixes
 2.0.1.1     2025/10/16  Updater failed to update

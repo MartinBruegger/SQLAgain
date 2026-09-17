@@ -103,9 +103,7 @@ namespace SQLAgain
         public Form1(string[] file)
         {
             InitializeComponent();
-            listBoxOptions.SelectedIndex = 0;
             tabControloptions.SelectedIndex = 0;
-            tabControloptions.Location = new System.Drawing.Point(-10, -25);
             ReadSettings();                                                                         // Read Favorites, load into listViewFavorites; file: Favorites.xml
             textBoxAbout.LoadFile("SQLAgain_About.rtf");
             Process currentProcess = Process.GetCurrentProcess();
@@ -247,7 +245,7 @@ namespace SQLAgain
             dbUser         = tableDBUser.Rows[listBox_User.SelectedIndex].Field<string>(0);
             dbSchema       = tableDBUser.Rows[listBox_User.SelectedIndex].Field<string>(1);
             dbUserPassword = tableDBUser.Rows[listBox_User.SelectedIndex].Field<string>(2);
-            sysDBA        = tableDBUser.Rows[listBox_User.SelectedIndex].Field<bool>(3);
+            sysDBA         = tableDBUser.Rows[listBox_User.SelectedIndex].Field<bool>(3);
         }
         private void ButtonTNSPing(object sender, EventArgs e)
         {
@@ -287,7 +285,6 @@ namespace SQLAgain
                     toolStripStatusLabel.ForeColor = textColorStatusLabel2;
                 pendingMessages.Enqueue(message);
             }
-            
         }
         
         private void ButtonSqlFile(object sender, EventArgs e)
@@ -1395,10 +1392,11 @@ namespace SQLAgain
             
         }
 
-        private void ListBoxOptions_SelectedIndexChanged(object sender, EventArgs e)
+        private void TabControloptions_SelectedIndexChanged(object sender, EventArgs e)
         {
-            tabControloptions.SelectedIndex = listBoxOptions.SelectedIndex;
-            if (listBoxOptions.SelectedIndex == 1)                                                  // Database Groups
+            if (buildDBListPending)
+                BuildDBList();
+            if (tabControloptions.SelectedIndex == 1)                                                  // Database Groups
             {
                 try
                 {
@@ -1417,7 +1415,7 @@ namespace SQLAgain
                     MessageBox.Show(ex.Message);
                 }
             }
-            if (listBoxOptions.SelectedIndex == 5)                                                  // Check for Update
+            if (tabControloptions.SelectedIndex == 5)                                                  // Check for Update
             {
                 Version appVersion = Assembly.GetEntryAssembly().GetName().Version;
                 string appLastWriteTime = File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToString("yyyy'/'MM'/'dd HH:mm:ss");
@@ -1427,7 +1425,6 @@ namespace SQLAgain
                 try
                 {
                     // download manifest
-                    //XDocument doc = XDocument.Load(Settings.Default.RemoteManifest);
                     doc = XDocument.Load(Settings.Default.RemoteManifest);
 
                     // if newer, display update dialog
@@ -1560,13 +1557,18 @@ namespace SQLAgain
         private void DataGridView_DBUsers_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
         {
             DataGridViewRow row = dataGridView_DBUsers.Rows[e.RowIndex];
-            if ((String.IsNullOrEmpty(row.Cells[0].Value.ToString())) ||
+            try
+            {
+                if ((String.IsNullOrEmpty(row.Cells[0].Value.ToString())) ||
                 (String.IsNullOrEmpty(row.Cells[1].Value.ToString())) ||
                 (String.IsNullOrEmpty(row.Cells[2].Value.ToString())))
-            {
-                SetMessage("", "Options/DB User", "Column USER or SCHEMA or PASSWORD is empty.", true);
-            } else
-                Reload_listBoxUser();
+                {
+                    SetMessage("", "Options/DB User", "Column USER or SCHEMA or PASSWORD is empty.", true);
+                }
+                else
+                    Reload_listBoxUser();
+            }
+            catch { }
         }
         private void HidePasswords_CheckedChanged(object sender, EventArgs e)
         {
@@ -1644,11 +1646,8 @@ namespace SQLAgain
                 return;
             }
             textBox_OptDBGroup_NewName.Text = string.Empty;
-            //textBox_OptDBGroup_NewName.ForeColor = SystemColors.ButtonFace;
             textBox_OptDBGroup_NewRegExp.Text = string.Empty;
             textBox_OptDBGroup_NewColor.Text = string.Empty;
-            //textBox_OptDBGroup_NewColor.BackColor = colorBack1;
-            //textBox_OptDBGroup_NewColor.ForeColor = color
             buildDBListPending = true;                                                              // call BuildDBList when leaving this TabPage
         }
         private String SelectColor()
@@ -1769,11 +1768,8 @@ namespace SQLAgain
 
         private void TabControloptions_Leave(object sender, EventArgs e)
         {
-            if (tabControloptions.SelectedIndex == 1)                                               // Options: Database Groups
-            {
-                if (buildDBListPending) 
-                    BuildDBList();
-            }
+            if (buildDBListPending)
+                BuildDBList();
         }
 
         private void ToolStripMenuOptDBGroup_Up_Click(object sender, EventArgs e)
@@ -2359,7 +2355,7 @@ namespace SQLAgain
             toolStripStatusLabel.BackColor = colorBack1;
             toolStripStatusLabel.ForeColor = colorText1;
             foreach (ListViewItem listItem in listView_DBs.Items)
-                    listItem.BackColor = colorBack1;
+                listItem.BackColor = colorBack1;
 
             Utils.SetColorMode(this, checkBox_OptEnv_Mode.Checked);
         }
@@ -2479,5 +2475,25 @@ namespace SQLAgain
             }
         }
 
+        private void TabControlOptions_DrawItem(object sender, DrawItemEventArgs e)
+        {                                                                   // TabControl Tabs on the left side - DrawItemEvent is required to print the TabPage Item Text
+            Graphics g = e.Graphics;
+            Brush _textBrush = new SolidBrush(Color.Black);
+            if (e.Index == 0)
+            {
+                Rectangle _clientRectangle = tabControloptions.ClientRectangle;
+                _clientRectangle.Width = 100;                               // reduce width to paint only the left side of the tabControloptions, avoid drawing over the tab pages
+                _clientRectangle.Height = _clientRectangle.Height - 124;    // reduce height to avoid drawing over existing the tab pages, 6 Items in Options, 6*20=120 plus 2 for the border
+                _clientRectangle.Y = _clientRectangle.Y + 124;              // top position of the rectangle to paint, after 6 Items in Options, 6*20=120 plus 2 for the border
+                Brush myBrush = new SolidBrush(colorBack1);                 // colorBack1 is set in CheckBox_OptEnv_Mode_CheckedChanged
+                g.FillRectangle(myBrush, _clientRectangle);                 // fill the rectangle with the background color
+            }
+            TabPage _tabPage = tabControloptions.TabPages[e.Index];         // Get the item from the collection.
+            Rectangle _tabBounds = tabControloptions.GetTabRect(e.Index);   // Get the real bounds for the tab rectangle.
+            StringFormat _stringFlags = new StringFormat();                 // Draw string. Center the text.
+            _stringFlags.Alignment = StringAlignment.Center;
+            _stringFlags.LineAlignment = StringAlignment.Center;
+            g.DrawString(_tabPage.Text, e.Font, _textBrush, _tabBounds, new StringFormat(_stringFlags));
+        }
     }
 }
