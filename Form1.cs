@@ -2483,13 +2483,27 @@ namespace SQLAgain
             {
                 Rectangle _clientRectangle = tabControloptions.ClientRectangle;
                 _clientRectangle.Width = 100;                               // reduce width to paint only the left side of the tabControloptions, avoid drawing over the tab pages
-                _clientRectangle.Height = _clientRectangle.Height - 124;    // reduce height to avoid drawing over existing the tab pages, 6 Items in Options, 6*20=120 plus 2 for the border
-                _clientRectangle.Y = _clientRectangle.Y + 124;              // top position of the rectangle to paint, after 6 Items in Options, 6*20=120 plus 2 for the border
+                _clientRectangle.Height = _clientRectangle.Height - 110;    // reduce height to avoid drawing over existing the tab pages, 6 Items in Options, 6*20=120 plus 2 for the border
+                _clientRectangle.Y = _clientRectangle.Y + 110;              // top position of the rectangle to paint, after 6 Items in Options, 6*18=108 plus 2 for the border
+                _clientRectangle.X = _clientRectangle.X + 2;                // left position of the rectangle to paint, avoid drawing over the border
                 Brush myBrush = new SolidBrush(colorBack1);                 // colorBack1 is set in CheckBox_OptEnv_Mode_CheckedChanged
                 g.FillRectangle(myBrush, _clientRectangle);                 // fill the rectangle with the background color
             }
-            TabPage _tabPage = tabControloptions.TabPages[e.Index];         // Get the item from the collection.
+
             Rectangle _tabBounds = tabControloptions.GetTabRect(e.Index);   // Get the real bounds for the tab rectangle.
+            Brush _clientItemBG = new SolidBrush(Color.FromArgb(243, 243, 243));
+
+            if (e.State == DrawItemState.Selected)                          // Selected TabPage Item, paint with different background color
+            {
+                _clientItemBG = new SolidBrush(Color.FromArgb(249, 249, 249));
+                g.FillRectangle(_clientItemBG, e.Bounds);
+            }
+            else
+            {
+                g.FillRectangle(_clientItemBG, e.Bounds);
+            }
+
+            TabPage _tabPage = tabControloptions.TabPages[e.Index];         // Get the item from the collection.
             StringFormat _stringFlags = new StringFormat();                 // Draw string. Center the text.
             _stringFlags.Alignment = StringAlignment.Center;
             _stringFlags.LineAlignment = StringAlignment.Center;

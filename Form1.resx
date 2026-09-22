@@ -201,6 +201,36 @@
   <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>130, 17</value>
   </metadata>
+  <data name="button_OptEnv_SqlPlusPath.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAM9JREFUSEvt
+        lE0OgjAUhFkZPYwbjT8H0nPICViZtsOGA+lx1C2m2Bo7lLZAoi74kkko781MmhCybOJvEELsAdQBndjT
+        C0+gT8NLbAi/10gpt56ykHacESzQlGW58QR1iv3RgtF8vQDAna89QKtQAS/31jucC3SzOT+cpQSEEGvj
+        vTkDKrjoZynl0VlKAMDVZB148FnQvmIinV47KIpi0bkUIei1A7yolVLgnRgAlMk486z11VRVNeedGNab
+        5/mMZ62CMeLshoTfdaqWnD3xW56Pldgv0I5o5wAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <metadata name="contextMenuFavorites.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1036, 17</value>
+  </metadata>
+  <data name="button_OptEnv_TNS_ADMIN.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAM9JREFUSEvt
+        lE0OgjAUhFkZPYwbjT8H0nPICViZtsOGA+lx1C2m2Bo7lLZAoi74kkko781MmhCybOJvEELsAdQBndjT
+        C0+gT8NLbAi/10gpt56ykHacESzQlGW58QR1iv3RgtF8vQDAna89QKtQAS/31jucC3SzOT+cpQSEEGvj
+        vTkDKrjoZynl0VlKAMDVZB148FnQvmIinV47KIpi0bkUIei1A7yolVLgnRgAlMk486z11VRVNeedGNab
+        5/mMZ62CMeLshoTfdaqWnD3xW56Pldgv0I5o5wAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="button_OptEnv_SQLPATH.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAM9JREFUSEvt
+        lE0OgjAUhFkZPYwbjT8H0nPICViZtsOGA+lx1C2m2Bo7lLZAoi74kkko781MmhCybOJvEELsAdQBndjT
+        C0+gT8NLbAi/10gpt56ykHacESzQlGW58QR1iv3RgtF8vQDAna89QKtQAS/31jucC3SzOT+cpQSEEGvj
+        vTkDKrjoZynl0VlKAMDVZB148FnQvmIinV47KIpi0bkUIei1A7yolVLgnRgAlMk486z11VRVNeedGNab
+        5/mMZ62CMeLshoTfdaqWnD3xW56Pldgv0I5o5wAAAABJRU5ErkJggg==
+</value>
+  </data>
   <data name="button_OptDBGroup_Add.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAD9JREFUSEtj
@@ -221,36 +251,6 @@
   <metadata name="contextMenuOptDBUser.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1207, 17</value>
   </metadata>
-  <metadata name="contextMenuFavorites.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1036, 17</value>
-  </metadata>
-  <data name="button_OptEnv_SqlPlusPath.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAM9JREFUSEvt
-        lE0OgjAUhFkZPYwbjT8H0nPICViZtsOGA+lx1C2m2Bo7lLZAoi74kkko781MmhCybOJvEELsAdQBndjT
-        C0+gT8NLbAi/10gpt56ykHacESzQlGW58QR1iv3RgtF8vQDAna89QKtQAS/31jucC3SzOT+cpQSEEGvj
-        vTkDKrjoZynl0VlKAMDVZB148FnQvmIinV47KIpi0bkUIei1A7yolVLgnRgAlMk486z11VRVNeedGNab
-        5/mMZ62CMeLshoTfdaqWnD3xW56Pldgv0I5o5wAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="button_OptEnv_TNS_ADMIN.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAM9JREFUSEvt
-        lE0OgjAUhFkZPYwbjT8H0nPICViZtsOGA+lx1C2m2Bo7lLZAoi74kkko781MmhCybOJvEELsAdQBndjT
-        C0+gT8NLbAi/10gpt56ykHacESzQlGW58QR1iv3RgtF8vQDAna89QKtQAS/31jucC3SzOT+cpQSEEGvj
-        vTkDKrjoZynl0VlKAMDVZB148FnQvmIinV47KIpi0bkUIei1A7yolVLgnRgAlMk486z11VRVNeedGNab
-        5/mMZ62CMeLshoTfdaqWnD3xW56Pldgv0I5o5wAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="button_OptEnv_SQLPATH.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAM9JREFUSEvt
-        lE0OgjAUhFkZPYwbjT8H0nPICViZtsOGA+lx1C2m2Bo7lLZAoi74kkko781MmhCybOJvEELsAdQBndjT
-        C0+gT8NLbAi/10gpt56ykHacESzQlGW58QR1iv3RgtF8vQDAna89QKtQAS/31jucC3SzOT+cpQSEEGvj
-        vTkDKrjoZynl0VlKAMDVZB148FnQvmIinV47KIpi0bkUIei1A7yolVLgnRgAlMk486z11VRVNeedGNab
-        5/mMZ62CMeLshoTfdaqWnD3xW56Pldgv0I5o5wAAAABJRU5ErkJggg==
-</value>
-  </data>
   <metadata name="backgroundWorker1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>281, 17</value>
   </metadata>
