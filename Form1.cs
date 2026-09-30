@@ -99,11 +99,15 @@ namespace SQLAgain
         private  Color textColorStatusLabel1 = Color.DarkOrange;                                    // StatusLabel ForegroundColor Text High   (Orange  Mode white: Red)
         private  Color textColorStatusLabel2 = Color.Gold;                                          // StatusLabel ForegroundColor Text Normal (Gold    Mode white: Green) 
         private  Color colorBack1 = Color.FromArgb(44, 44, 44);                                     // ListView BackColor - we are changing BackColor SELECTED and normal in a DB loop
+        private Color colorBack2 = Color.FromArgb(65, 65, 65);                                      //  BackColor - UNSELECTED element
         private readonly Queue<string> pendingMessages = new Queue<string>();
         public Form1(string[] file)
         {
             InitializeComponent();
-            tabControloptions.SelectedIndex = 0;
+            tabControlSettings.SelectedIndex = 0;
+            //tabControlSettings.Location = new Point(125, -25);                                      // move TabControlSettings to top and hide the TabHeader 
+            tabControlSettings.Location = new Point(tabControlSettings.Location.X, -25);            // move TabControlSettings to top and hide the TabHeader
+            listViewSettings.Items[0].Selected = true;                                              // ListViewSettings is used to select the TabPage in TabControlSettings
             ReadSettings();                                                                         // Read Favorites, load into listViewFavorites; file: Favorites.xml
             textBoxAbout.LoadFile("SQLAgain_About.rtf");
             Process currentProcess = Process.GetCurrentProcess();
@@ -890,7 +894,6 @@ namespace SQLAgain
             foreach (ListViewItem listItem in listView_DBs.Items)
             {
                 listItem.BackColor = colorBack1;
-                //listItem.ForeColor = System.Drawing.ColorTranslator.FromHtml(listItem.SubItems[4].Text);
             }
             buttonRunSQL.Visible = true;
             buttonScheduleSQL.Visible = true;
@@ -1392,69 +1395,6 @@ namespace SQLAgain
             
         }
 
-        private void TabControloptions_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (buildDBListPending)
-                BuildDBList();
-            if (tabControloptions.SelectedIndex == 1)                                                  // Database Groups
-            {
-                try
-                {
-                    if (dataGridView_DBGroups.ColumnCount > 0)
-                    {
-                        DataGridViewColumn col1 = dataGridView_DBGroups.Columns[0];
-                        DataGridViewColumn col2 = dataGridView_DBGroups.Columns[1];
-                        DataGridViewColumn col3 = dataGridView_DBGroups.Columns[2];
-                        col1.Width = 100;
-                        col2.Width = 525;
-                        col3.Width = 60;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-            if (tabControloptions.SelectedIndex == 5)                                                  // Check for Update
-            {
-                Version appVersion = Assembly.GetEntryAssembly().GetName().Version;
-                string appLastWriteTime = File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToString("yyyy'/'MM'/'dd HH:mm:ss");
-                label_OptUpdate_Message1.Text = string.Empty;
-                label_OptUpdate_Message2.Text = string.Empty;
-                label_OptUpdate_Message3.Text = string.Empty;
-                try
-                {
-                    // download manifest
-                    doc = XDocument.Load(Settings.Default.RemoteManifest);
-
-                    // if newer, display update dialog
-                    Version newestVersion = new Version((string)doc.Root.Element("version"));
-                    if (newestVersion > appVersion)
-                    {
-                        label_OptUpdate_Message1.Text = "Update available";
-                        label_OptUpdate_Message2.Text = string.Format("{0}   from   {1}   is your current version", appVersion, appLastWriteTime);
-                        label_OptUpdate_Message3.Text = string.Format("{0}   from   {1}   is the latest version", newestVersion, ((DateTime)doc.Root.Element("date")).ToString("yyyy'/'MM'/'dd HH:mm:ss"));
-                        linkCheck4Update.Visible = true;
-                        button_OptUpdate_Update.Visible = true;
-                        check4UpdateInfo = (string)doc.Root.Element("info");
-                    }
-                    else
-                    {
-                        label_OptUpdate_Message1.Text = "Nothing to update ...";
-                        label_OptUpdate_Message2.Text = appVersion.ToString() + " from ";
-                        label_OptUpdate_Message2.Text = string.Format("{0} from {1} is the latest version", appVersion, appLastWriteTime);
-                        button_OptUpdate_Update.Visible = false;
-                        linkCheck4Update.Visible = false;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    label_OptUpdate_Message1.Text = "Unable to check Updates";
-                    label_OptUpdate_Message2.Text = ex.Message;
-                }
-            }
-        }
-
         private void Button_OptUpdate_Update_Click(object sender, EventArgs e)
         {
             Updater.LaunchUpdater(doc);
@@ -1472,25 +1412,29 @@ namespace SQLAgain
         private enum MoveDirection { Up = -1, Down = 1 };
         private void MoveItems_DBUser(MoveDirection direction)
         {
-            int rowIndex = dataGridView_DBUsers.SelectedCells[0].OwningRow.Index;
-
-            bool valid = dataGridView_DBUsers.RowCount > 0 &&
-                        ((direction == MoveDirection.Down && (rowIndex - 1 < dataGridView_DBUsers.RowCount - 1))
-                        || (direction == MoveDirection.Up && (rowIndex > 0)));
-            if (valid)
+            try
             {
-                DataRow row = tableDBUser.NewRow();
-                row.ItemArray = tableDBUser.Rows[rowIndex].ItemArray;
-                tableDBUser.Rows.RemoveAt(rowIndex);
-                tableDBUser.Rows.InsertAt(row, rowIndex + (int)direction);
-                Reload_listBoxUser();
-                try 
+                int rowIndex = dataGridView_DBUsers.SelectedCells[0].OwningRow.Index;
+
+                bool valid = dataGridView_DBUsers.RowCount > 0 &&
+                            ((direction == MoveDirection.Down && (rowIndex - 1 < dataGridView_DBUsers.RowCount - 1))
+                            || (direction == MoveDirection.Up && (rowIndex > 0)));
+                if (valid)
                 {
-                    dataGridView_DBUsers.Rows[rowIndex + (int)direction].Selected = true;
-                }
-                catch { }
+                    DataRow row = tableDBUser.NewRow();
+                    row.ItemArray = tableDBUser.Rows[rowIndex].ItemArray;
+                    tableDBUser.Rows.RemoveAt(rowIndex);
+                    tableDBUser.Rows.InsertAt(row, rowIndex + (int)direction);
+                    Reload_listBoxUser();
+                    try
+                    {
+                        dataGridView_DBUsers.Rows[rowIndex + (int)direction].Selected = true;
+                    }
+                    catch { }
+                }           
                 
             }
+            catch { }
         }
         private void ToolStripMenuOptDBUser_Up_Click(object sender, EventArgs e)
         {
@@ -1766,7 +1710,7 @@ namespace SQLAgain
             buildDBListPending = true;
         }
 
-        private void TabControloptions_Leave(object sender, EventArgs e)
+        private void tabControlSettings_Leave(object sender, EventArgs e)
         {
             if (buildDBListPending)
                 BuildDBList();
@@ -2061,7 +2005,7 @@ namespace SQLAgain
         private void TabControl1SelectedIndexChanged(Object sender, EventArgs e)
         {
             if (tabControl1.SelectedIndex == 1) ShowFavorites();
-            if (tabControl1.SelectedIndex == 3) ShowSessionHistory();
+            if (tabControl1.SelectedIndex == 2) ShowSessionHistory();
         }
         private void ShowSessionHistory()
         {
@@ -2475,39 +2419,74 @@ namespace SQLAgain
             }
         }
 
-        private void TabControlOptions_DrawItem(object sender, DrawItemEventArgs e)
-        {                                                                   // TabControl Tabs on the left side - DrawItemEvent is required to print the TabPage Item Text
-            Graphics g = e.Graphics;
-            Brush _textBrush = new SolidBrush(Color.Black);
-            if (e.Index == 0)
-            {
-                Rectangle _clientRectangle = tabControloptions.ClientRectangle;
-                _clientRectangle.Width = 100;                               // reduce width to paint only the left side of the tabControloptions, avoid drawing over the tab pages
-                _clientRectangle.Height = _clientRectangle.Height - 110;    // reduce height to avoid drawing over existing the tab pages, 6 Items in Options, 6*20=120 plus 2 for the border
-                _clientRectangle.Y = _clientRectangle.Y + 110;              // top position of the rectangle to paint, after 6 Items in Options, 6*18=108 plus 2 for the border
-                _clientRectangle.X = _clientRectangle.X + 2;                // left position of the rectangle to paint, avoid drawing over the border
-                Brush myBrush = new SolidBrush(colorBack1);                 // colorBack1 is set in CheckBox_OptEnv_Mode_CheckedChanged
-                g.FillRectangle(myBrush, _clientRectangle);                 // fill the rectangle with the background color
-            }
+        
+        private void ListViewSettings_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listViewSettings.FocusedItem == null) return;
+            tabControlSettings.SelectedIndex = listViewSettings.FocusedItem.Index;
+        }
 
-            Rectangle _tabBounds = tabControloptions.GetTabRect(e.Index);   // Get the real bounds for the tab rectangle.
-            Brush _clientItemBG = new SolidBrush(Color.FromArgb(243, 243, 243));
-
-            if (e.State == DrawItemState.Selected)                          // Selected TabPage Item, paint with different background color
+        private void tabControlSettings_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (buildDBListPending)
+                BuildDBList();
+            if (tabControlSettings.SelectedIndex == 1)                                                  // Database Groups
             {
-                _clientItemBG = new SolidBrush(Color.FromArgb(249, 249, 249));
-                g.FillRectangle(_clientItemBG, e.Bounds);
+                try
+                {
+                    if (dataGridView_DBGroups.ColumnCount > 0)
+                    {
+                        DataGridViewColumn col1 = dataGridView_DBGroups.Columns[0];
+                        DataGridViewColumn col2 = dataGridView_DBGroups.Columns[1];
+                        DataGridViewColumn col3 = dataGridView_DBGroups.Columns[2];
+                        col1.Width = 100;
+                        col2.Width = 420;
+                        col3.Width = 60;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
-            else
+            if (tabControlSettings.SelectedIndex == 5)                                                  // Check for Update
             {
-                g.FillRectangle(_clientItemBG, e.Bounds);
-            }
+                Version appVersion = Assembly.GetEntryAssembly().GetName().Version;
+                string appLastWriteTime = File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToString("yyyy'/'MM'/'dd HH:mm:ss");
+                label_OptUpdate_Message1.Text = string.Empty;
+                label_OptUpdate_Message2.Text = string.Empty;
+                label_OptUpdate_Message3.Text = string.Empty;
+                try
+                {
+                    // download manifest
+                    doc = XDocument.Load(Settings.Default.RemoteManifest);
 
-            TabPage _tabPage = tabControloptions.TabPages[e.Index];         // Get the item from the collection.
-            StringFormat _stringFlags = new StringFormat();                 // Draw string. Center the text.
-            _stringFlags.Alignment = StringAlignment.Center;
-            _stringFlags.LineAlignment = StringAlignment.Center;
-            g.DrawString(_tabPage.Text, e.Font, _textBrush, _tabBounds, new StringFormat(_stringFlags));
+                    // if newer, display update dialog
+                    Version newestVersion = new Version((string)doc.Root.Element("version"));
+                    if (newestVersion > appVersion)
+                    {
+                        label_OptUpdate_Message1.Text = "Update available";
+                        label_OptUpdate_Message2.Text = string.Format("{0}   from   {1}   is your current version", appVersion, appLastWriteTime);
+                        label_OptUpdate_Message3.Text = string.Format("{0}   from   {1}   is the latest version", newestVersion, ((DateTime)doc.Root.Element("date")).ToString("yyyy'/'MM'/'dd HH:mm:ss"));
+                        linkCheck4Update.Visible = true;
+                        button_OptUpdate_Update.Visible = true;
+                        check4UpdateInfo = (string)doc.Root.Element("info");
+                    }
+                    else
+                    {
+                        label_OptUpdate_Message1.Text = "Nothing to update ...";
+                        label_OptUpdate_Message2.Text = appVersion.ToString() + " from ";
+                        label_OptUpdate_Message2.Text = string.Format("{0} from {1} is the latest version", appVersion, appLastWriteTime);
+                        button_OptUpdate_Update.Visible = false;
+                        linkCheck4Update.Visible = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    label_OptUpdate_Message1.Text = "Unable to check Updates";
+                    label_OptUpdate_Message2.Text = ex.Message;
+                }
+            }
         }
     }
 }
