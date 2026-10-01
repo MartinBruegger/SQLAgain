@@ -14,4 +14,3 @@ gci $zipFile
 
 "`n`nCopy this File into Visual Studio / Solution Explorer / Update Directory"
 explorer $(Split-Path -Path $zipFile)
-Read-Host "`n`nA new copy of $zipFile was created. Good bye."

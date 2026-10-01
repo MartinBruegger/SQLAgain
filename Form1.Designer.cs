@@ -1030,12 +1030,12 @@
             listViewItem4,
             listViewItem5,
             listViewItem6});
+            this.listViewSettings.LargeImageList = this.imageListSettings;
             this.listViewSettings.Location = new System.Drawing.Point(10, 10);
             this.listViewSettings.MultiSelect = false;
             this.listViewSettings.Name = "listViewSettings";
             this.listViewSettings.Scrollable = false;
             this.listViewSettings.Size = new System.Drawing.Size(150, 212);
-            this.listViewSettings.SmallImageList = this.imageListSettings;
             this.listViewSettings.TabIndex = 2;
             this.listViewSettings.UseCompatibleStateImageBehavior = false;
             this.listViewSettings.View = System.Windows.Forms.View.Tile;
