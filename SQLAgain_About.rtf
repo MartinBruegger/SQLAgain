@@ -19,14 +19,17 @@ Let SQLAgain do the repetitive connect to the next database and run the same fil
 \b\lang2055 Prerequisites\par
 
 \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\fi-360\li720\b0\lang1033 Oracles SQL*Plus \endash  from a Oracle DB, Oracle Client or Oracle Instant Client \par
-{\pntext\f4\'B7\tab}tnsnames.ora \endash  the well-known configuration file used by Oracle databases.\par
+{\pntext\f4\'B7\tab}tnsnames.ora \endash  the well-known configuration file used by Oracle databases.\f1\par
 
-\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\highlight2\b\par
-\highlight0\b0\f1\par
-\b\f0 Schedule SQL - delay execution\b0\par
+\pard\nowidctlpar\f0\par
+\f1\par
+
+\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\b\f0 Schedule SQL - delay execution\b0\par
 In addition to a normal execution in \i foreground\i0 , you may schedule your prepared SQL job later - when the time is right for the long running delete, alter or update statements or when the maintenance window is open for the change of the data structure.\line SQLAgain lets you create a Windows Scheduler Task, sends an E-mail confirmation including a Calendar Event; executes the SQL statements and finally sends its output by E-mail to your inbox.\par
-\par
-\b Options / Environment\par
+
+\pard\nowidctlpar\par
+
+\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\b Settings / Environment\par
 
 \pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\sl240\slmult1{\pict{\*\picprop}\wmetafile8\picw22331\pich7488\picwgoal12660\pichgoal4245 
 010009000003be7705000000a87705000000050000000b0200000000050000000c02401d3b57a8
@@ -18417,7 +18420,7 @@ ecececececececececececececececececececececececececd2d2d26363632c2c2c2c2c2c2c2c
 {\pntext\f4\'B7\tab}Security / Hide Passwords\line By default, passwords in your ConfigFile are encrypted. \line You could uncheck it, close SQLAgain, edit  and update the File, restart SQLAgain and check the Option again. \line\par
 {\pntext\f4\'B7\tab}Dark Mode\line This is the only User-Setting; saved in your AppData\\Local directory - along with Form-Size and Form-Location\line\line\par
 
-\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\b Options / Database Groups\par
+\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\b Settings / Database Groups\par
 
 \pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\sl240\slmult1{\pict{\*\picprop}\wmetafile8\picw22331\pich7197\picwgoal12660\pichgoal4080 
 010009000003584105000000424105000000050000000b0200000000050000000c021d1c3b5742
@@ -36093,7 +36096,7 @@ a0a0a0a07d8fa02c426a2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c
 
 \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\fi-360\li720 Test your expressions here: {\cf0{\field{\*\fldinst{HYPERLINK http://regexstorm.net/tester }}{\fldrslt{http://regexstorm.net/tester\ul0\cf0}}}}\f0\fs18   \line - select "Ignore Whitespace" and "Multiline"\par
 
-\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\line\line\b Options / Database Users\par
+\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\line\line\b Settings / Database Users\par
 
 \pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\sl240\slmult1{\pict{\*\picprop}\wmetafile8\picw22225\pich7250\picwgoal12600\pichgoal4110 
 010009000003d04405000000ba4405000000050000000b0200000000050000000c02521cd156ba
@@ -53810,11 +53813,11 @@ a02c426a2c2c2c2c2c2c2c2c2c2c2c2c562c2c7da07d2c2c562c2c2c2c2c2c562c2c7da07d2c2c
 
 \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\fi-360\li720\b0 Here you define the DB User with Password and SYSDBA Flag. \line With Context-Menu Option Move Up/Move Down you control the sequence of its appereance in the DB User List.\line The First DB User is automatically selected at Startup.\par
 
-\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\b\line Options / Task Scheduler\par
+\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\b\line Settings / Task Scheduler\par
 
 \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\fi-360\li720\b0 Define your Task-Owner along with its Password here\b\line\par
 
-\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar Options / Email\par
+\pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar Settings / Email\par
 
 \pard{\*\pn\pnlvlcont\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\sl240\slmult1{\pict{\*\picprop}\wmetafile8\picw21775\pich6085\picwgoal12345\pichgoal3450 
 010009000003b056040000009a5604000000050000000b0200000000050000000c02c5170f559a
@@ -113260,10 +113263,9 @@ Want to update a favorite ? \b Load\b0 , change your selections, \b Delete \b0 a
 \par
 \b Session History\b0\par
 Are trace records from SQLAgain saved in C:\\ProgramData\\SQLAgain\\Sessions.log. \par
-SQLAgain reads the file at startup and deletes records older than 6 month automatically. \par
+SQLAgain reads the file at startup and deletes records older than 6 month automatically. \f3\fs22\lang7\par
 
-\pard\nowidctlpar\sl240\slmult1\f3\fs22\lang7\par
-\par
+\pard\nowidctlpar\sl240\slmult1\par
 
 \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\fi-360\li720\sl240\slmult1\f0\fs18\lang1033 Double-Click somewhere below a \b\i Foreground \b0\i0 or\b\i  Batch Session started\b0\i0  label will read the Session-Parameters and copy it into the Form1 Fields (including selected DBs and appropriate DB User). \endash  You will see a message in the StatusBar\par
 
@@ -135324,7 +135326,7 @@ You find a public version at Github: {\cf0{\field{\*\fldinst{HYPERLINK https://g
 \par
 \b Whats new in latest Builds ?\b0\par
 
-\pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\fi-360\li720 2.0.0.5 Checks the SQLFile Contents. Whe had periodic Problems with CREATE (TRIGGER|FUNCTION|PROCEDURE|PACKAGE) Statements without a trailing Slash (/) on a separate Line after the PL/SQL Block. SQLAgain was hanging in these Situations.\line SQL*Plus requires that Statement to Run the PL/SQL Block which was placed in a Buffer; SQL Developer does not need it. \line We now count above CREATE Statements and the Lines with only a Slash and compares the Numbers. You get a Warning-Message when the Number of Slash-Lines is smaller.\par
+\pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\nowidctlpar\fi-360\li720 2.0.0.5 Checks the SQLFile Contents. \line Whe had periodic Problems with CREATE (TRIGGER|FUNCTION|PROCEDURE|PACKAGE) Statements without a trailing Slash (/) on a separate Line after the PL/SQL Block. \line SQLAgain was hanging in these Situations.\line SQL*Plus requires that terminating Slash (/) Statement to run the PL/SQL Block, which was placed in a Buffer; \line SQL Developer does not need it. \line We now count above mentioned  CREATE Statements and Lines with only a Slash and compares the Numbers. \line You receive a Warning-Message when the Numbers do not match..\par
 {\pntext\f4\'B7\tab}2.0.1.1 Redesign of the GUI. {\cf0{\field{\*\fldinst{HYPERLINK https://github.com/jstedfast/MailKit }}{\fldrslt{https://github.com/jstedfast/MailKit\ul0\cf0}}}}\f0\fs18  replaces {\cf0{\field{\*\fldinst{HYPERLINK https://github.com/cutelyst/simple-mail }}{\fldrslt{https://github.com/cutelyst/simple-mail\ul0\cf0}}}}\f0\fs18\line\par
 
 \pard\nowidctlpar\par
@@ -135332,7 +135334,7 @@ Please contact me if you have any questions.  \par
 \par
 martin.bruegger@gmail.com\par
 \par
-September 2026\par
+October 2026\par
 \f1\par
 \par
 }

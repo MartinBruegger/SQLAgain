@@ -36,12 +36,12 @@
             System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Task Scheduler", 3);
             System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Mail", 4);
             System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Check for Update", 5);
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelDB = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxLog = new System.Windows.Forms.CheckBox();
@@ -105,9 +105,9 @@
             this.tabPageSettings = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.listViewSettings = new System.Windows.Forms.ListView();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.imageListSettings = new System.Windows.Forms.ImageList(this.components);
             this.tabControlSettings = new System.Windows.Forms.TabControl();
-            this.tabPageOptionsEnvironment = new System.Windows.Forms.TabPage();
+            this.tabPageSettingsEnvironment = new System.Windows.Forms.TabPage();
             this.groupBox_OptEnv3 = new System.Windows.Forms.GroupBox();
             this.checkBox_OptEnv_Mode = new System.Windows.Forms.CheckBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -126,7 +126,7 @@
             this.label33 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.tabPageOptionsDBs = new System.Windows.Forms.TabPage();
+            this.tabPageSettingsDBs = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dataGridView_DBGroups = new System.Windows.Forms.DataGridView();
             this.contextMenuOptDBGroups = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -140,7 +140,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.textBox_OptDBGroup_ExcludeDBs = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.tabPageOptionsDBUser = new System.Windows.Forms.TabPage();
+            this.tabPageSettingsDBUser = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dataGridView_DBUsers = new System.Windows.Forms.DataGridView();
             this.contextMenuOptDBUser = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -152,12 +152,12 @@
             this.textBox_OptDBUser_NewSchema = new System.Windows.Forms.TextBox();
             this.textBox_OptDBUser_NewUser = new System.Windows.Forms.TextBox();
             this.buttonOptDBUser_Add = new System.Windows.Forms.Button();
-            this.tabPageOptionsTaskScheduler = new System.Windows.Forms.TabPage();
+            this.tabPageSettingsTaskScheduler = new System.Windows.Forms.TabPage();
             this.groupBox_OptJobScheduler = new System.Windows.Forms.GroupBox();
             this.textBox_OptTask_Password = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.tabPageOptionsMail = new System.Windows.Forms.TabPage();
+            this.tabPageSettingsMail = new System.Windows.Forms.TabPage();
             this.groupBox_OptMail = new System.Windows.Forms.GroupBox();
             this.maskedTextBox_OptMail_Port = new System.Windows.Forms.MaskedTextBox();
             this.label21 = new System.Windows.Forms.Label();
@@ -173,7 +173,7 @@
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.tabPageOptionsCheckForUpdates = new System.Windows.Forms.TabPage();
+            this.tabPageSettingsCheckForUpdates = new System.Windows.Forms.TabPage();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.linkCheck4Update = new System.Windows.Forms.LinkLabel();
             this.label_OptUpdate_Message3 = new System.Windows.Forms.Label();
@@ -218,26 +218,26 @@
             this.tabPageSettings.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tabControlSettings.SuspendLayout();
-            this.tabPageOptionsEnvironment.SuspendLayout();
+            this.tabPageSettingsEnvironment.SuspendLayout();
             this.groupBox_OptEnv3.SuspendLayout();
             this.groupBox_OptEnv2.SuspendLayout();
             this.groupBox_OptEnv1.SuspendLayout();
-            this.tabPageOptionsDBs.SuspendLayout();
+            this.tabPageSettingsDBs.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_DBGroups)).BeginInit();
             this.contextMenuOptDBGroups.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.tabPageOptionsDBUser.SuspendLayout();
+            this.tabPageSettingsDBUser.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_DBUsers)).BeginInit();
             this.contextMenuOptDBUser.SuspendLayout();
             this.groupBox_OptDBUser.SuspendLayout();
-            this.tabPageOptionsTaskScheduler.SuspendLayout();
+            this.tabPageSettingsTaskScheduler.SuspendLayout();
             this.groupBox_OptJobScheduler.SuspendLayout();
-            this.tabPageOptionsMail.SuspendLayout();
+            this.tabPageSettingsMail.SuspendLayout();
             this.groupBox_OptMail.SuspendLayout();
-            this.tabPageOptionsCheckForUpdates.SuspendLayout();
+            this.tabPageSettingsCheckForUpdates.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.tabPageHelp.SuspendLayout();
             this.contextMenuStatusMessages.SuspendLayout();
@@ -1030,40 +1030,39 @@
             listViewItem4,
             listViewItem5,
             listViewItem6});
-            this.listViewSettings.LargeImageList = this.imageList1;
             this.listViewSettings.Location = new System.Drawing.Point(10, 10);
             this.listViewSettings.MultiSelect = false;
             this.listViewSettings.Name = "listViewSettings";
             this.listViewSettings.Scrollable = false;
             this.listViewSettings.Size = new System.Drawing.Size(150, 212);
-            this.listViewSettings.SmallImageList = this.imageList1;
+            this.listViewSettings.SmallImageList = this.imageListSettings;
             this.listViewSettings.TabIndex = 2;
             this.listViewSettings.UseCompatibleStateImageBehavior = false;
             this.listViewSettings.View = System.Windows.Forms.View.Tile;
             this.listViewSettings.SelectedIndexChanged += new System.EventHandler(this.ListViewSettings_SelectedIndexChanged);
             // 
-            // imageList1
+            // imageListSettings
             // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "home_and_garden_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            this.imageList1.Images.SetKeyName(1, "database_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            this.imageList1.Images.SetKeyName(2, "user_attributes_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            this.imageList1.Images.SetKeyName(3, "schedule_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            this.imageList1.Images.SetKeyName(4, "mail_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            this.imageList1.Images.SetKeyName(5, "update_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListSettings.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListSettings.ImageStream")));
+            this.imageListSettings.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListSettings.Images.SetKeyName(0, "home_and_garden_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListSettings.Images.SetKeyName(1, "database_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListSettings.Images.SetKeyName(2, "user_attributes_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListSettings.Images.SetKeyName(3, "schedule_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListSettings.Images.SetKeyName(4, "mail_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListSettings.Images.SetKeyName(5, "update_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
             // 
             // tabControlSettings
             // 
             this.tabControlSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControlSettings.Controls.Add(this.tabPageOptionsEnvironment);
-            this.tabControlSettings.Controls.Add(this.tabPageOptionsDBs);
-            this.tabControlSettings.Controls.Add(this.tabPageOptionsDBUser);
-            this.tabControlSettings.Controls.Add(this.tabPageOptionsTaskScheduler);
-            this.tabControlSettings.Controls.Add(this.tabPageOptionsMail);
-            this.tabControlSettings.Controls.Add(this.tabPageOptionsCheckForUpdates);
+            this.tabControlSettings.Controls.Add(this.tabPageSettingsEnvironment);
+            this.tabControlSettings.Controls.Add(this.tabPageSettingsDBs);
+            this.tabControlSettings.Controls.Add(this.tabPageSettingsDBUser);
+            this.tabControlSettings.Controls.Add(this.tabPageSettingsTaskScheduler);
+            this.tabControlSettings.Controls.Add(this.tabPageSettingsMail);
+            this.tabControlSettings.Controls.Add(this.tabPageSettingsCheckForUpdates);
             this.tabControlSettings.ItemSize = new System.Drawing.Size(100, 18);
             this.tabControlSettings.Location = new System.Drawing.Point(130, 0);
             this.tabControlSettings.Margin = new System.Windows.Forms.Padding(0);
@@ -1076,21 +1075,21 @@
             this.tabControlSettings.SelectedIndexChanged += new System.EventHandler(this.tabControlSettings_SelectedIndexChanged);
             this.tabControlSettings.Leave += new System.EventHandler(this.tabControlSettings_Leave);
             // 
-            // tabPageOptionsEnvironment
+            // tabPageSettingsEnvironment
             // 
-            this.tabPageOptionsEnvironment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
-            this.tabPageOptionsEnvironment.Controls.Add(this.groupBox_OptEnv3);
-            this.tabPageOptionsEnvironment.Controls.Add(this.label10);
-            this.tabPageOptionsEnvironment.Controls.Add(this.groupBox_OptEnv2);
-            this.tabPageOptionsEnvironment.Controls.Add(this.button_OptEnv_SqlPlusPath);
-            this.tabPageOptionsEnvironment.Controls.Add(this.textBox_OptEnv_SqlPlusPath);
-            this.tabPageOptionsEnvironment.Controls.Add(this.groupBox_OptEnv1);
-            this.tabPageOptionsEnvironment.Location = new System.Drawing.Point(4, 22);
-            this.tabPageOptionsEnvironment.Name = "tabPageOptionsEnvironment";
-            this.tabPageOptionsEnvironment.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOptionsEnvironment.Size = new System.Drawing.Size(812, 308);
-            this.tabPageOptionsEnvironment.TabIndex = 0;
-            this.tabPageOptionsEnvironment.Text = "Environment";
+            this.tabPageSettingsEnvironment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
+            this.tabPageSettingsEnvironment.Controls.Add(this.groupBox_OptEnv3);
+            this.tabPageSettingsEnvironment.Controls.Add(this.label10);
+            this.tabPageSettingsEnvironment.Controls.Add(this.groupBox_OptEnv2);
+            this.tabPageSettingsEnvironment.Controls.Add(this.button_OptEnv_SqlPlusPath);
+            this.tabPageSettingsEnvironment.Controls.Add(this.textBox_OptEnv_SqlPlusPath);
+            this.tabPageSettingsEnvironment.Controls.Add(this.groupBox_OptEnv1);
+            this.tabPageSettingsEnvironment.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettingsEnvironment.Name = "tabPageSettingsEnvironment";
+            this.tabPageSettingsEnvironment.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSettingsEnvironment.Size = new System.Drawing.Size(812, 308);
+            this.tabPageSettingsEnvironment.TabIndex = 0;
+            this.tabPageSettingsEnvironment.Text = "Environment";
             // 
             // groupBox_OptEnv3
             // 
@@ -1318,17 +1317,17 @@
             this.label12.TabIndex = 11;
             this.label12.Text = "- SQLPATH";
             // 
-            // tabPageOptionsDBs
+            // tabPageSettingsDBs
             // 
-            this.tabPageOptionsDBs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
-            this.tabPageOptionsDBs.Controls.Add(this.groupBox1);
-            this.tabPageOptionsDBs.Controls.Add(this.groupBox3);
-            this.tabPageOptionsDBs.Location = new System.Drawing.Point(4, 22);
-            this.tabPageOptionsDBs.Name = "tabPageOptionsDBs";
-            this.tabPageOptionsDBs.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOptionsDBs.Size = new System.Drawing.Size(812, 308);
-            this.tabPageOptionsDBs.TabIndex = 1;
-            this.tabPageOptionsDBs.Text = "DB Groups";
+            this.tabPageSettingsDBs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
+            this.tabPageSettingsDBs.Controls.Add(this.groupBox1);
+            this.tabPageSettingsDBs.Controls.Add(this.groupBox3);
+            this.tabPageSettingsDBs.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettingsDBs.Name = "tabPageSettingsDBs";
+            this.tabPageSettingsDBs.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSettingsDBs.Size = new System.Drawing.Size(812, 308);
+            this.tabPageSettingsDBs.TabIndex = 1;
+            this.tabPageSettingsDBs.Text = "DB Groups";
             // 
             // groupBox1
             // 
@@ -1352,37 +1351,37 @@
             this.dataGridView_DBGroups.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_DBGroups.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this.dataGridView_DBGroups.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBGroups.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBGroups.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView_DBGroups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_DBGroups.ContextMenuStrip = this.contextMenuOptDBGroups;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView_DBGroups.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView_DBGroups.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView_DBGroups.EnableHeadersVisualStyles = false;
             this.dataGridView_DBGroups.Location = new System.Drawing.Point(8, 18);
             this.dataGridView_DBGroups.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_DBGroups.MultiSelect = false;
             this.dataGridView_DBGroups.Name = "dataGridView_DBGroups";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBGroups.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBGroups.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView_DBGroups.RowHeadersVisible = false;
             this.dataGridView_DBGroups.RowHeadersWidth = 51;
             this.dataGridView_DBGroups.RowTemplate.Height = 24;
@@ -1515,15 +1514,15 @@
             this.label13.TabIndex = 10;
             this.label13.Text = "Regular expression";
             // 
-            // tabPageOptionsDBUser
+            // tabPageSettingsDBUser
             // 
-            this.tabPageOptionsDBUser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
-            this.tabPageOptionsDBUser.Controls.Add(this.groupBox2);
-            this.tabPageOptionsDBUser.Location = new System.Drawing.Point(4, 22);
-            this.tabPageOptionsDBUser.Name = "tabPageOptionsDBUser";
-            this.tabPageOptionsDBUser.Size = new System.Drawing.Size(812, 308);
-            this.tabPageOptionsDBUser.TabIndex = 2;
-            this.tabPageOptionsDBUser.Text = "DB User";
+            this.tabPageSettingsDBUser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
+            this.tabPageSettingsDBUser.Controls.Add(this.groupBox2);
+            this.tabPageSettingsDBUser.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettingsDBUser.Name = "tabPageSettingsDBUser";
+            this.tabPageSettingsDBUser.Size = new System.Drawing.Size(812, 308);
+            this.tabPageSettingsDBUser.TabIndex = 2;
+            this.tabPageSettingsDBUser.Text = "DB User";
             // 
             // groupBox2
             // 
@@ -1547,36 +1546,36 @@
             this.dataGridView_DBUsers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_DBUsers.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this.dataGridView_DBUsers.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBUsers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBUsers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridView_DBUsers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_DBUsers.ContextMenuStrip = this.contextMenuOptDBUser;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView_DBUsers.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView_DBUsers.DefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridView_DBUsers.EnableHeadersVisualStyles = false;
             this.dataGridView_DBUsers.Location = new System.Drawing.Point(5, 18);
             this.dataGridView_DBUsers.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_DBUsers.Name = "dataGridView_DBUsers";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBUsers.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBUsers.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridView_DBUsers.RowHeadersVisible = false;
             this.dataGridView_DBUsers.RowHeadersWidth = 51;
             this.dataGridView_DBUsers.RowTemplate.Height = 24;
@@ -1684,15 +1683,15 @@
             this.buttonOptDBUser_Add.UseVisualStyleBackColor = false;
             this.buttonOptDBUser_Add.Click += new System.EventHandler(this.ButtonOptDBUser_Add_Click);
             // 
-            // tabPageOptionsTaskScheduler
+            // tabPageSettingsTaskScheduler
             // 
-            this.tabPageOptionsTaskScheduler.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
-            this.tabPageOptionsTaskScheduler.Controls.Add(this.groupBox_OptJobScheduler);
-            this.tabPageOptionsTaskScheduler.Location = new System.Drawing.Point(4, 22);
-            this.tabPageOptionsTaskScheduler.Name = "tabPageOptionsTaskScheduler";
-            this.tabPageOptionsTaskScheduler.Size = new System.Drawing.Size(812, 308);
-            this.tabPageOptionsTaskScheduler.TabIndex = 3;
-            this.tabPageOptionsTaskScheduler.Text = "Task Scheduler";
+            this.tabPageSettingsTaskScheduler.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
+            this.tabPageSettingsTaskScheduler.Controls.Add(this.groupBox_OptJobScheduler);
+            this.tabPageSettingsTaskScheduler.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettingsTaskScheduler.Name = "tabPageSettingsTaskScheduler";
+            this.tabPageSettingsTaskScheduler.Size = new System.Drawing.Size(812, 308);
+            this.tabPageSettingsTaskScheduler.TabIndex = 3;
+            this.tabPageSettingsTaskScheduler.Text = "Task Scheduler";
             // 
             // groupBox_OptJobScheduler
             // 
@@ -1741,16 +1740,16 @@
             this.label5.TabIndex = 5;
             this.label5.Text = "- O/S Username";
             // 
-            // tabPageOptionsMail
+            // tabPageSettingsMail
             // 
-            this.tabPageOptionsMail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
-            this.tabPageOptionsMail.Controls.Add(this.button_OptMail_Test);
-            this.tabPageOptionsMail.Controls.Add(this.groupBox_OptMail);
-            this.tabPageOptionsMail.Location = new System.Drawing.Point(4, 22);
-            this.tabPageOptionsMail.Name = "tabPageOptionsMail";
-            this.tabPageOptionsMail.Size = new System.Drawing.Size(812, 308);
-            this.tabPageOptionsMail.TabIndex = 4;
-            this.tabPageOptionsMail.Text = "Mail";
+            this.tabPageSettingsMail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
+            this.tabPageSettingsMail.Controls.Add(this.button_OptMail_Test);
+            this.tabPageSettingsMail.Controls.Add(this.groupBox_OptMail);
+            this.tabPageSettingsMail.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettingsMail.Name = "tabPageSettingsMail";
+            this.tabPageSettingsMail.Size = new System.Drawing.Size(812, 308);
+            this.tabPageSettingsMail.TabIndex = 4;
+            this.tabPageSettingsMail.Text = "Mail";
             // 
             // groupBox_OptMail
             // 
@@ -1919,16 +1918,16 @@
             this.label15.TabIndex = 10;
             this.label15.Text = "- SMTP Server";
             // 
-            // tabPageOptionsCheckForUpdates
+            // tabPageSettingsCheckForUpdates
             // 
-            this.tabPageOptionsCheckForUpdates.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
-            this.tabPageOptionsCheckForUpdates.Controls.Add(this.button_OptUpdate_Update);
-            this.tabPageOptionsCheckForUpdates.Controls.Add(this.groupBox10);
-            this.tabPageOptionsCheckForUpdates.Location = new System.Drawing.Point(4, 22);
-            this.tabPageOptionsCheckForUpdates.Name = "tabPageOptionsCheckForUpdates";
-            this.tabPageOptionsCheckForUpdates.Size = new System.Drawing.Size(812, 308);
-            this.tabPageOptionsCheckForUpdates.TabIndex = 5;
-            this.tabPageOptionsCheckForUpdates.Text = "Check for Updates";
+            this.tabPageSettingsCheckForUpdates.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
+            this.tabPageSettingsCheckForUpdates.Controls.Add(this.button_OptUpdate_Update);
+            this.tabPageSettingsCheckForUpdates.Controls.Add(this.groupBox10);
+            this.tabPageSettingsCheckForUpdates.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettingsCheckForUpdates.Name = "tabPageSettingsCheckForUpdates";
+            this.tabPageSettingsCheckForUpdates.Size = new System.Drawing.Size(812, 308);
+            this.tabPageSettingsCheckForUpdates.TabIndex = 5;
+            this.tabPageSettingsCheckForUpdates.Text = "Check for Updates";
             // 
             // groupBox10
             // 
@@ -2344,15 +2343,15 @@
             this.tabPageSettings.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.tabControlSettings.ResumeLayout(false);
-            this.tabPageOptionsEnvironment.ResumeLayout(false);
-            this.tabPageOptionsEnvironment.PerformLayout();
+            this.tabPageSettingsEnvironment.ResumeLayout(false);
+            this.tabPageSettingsEnvironment.PerformLayout();
             this.groupBox_OptEnv3.ResumeLayout(false);
             this.groupBox_OptEnv3.PerformLayout();
             this.groupBox_OptEnv2.ResumeLayout(false);
             this.groupBox_OptEnv2.PerformLayout();
             this.groupBox_OptEnv1.ResumeLayout(false);
             this.groupBox_OptEnv1.PerformLayout();
-            this.tabPageOptionsDBs.ResumeLayout(false);
+            this.tabPageSettingsDBs.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_DBGroups)).EndInit();
             this.contextMenuOptDBGroups.ResumeLayout(false);
@@ -2360,20 +2359,20 @@
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.tabPageOptionsDBUser.ResumeLayout(false);
+            this.tabPageSettingsDBUser.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_DBUsers)).EndInit();
             this.contextMenuOptDBUser.ResumeLayout(false);
             this.groupBox_OptDBUser.ResumeLayout(false);
             this.groupBox_OptDBUser.PerformLayout();
-            this.tabPageOptionsTaskScheduler.ResumeLayout(false);
+            this.tabPageSettingsTaskScheduler.ResumeLayout(false);
             this.groupBox_OptJobScheduler.ResumeLayout(false);
             this.groupBox_OptJobScheduler.PerformLayout();
-            this.tabPageOptionsMail.ResumeLayout(false);
-            this.tabPageOptionsMail.PerformLayout();
+            this.tabPageSettingsMail.ResumeLayout(false);
+            this.tabPageSettingsMail.PerformLayout();
             this.groupBox_OptMail.ResumeLayout(false);
             this.groupBox_OptMail.PerformLayout();
-            this.tabPageOptionsCheckForUpdates.ResumeLayout(false);
+            this.tabPageSettingsCheckForUpdates.ResumeLayout(false);
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
             this.tabPageHelp.ResumeLayout(false);
@@ -2461,11 +2460,11 @@
         private System.Windows.Forms.Label labelDBsSelected;
         private System.Windows.Forms.TabPage tabPageSettings;
         private System.Windows.Forms.TabControl tabControlSettings;
-        private System.Windows.Forms.TabPage tabPageOptionsEnvironment;
-        private System.Windows.Forms.TabPage tabPageOptionsDBs;
-        private System.Windows.Forms.TabPage tabPageOptionsDBUser;
-        private System.Windows.Forms.TabPage tabPageOptionsTaskScheduler;
-        private System.Windows.Forms.TabPage tabPageOptionsMail;
+        private System.Windows.Forms.TabPage tabPageSettingsEnvironment;
+        private System.Windows.Forms.TabPage tabPageSettingsDBs;
+        private System.Windows.Forms.TabPage tabPageSettingsDBUser;
+        private System.Windows.Forms.TabPage tabPageSettingsTaskScheduler;
+        private System.Windows.Forms.TabPage tabPageSettingsMail;
         private System.Windows.Forms.Panel panelOptions;
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.Label label11;
@@ -2533,7 +2532,7 @@
         private System.Windows.Forms.TextBox textBox_OptMail_MailReceiver;
         private System.Windows.Forms.TextBox textBox_OptMail_MailSender;
         private System.Windows.Forms.CheckBox checkBox_OptMail_EnableSSL;
-        private System.Windows.Forms.TabPage tabPageOptionsCheckForUpdates;
+        private System.Windows.Forms.TabPage tabPageSettingsCheckForUpdates;
         private System.Windows.Forms.GroupBox groupBox10;
         private System.Windows.Forms.Button button_OptUpdate_Update;
         private System.Windows.Forms.Label label_OptUpdate_Message1;
@@ -2560,7 +2559,7 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ImageList imageListSettings;
     }
 }
 

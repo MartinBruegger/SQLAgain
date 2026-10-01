@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest>
-  <version>2.0.1.6</version>
-  <date>2026/09/30 15:05:00</date>
+  <version>2.0.1.7</version>
+  <date>2026/10/01 09:20:00</date>
   <info>https://raw.githubusercontent.com/MartinBruegger/SQLAgain/refs/heads/master/Update/SQLAgain_changes.txt</info>
   <download>https://raw.githubusercontent.com/MartinBruegger/SQLAgain/refs/heads/master/Update/SQLAgain.zip</download>
 </manifest>
