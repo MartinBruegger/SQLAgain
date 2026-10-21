@@ -30,12 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Environment", 0);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("DB Groups", 1);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("DB User", 2);
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Task Scheduler", 3);
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Mail", 4);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Check for Update", 5);
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Environment", 0);
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("DB Groups", 1);
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("DB User", 2);
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Task Scheduler", 3);
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Mail", 4);
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Check for Update", 5);
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -205,6 +205,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.imageListTabControl1 = new System.Windows.Forms.ImageList(this.components);
             this.tabPageMessages.SuspendLayout();
             this.tabPageHistory.SuspendLayout();
             this.contextMenuSessionHistory.SuspendLayout();
@@ -488,6 +489,7 @@
             this.tabPageMessages.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
             this.tabPageMessages.Controls.Add(this.listViewStatusMessages);
             this.tabPageMessages.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.tabPageMessages.ImageIndex = 0;
             this.tabPageMessages.Location = new System.Drawing.Point(4, 22);
             this.tabPageMessages.Margin = new System.Windows.Forms.Padding(2);
             this.tabPageMessages.Name = "tabPageMessages";
@@ -547,6 +549,7 @@
             this.tabPageHistory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
             this.tabPageHistory.Controls.Add(this.textBoxSessionHistory);
             this.tabPageHistory.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.tabPageHistory.ImageIndex = 2;
             this.tabPageHistory.Location = new System.Drawing.Point(4, 22);
             this.tabPageHistory.Margin = new System.Windows.Forms.Padding(2);
             this.tabPageHistory.Name = "tabPageHistory";
@@ -829,6 +832,7 @@
             this.tabControl1.Controls.Add(this.tabPageHistory);
             this.tabControl1.Controls.Add(this.tabPageSettings);
             this.tabControl1.Controls.Add(this.tabPageHelp);
+            this.tabControl1.ImageList = this.imageListTabControl1;
             this.tabControl1.ItemSize = new System.Drawing.Size(100, 18);
             this.tabControl1.Location = new System.Drawing.Point(14, 480);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
@@ -845,6 +849,7 @@
             this.tabPageFavorites.Controls.Add(this.groupBox11);
             this.tabPageFavorites.Controls.Add(this.listViewFavorites);
             this.tabPageFavorites.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.tabPageFavorites.ImageIndex = 1;
             this.tabPageFavorites.Location = new System.Drawing.Point(4, 22);
             this.tabPageFavorites.Margin = new System.Windows.Forms.Padding(2);
             this.tabPageFavorites.Name = "tabPageFavorites";
@@ -999,6 +1004,7 @@
             this.tabPageSettings.Controls.Add(this.panel2);
             this.tabPageSettings.Controls.Add(this.tabControlSettings);
             this.tabPageSettings.Controls.Add(this.panelOptions);
+            this.tabPageSettings.ImageIndex = 3;
             this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettings.Name = "tabPageSettings";
             this.tabPageSettings.Size = new System.Drawing.Size(918, 299);
@@ -1024,12 +1030,12 @@
             this.listViewSettings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.listViewSettings.HideSelection = false;
             this.listViewSettings.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5,
-            listViewItem6});
+            listViewItem7,
+            listViewItem8,
+            listViewItem9,
+            listViewItem10,
+            listViewItem11,
+            listViewItem12});
             this.listViewSettings.LargeImageList = this.imageListSettings;
             this.listViewSettings.Location = new System.Drawing.Point(10, 10);
             this.listViewSettings.MultiSelect = false;
@@ -2003,6 +2009,7 @@
             this.tabPageHelp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
             this.tabPageHelp.Controls.Add(this.textBoxAbout);
             this.tabPageHelp.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.tabPageHelp.ImageIndex = 4;
             this.tabPageHelp.Location = new System.Drawing.Point(4, 22);
             this.tabPageHelp.Margin = new System.Windows.Forms.Padding(2);
             this.tabPageHelp.Name = "tabPageHelp";
@@ -2310,6 +2317,16 @@
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
             // 
+            // imageListTabControl1
+            // 
+            this.imageListTabControl1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListTabControl1.ImageStream")));
+            this.imageListTabControl1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListTabControl1.Images.SetKeyName(0, "notifications_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListTabControl1.Images.SetKeyName(1, "favorite_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListTabControl1.Images.SetKeyName(2, "history_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListTabControl1.Images.SetKeyName(3, "settings_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListTabControl1.Images.SetKeyName(4, "help_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2560,6 +2577,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ImageList imageListSettings;
+        private System.Windows.Forms.ImageList imageListTabControl1;
     }
 }
 
