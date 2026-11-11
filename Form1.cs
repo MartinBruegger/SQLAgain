@@ -1103,6 +1103,7 @@ namespace SQLAgain
         }
         private void ShowSHFind()
         {
+            panelSHFind.Location = new Point(2, textBoxSessionHistory.ClientSize.Height - panelSHFind.Height);  // respect the current size of the SessionHistory TextBox - including the horizontal ScrollBar
             panelSHFind.Visible = true;
             labelSHFindMsg.Text = string.Empty;
             textBoxSHFindText.Focus();
@@ -2644,7 +2645,7 @@ namespace SQLAgain
         {
             if (listSHFindMatches.Count > 0)   
             {
-                ColorKeywordBackground(listSHFindMatches[1].Value, listSHFindMatches[1].Position, 3);
+                ColorKeywordBackground(listSHFindMatches[0].Value, listSHFindMatches[0].Position, 3);
                 labelSHFindMsg.Text = string.Empty;
                 listSHFindMatches.Clear();
                 sHFindMatch_x = 0;
