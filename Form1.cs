@@ -15,6 +15,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -101,6 +102,20 @@ namespace SQLAgain
         private  Color colorBack1 = Color.FromArgb(44, 44, 44);                                     // ListView BackColor - we are changing BackColor SELECTED and normal in a DB loop
         private Color colorBack2 = Color.FromArgb(65, 65, 65);                                      //  BackColor - UNSELECTED element
         private readonly Queue<string> pendingMessages = new Queue<string>();
+        private class SHFindMatchClass
+        {
+            public int Match { get; set; }
+            public string Value { get; set; }
+            public int Position { get; set; }
+            public SHFindMatchClass(int _Match, string _Value, int _Position)
+            {
+                Match = _Match;
+                Value = _Value;
+                Position = _Position;
+            }
+        }
+        private readonly List<SHFindMatchClass> listSHFindMatches = new List<SHFindMatchClass>();
+        private int sHFindMatch_x = 0;
         public Form1(string[] file)
         {
             InitializeComponent();
@@ -920,7 +935,7 @@ namespace SQLAgain
                     case 0:
                         this.contextMenuStatusMessages.Show(this.tabControl1, e.Location);
                         break;
-                    case 3:
+                    case 2:
                         this.contextMenuSessionHistory.Show(this.tabControl1, e.Location);
                         break;                    
                 }                
@@ -1073,10 +1088,30 @@ namespace SQLAgain
 
         private void TextBoxSessionHistory_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyData == Keys.F5)  // Key F5 is the standard refresh, calls the same function as Context-Menu "Refresh"
+            if (e.KeyData == Keys.F5)                   // Key F5 is the standard refresh, calls the same function as Context-Menu "Refresh"
             {
                 ShowSessionHistory();
             }
+            if (e.Control && e.KeyCode == Keys.F)       // Ctrl+F: Show Search Panel in SessionHistory Tab
+            {
+                ShowSHFind();
+            }
+            if (e.KeyData == Keys.F3)                   // Key F3: Find Next in SessionHistory Tab
+            {
+                SHFIndMatchToggler("down");
+            }
+        }
+        private void ShowSHFind()
+        {
+            panelSHFind.Visible = true;
+            labelSHFindMsg.Text = string.Empty;
+            textBoxSHFindText.Focus();
+        }
+        private void ShowSHFindClose()
+        {            
+            SHFind_Reset();
+            textBoxSHFindText.Text = string.Empty;
+            panelSHFind.Visible = false;
         }
 
         private void CheckBoxOptIgnoreError_CheckedChanged(object sender, EventArgs e)
@@ -2331,6 +2366,7 @@ namespace SQLAgain
                 this.Size = Settings.Default.F1Size;
             }
             checkBox_OptEnv_Mode.Checked = (Settings.Default.F1DarkMode);
+            panelSHFind.Visible = false;
         }
 
         private void Form1_Closing(object sender, FormClosingEventArgs e)
@@ -2487,6 +2523,152 @@ namespace SQLAgain
                     label_OptUpdate_Message2.Text = ex.Message;
                 }
             }
+        }
+
+        private void PictureBoxSHFindClose_Click(object sender, EventArgs e)
+        {
+            ShowSHFindClose();
+        }
+
+        private void SessionHistoryFind(object sender, EventArgs e)
+        {
+            ShowSHFind();
+        }
+
+        private void TextBoxSHFindText_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(textBoxSHFindText.Text))
+            {
+                labelSHFindMsg.Text = "Please enter a string to find.";
+                return;
+            }
+            SHFind();
+        }
+        private void SHFind()
+        {
+            SHFind_Reset();
+            int matches = 0;
+            string findText = textBoxSHFindText.Text;
+            RegexOptions options = RegexOptions.Multiline;
+            if (checkBoxSHFindCase.Checked == false)
+                options = RegexOptions.Multiline | RegexOptions.IgnoreCase;
+            if (checkBoxSHFindWord.Checked == true)                                                      // When "Match Word" is selected
+                findText = "\\b" + findText + "\\b";                            // enclose findText with \b
+            try
+            {
+                foreach (Match m in Regex.Matches(textBoxSessionHistory.Text, findText, options))
+                {
+                    matches++;
+                    ColorKeyword(m.Value, m.Index);
+                    listSHFindMatches.Add(new SHFindMatchClass(matches, m.Value, m.Index));
+                    if (matches == 1000)                    // limit highlighting of found strings to 1000
+                        break;                              // ... otherwise it takes too long and is not responding
+                }
+                sHFindMatch_x = 0;
+                SHFIndMatchToggler("none");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: "
+                    + ex.Message
+                    + Environment.NewLine
+                    + Environment.NewLine
+                    + "Possible cause: Input Error in FIND TEXT, Single Backslash not escaped with Backslash ?");
+            }
+            if (matches > 0)
+                labelSHFindMsg.Text = "1 of " + listSHFindMatches.Count.ToString() + " matches";
+            else
+                labelSHFindMsg.Text = "Phrase not found";
+        }
+        private void ColorKeyword(string word, int startIndex)                  // Highlite all found strings
+        {
+            textBoxSessionHistory.Select(startIndex, word.Length);
+            textBoxSessionHistory.SelectionBackColor = Color.Orchid;
+        }
+        private void ColorKeywordBackground(string word, int startIndex, int mode)    // Selected string LimeGreen, reset old selection to Orchid
+        {
+            textBoxSessionHistory.Select(startIndex, word.Length);
+            switch (mode)
+            {
+                case 1:                                                                 
+                    textBoxSessionHistory.SelectionBackColor = Color.LimeGreen;
+                    textBoxSessionHistory.ScrollToCaret();
+                    break;
+                case 2:
+                    textBoxSessionHistory.SelectionBackColor = Color.Orchid;
+                    break;
+                case 3:                                                         // select all and reset to default background color
+                    textBoxSessionHistory.SelectAll();
+                    textBoxSessionHistory.SelectionBackColor = colorBack1;
+                    break;
+            }
+        }
+        private void SHFIndMatchToggler(string direction)
+        {                                                                           // Find DOWN or UP: Select next match and scroll to it
+            if (listSHFindMatches.Count > 0)
+            {
+                if ("up down".Contains(direction))
+                {
+                    ColorKeywordBackground(listSHFindMatches[sHFindMatch_x].Value, listSHFindMatches[sHFindMatch_x].Position, 2);
+                    if (direction == "down")
+                    {
+                        if (sHFindMatch_x + 1 == listSHFindMatches.Count)
+                            sHFindMatch_x = 0;
+                        else
+                            sHFindMatch_x++;
+                    }
+                    else
+                    {
+                        if (sHFindMatch_x == 0)
+                            sHFindMatch_x = listSHFindMatches.Count - 1;
+                        else
+                            sHFindMatch_x--;
+                    }
+                }
+                ColorKeywordBackground(listSHFindMatches[sHFindMatch_x].Value, listSHFindMatches[sHFindMatch_x].Position, 1);
+                labelSHFindMsg.Text = (sHFindMatch_x + 1).ToString() + " of " + listSHFindMatches.Count.ToString() + " matches";
+            }
+        }
+        
+
+        private void PictureBoxSHFindUp_Click(object sender, EventArgs e)
+        {
+            SHFIndMatchToggler("up");
+        }
+
+        private void PictureBoxSHFindDown_Click(object sender, EventArgs e)
+        {
+            SHFIndMatchToggler("down");
+        }
+        private void SHFind_Reset()
+        {
+            if (listSHFindMatches.Count > 0)   
+            {
+                ColorKeywordBackground(listSHFindMatches[1].Value, listSHFindMatches[1].Position, 3);
+                labelSHFindMsg.Text = string.Empty;
+                listSHFindMatches.Clear();
+                sHFindMatch_x = 0;
+            }
+        }
+
+        private void CheckBoxSHFindCase(object sender, EventArgs e)
+        {
+            SHFind();
+        }
+
+        private void CheckBoxSHFindWord_Changed(object sender, EventArgs e)
+        {
+            SHFind();
+        }
+
+        private void CheckBoxSHFindWord_CheckedChanged(object sender, EventArgs e)
+        {
+            SHFind();
+        }
+
+        private void CheckBoxSHFind_CheckedChanged(object sender, EventArgs e)
+        {
+            SHFind();
         }
     }
 }

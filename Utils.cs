@@ -143,7 +143,7 @@ namespace SQLAgain
                 colorText1 = SystemColors.ControlText;
                 colorText2 = SystemColors.WindowText;
             }
-            if ((control is Label) || (control is CheckBox) || (control is GroupBox) || (control is TabPage) || (control is RichTextBox) || (control is StatusStrip))
+            if ((control is Label) || (control is Panel) || (control is CheckBox) || (control is GroupBox) || (control is TabPage) || (control is RichTextBox) || (control is StatusStrip))
             {
                 control.BackColor = colorBack1;
                 control.ForeColor = colorText1;

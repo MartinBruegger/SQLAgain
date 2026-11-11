@@ -178,6 +178,9 @@
     <Compile Include="Utils.cs" />
     <None Include="New-SQLAgainArchive.ps1" />
     <None Include="Resources\Update.png" />
+    <None Include="Resources\keyboard_arrow_up_18dp_999999_FILL0_wght400_GRAD0_opsz201.png" />
+    <None Include="Resources\keyboard_arrow_down_18dp_999999_FILL0_wght400_GRAD0_opsz201.png" />
+    <None Include="Resources\close_18dp_999999_FILL0_wght400_GRAD0_opsz201.png" />
     <Content Include="SQLAgain.ico" />
     <Content Include="SQLAgainStart.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

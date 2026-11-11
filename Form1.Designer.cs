@@ -30,18 +30,18 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Environment", 0);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("DB Groups", 1);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("DB User", 2);
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Task Scheduler", 3);
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Mail", 4);
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Check for Update", 5);
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Environment", 0);
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("DB Groups", 1);
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("DB User", 2);
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Task Scheduler", 3);
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Mail", 4);
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Check for Update", 5);
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelDB = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxLog = new System.Windows.Forms.CheckBox();
@@ -65,9 +65,18 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPageHistory = new System.Windows.Forms.TabPage();
+            this.panelSHFind = new System.Windows.Forms.Panel();
+            this.checkBoxSHFindWord = new System.Windows.Forms.CheckBox();
+            this.checkBoxSHFindCase = new System.Windows.Forms.CheckBox();
+            this.labelSHFindMsg = new System.Windows.Forms.Label();
+            this.pictureBoxSHFindClose = new System.Windows.Forms.PictureBox();
+            this.pictureBoxSHFindDown = new System.Windows.Forms.PictureBox();
+            this.pictureBoxSHFindUp = new System.Windows.Forms.PictureBox();
+            this.textBoxSHFindText = new System.Windows.Forms.TextBox();
             this.textBoxSessionHistory = new System.Windows.Forms.RichTextBox();
             this.contextMenuSessionHistory = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.sessionHistoryEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.sessionHistoryFind = new System.Windows.Forms.ToolStripMenuItem();
             this.sessionHistoryRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.timeoutHH = new System.Windows.Forms.NumericUpDown();
             this.timeoutMM = new System.Windows.Forms.NumericUpDown();
@@ -182,6 +191,7 @@
             this.panelOptions = new System.Windows.Forms.Panel();
             this.tabPageHelp = new System.Windows.Forms.TabPage();
             this.textBoxAbout = new System.Windows.Forms.RichTextBox();
+            this.imageListTabControl1 = new System.Windows.Forms.ImageList(this.components);
             this.listView_DBs = new System.Windows.Forms.ListView();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.buttonCancelSQL = new System.Windows.Forms.Button();
@@ -205,9 +215,12 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.imageListTabControl1 = new System.Windows.Forms.ImageList(this.components);
             this.tabPageMessages.SuspendLayout();
             this.tabPageHistory.SuspendLayout();
+            this.panelSHFind.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSHFindClose)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSHFindDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSHFindUp)).BeginInit();
             this.contextMenuSessionHistory.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutHH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutMM)).BeginInit();
@@ -547,6 +560,7 @@
             // tabPageHistory
             // 
             this.tabPageHistory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            this.tabPageHistory.Controls.Add(this.panelSHFind);
             this.tabPageHistory.Controls.Add(this.textBoxSessionHistory);
             this.tabPageHistory.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.tabPageHistory.ImageIndex = 2;
@@ -558,6 +572,103 @@
             this.tabPageHistory.TabIndex = 1;
             this.tabPageHistory.Text = "SQL History";
             this.toolTip1.SetToolTip(this.tabPageHistory, "Trace Records from earlier Sessions.");
+            // 
+            // panelSHFind
+            // 
+            this.panelSHFind.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelSHFind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.panelSHFind.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelSHFind.Controls.Add(this.checkBoxSHFindWord);
+            this.panelSHFind.Controls.Add(this.checkBoxSHFindCase);
+            this.panelSHFind.Controls.Add(this.labelSHFindMsg);
+            this.panelSHFind.Controls.Add(this.pictureBoxSHFindClose);
+            this.panelSHFind.Controls.Add(this.pictureBoxSHFindDown);
+            this.panelSHFind.Controls.Add(this.pictureBoxSHFindUp);
+            this.panelSHFind.Controls.Add(this.textBoxSHFindText);
+            this.panelSHFind.Location = new System.Drawing.Point(2, 256);
+            this.panelSHFind.Name = "panelSHFind";
+            this.panelSHFind.Size = new System.Drawing.Size(900, 26);
+            this.panelSHFind.TabIndex = 1;
+            // 
+            // checkBoxSHFindWord
+            // 
+            this.checkBoxSHFindWord.AutoSize = true;
+            this.checkBoxSHFindWord.Location = new System.Drawing.Point(353, 4);
+            this.checkBoxSHFindWord.Name = "checkBoxSHFindWord";
+            this.checkBoxSHFindWord.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxSHFindWord.TabIndex = 6;
+            this.checkBoxSHFindWord.Text = "Whole Word";
+            this.checkBoxSHFindWord.UseVisualStyleBackColor = true;
+            this.checkBoxSHFindWord.CheckedChanged += new System.EventHandler(this.CheckBoxSHFindWord_CheckedChanged);
+            // 
+            // checkBoxSHFindCase
+            // 
+            this.checkBoxSHFindCase.AutoSize = true;
+            this.checkBoxSHFindCase.Location = new System.Drawing.Point(271, 4);
+            this.checkBoxSHFindCase.Name = "checkBoxSHFindCase";
+            this.checkBoxSHFindCase.Size = new System.Drawing.Size(83, 17);
+            this.checkBoxSHFindCase.TabIndex = 5;
+            this.checkBoxSHFindCase.Text = "Match Case";
+            this.checkBoxSHFindCase.UseVisualStyleBackColor = true;
+            this.checkBoxSHFindCase.CheckedChanged += new System.EventHandler(this.CheckBoxSHFind_CheckedChanged);
+            // 
+            // labelSHFindMsg
+            // 
+            this.labelSHFindMsg.AutoSize = true;
+            this.labelSHFindMsg.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.labelSHFindMsg.Location = new System.Drawing.Point(457, 6);
+            this.labelSHFindMsg.Name = "labelSHFindMsg";
+            this.labelSHFindMsg.Size = new System.Drawing.Size(115, 13);
+            this.labelSHFindMsg.TabIndex = 4;
+            this.labelSHFindMsg.Text = "label20 - found nothing";
+            // 
+            // pictureBoxSHFindClose
+            // 
+            this.pictureBoxSHFindClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxSHFindClose.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxSHFindClose.Image = global::SQLAgain.Properties.Resources.close_18dp_999999_FILL0_wght400_GRAD0_opsz20;
+            this.pictureBoxSHFindClose.Location = new System.Drawing.Point(874, 2);
+            this.pictureBoxSHFindClose.Name = "pictureBoxSHFindClose";
+            this.pictureBoxSHFindClose.Size = new System.Drawing.Size(20, 20);
+            this.pictureBoxSHFindClose.TabIndex = 3;
+            this.pictureBoxSHFindClose.TabStop = false;
+            this.toolTip1.SetToolTip(this.pictureBoxSHFindClose, "Close find bar");
+            this.pictureBoxSHFindClose.Click += new System.EventHandler(this.PictureBoxSHFindClose_Click);
+            // 
+            // pictureBoxSHFindDown
+            // 
+            this.pictureBoxSHFindDown.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxSHFindDown.Image = global::SQLAgain.Properties.Resources.keyboard_arrow_down_18dp_999999_FILL0_wght400_GRAD0_opsz20;
+            this.pictureBoxSHFindDown.Location = new System.Drawing.Point(244, 2);
+            this.pictureBoxSHFindDown.Name = "pictureBoxSHFindDown";
+            this.pictureBoxSHFindDown.Size = new System.Drawing.Size(20, 20);
+            this.pictureBoxSHFindDown.TabIndex = 2;
+            this.pictureBoxSHFindDown.TabStop = false;
+            this.toolTip1.SetToolTip(this.pictureBoxSHFindDown, "Find the next occurence of the phrase");
+            this.pictureBoxSHFindDown.Click += new System.EventHandler(this.PictureBoxSHFindDown_Click);
+            // 
+            // pictureBoxSHFindUp
+            // 
+            this.pictureBoxSHFindUp.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxSHFindUp.Image = global::SQLAgain.Properties.Resources.keyboard_arrow_up_18dp_999999_FILL0_wght400_GRAD0_opsz20;
+            this.pictureBoxSHFindUp.Location = new System.Drawing.Point(220, 2);
+            this.pictureBoxSHFindUp.Name = "pictureBoxSHFindUp";
+            this.pictureBoxSHFindUp.Size = new System.Drawing.Size(20, 20);
+            this.pictureBoxSHFindUp.TabIndex = 1;
+            this.pictureBoxSHFindUp.TabStop = false;
+            this.toolTip1.SetToolTip(this.pictureBoxSHFindUp, "Find the previous occurence of the phrase");
+            this.pictureBoxSHFindUp.Click += new System.EventHandler(this.PictureBoxSHFindUp_Click);
+            // 
+            // textBoxSHFindText
+            // 
+            this.textBoxSHFindText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.textBoxSHFindText.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            this.textBoxSHFindText.Location = new System.Drawing.Point(2, 2);
+            this.textBoxSHFindText.Name = "textBoxSHFindText";
+            this.textBoxSHFindText.Size = new System.Drawing.Size(210, 20);
+            this.textBoxSHFindText.TabIndex = 0;
+            this.textBoxSHFindText.TextChanged += new System.EventHandler(this.TextBoxSHFindText_TextChanged);
             // 
             // textBoxSessionHistory
             // 
@@ -585,9 +696,10 @@
             this.contextMenuSessionHistory.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuSessionHistory.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sessionHistoryEdit,
+            this.sessionHistoryFind,
             this.sessionHistoryRefresh});
             this.contextMenuSessionHistory.Name = "contextMenuStrip1";
-            this.contextMenuSessionHistory.Size = new System.Drawing.Size(175, 48);
+            this.contextMenuSessionHistory.Size = new System.Drawing.Size(175, 70);
             this.contextMenuSessionHistory.Text = "Edit SessionHistory";
             // 
             // sessionHistoryEdit
@@ -598,6 +710,15 @@
             this.sessionHistoryEdit.Size = new System.Drawing.Size(174, 22);
             this.sessionHistoryEdit.Text = "Edit SessionHistory";
             this.sessionHistoryEdit.Click += new System.EventHandler(this.SessionHistoryEdit);
+            // 
+            // sessionHistoryFind
+            // 
+            this.sessionHistoryFind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.sessionHistoryFind.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.sessionHistoryFind.Name = "sessionHistoryFind";
+            this.sessionHistoryFind.Size = new System.Drawing.Size(174, 22);
+            this.sessionHistoryFind.Text = "Find";
+            this.sessionHistoryFind.Click += new System.EventHandler(this.SessionHistoryFind);
             // 
             // sessionHistoryRefresh
             // 
@@ -1030,12 +1151,12 @@
             this.listViewSettings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.listViewSettings.HideSelection = false;
             this.listViewSettings.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem7,
-            listViewItem8,
-            listViewItem9,
-            listViewItem10,
-            listViewItem11,
-            listViewItem12});
+            listViewItem13,
+            listViewItem14,
+            listViewItem15,
+            listViewItem16,
+            listViewItem17,
+            listViewItem18});
             this.listViewSettings.LargeImageList = this.imageListSettings;
             this.listViewSettings.Location = new System.Drawing.Point(10, 10);
             this.listViewSettings.MultiSelect = false;
@@ -1357,37 +1478,37 @@
             this.dataGridView_DBGroups.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_DBGroups.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this.dataGridView_DBGroups.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBGroups.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBGroups.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.dataGridView_DBGroups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_DBGroups.ContextMenuStrip = this.contextMenuOptDBGroups;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView_DBGroups.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView_DBGroups.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridView_DBGroups.EnableHeadersVisualStyles = false;
             this.dataGridView_DBGroups.Location = new System.Drawing.Point(8, 18);
             this.dataGridView_DBGroups.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_DBGroups.MultiSelect = false;
             this.dataGridView_DBGroups.Name = "dataGridView_DBGroups";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBGroups.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBGroups.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.dataGridView_DBGroups.RowHeadersVisible = false;
             this.dataGridView_DBGroups.RowHeadersWidth = 51;
             this.dataGridView_DBGroups.RowTemplate.Height = 24;
@@ -1552,36 +1673,36 @@
             this.dataGridView_DBUsers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_DBUsers.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this.dataGridView_DBUsers.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBUsers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBUsers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridView_DBUsers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_DBUsers.ContextMenuStrip = this.contextMenuOptDBUser;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView_DBUsers.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView_DBUsers.DefaultCellStyle = dataGridViewCellStyle11;
             this.dataGridView_DBUsers.EnableHeadersVisualStyles = false;
             this.dataGridView_DBUsers.Location = new System.Drawing.Point(5, 18);
             this.dataGridView_DBUsers.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_DBUsers.Name = "dataGridView_DBUsers";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBUsers.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBUsers.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
             this.dataGridView_DBUsers.RowHeadersVisible = false;
             this.dataGridView_DBUsers.RowHeadersWidth = 51;
             this.dataGridView_DBUsers.RowTemplate.Height = 24;
@@ -2035,6 +2156,16 @@
             this.textBoxAbout.Text = "";
             this.textBoxAbout.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.TextBoxAboutLink);
             // 
+            // imageListTabControl1
+            // 
+            this.imageListTabControl1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListTabControl1.ImageStream")));
+            this.imageListTabControl1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListTabControl1.Images.SetKeyName(0, "notifications_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListTabControl1.Images.SetKeyName(1, "favorite_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListTabControl1.Images.SetKeyName(2, "history_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListTabControl1.Images.SetKeyName(3, "settings_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            this.imageListTabControl1.Images.SetKeyName(4, "help_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
+            // 
             // listView_DBs
             // 
             this.listView_DBs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
@@ -2089,7 +2220,7 @@
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            this.progressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(196)))), ((int)(((byte)(145)))));
+            this.progressBar1.ForeColor = System.Drawing.SystemColors.ActiveBorder;
             this.progressBar1.Location = new System.Drawing.Point(14, 468);
             this.progressBar1.Margin = new System.Windows.Forms.Padding(2);
             this.progressBar1.MarqueeAnimationSpeed = 30;
@@ -2317,16 +2448,6 @@
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
             // 
-            // imageListTabControl1
-            // 
-            this.imageListTabControl1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListTabControl1.ImageStream")));
-            this.imageListTabControl1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListTabControl1.Images.SetKeyName(0, "notifications_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            this.imageListTabControl1.Images.SetKeyName(1, "favorite_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            this.imageListTabControl1.Images.SetKeyName(2, "history_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            this.imageListTabControl1.Images.SetKeyName(3, "settings_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            this.imageListTabControl1.Images.SetKeyName(4, "help_18dp_999999_FILL0_wght400_GRAD0_opsz20.png");
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2348,6 +2469,11 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabPageMessages.ResumeLayout(false);
             this.tabPageHistory.ResumeLayout(false);
+            this.panelSHFind.ResumeLayout(false);
+            this.panelSHFind.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSHFindClose)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSHFindDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSHFindUp)).EndInit();
             this.contextMenuSessionHistory.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.timeoutHH)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutMM)).EndInit();
@@ -2578,6 +2704,15 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ImageList imageListSettings;
         private System.Windows.Forms.ImageList imageListTabControl1;
+        private System.Windows.Forms.ToolStripMenuItem sessionHistoryFind;
+        private System.Windows.Forms.Panel panelSHFind;
+        private System.Windows.Forms.PictureBox pictureBoxSHFindUp;
+        private System.Windows.Forms.TextBox textBoxSHFindText;
+        private System.Windows.Forms.PictureBox pictureBoxSHFindDown;
+        private System.Windows.Forms.PictureBox pictureBoxSHFindClose;
+        private System.Windows.Forms.Label labelSHFindMsg;
+        private System.Windows.Forms.CheckBox checkBoxSHFindWord;
+        private System.Windows.Forms.CheckBox checkBoxSHFindCase;
     }
 }
 
