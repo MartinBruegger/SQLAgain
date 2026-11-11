@@ -30,18 +30,18 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Environment", 0);
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("DB Groups", 1);
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("DB User", 2);
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Task Scheduler", 3);
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Mail", 4);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Check for Update", 5);
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("Environment", 0);
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("DB Groups", 1);
+            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem("DB User", 2);
+            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem("Task Scheduler", 3);
+            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem("Mail", 4);
+            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem("Check for Update", 5);
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelDB = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxLog = new System.Windows.Forms.CheckBox();
@@ -414,6 +414,7 @@
             this.checkBoxOptSilent.TabIndex = 0;
             this.checkBoxOptSilent.Text = "-S Silent";
             this.toolTip1.SetToolTip(this.checkBoxOptSilent, "-S[ILENT] Suppresses all SQL*Plus information and prompt messages.");
+            this.toolTip1.SetToolTip(this.checkBoxOptSilent, "-S[ILENT] Suppresses all SQL*Plus information and prompt messages.");
             this.checkBoxOptSilent.UseVisualStyleBackColor = true;
             // 
             // checkBoxOptCSV
@@ -426,6 +427,8 @@
             this.checkBoxOptCSV.Size = new System.Drawing.Size(72, 17);
             this.checkBoxOptCSV.TabIndex = 2;
             this.checkBoxOptCSV.Text = "CSV ON  ";
+            this.toolTip1.SetToolTip(this.checkBoxOptCSV, "-M[ARKUP] CSV ON  Output from a query will be displayed in CSV format (Version 12" +
+        ".2 required).");
             this.toolTip1.SetToolTip(this.checkBoxOptCSV, "-M[ARKUP] CSV ON  Output from a query will be displayed in CSV format (Version 12" +
         ".2 required).");
             this.checkBoxOptCSV.UseVisualStyleBackColor = true;
@@ -441,6 +444,7 @@
             this.checkBoxOptHTML.Size = new System.Drawing.Size(75, 17);
             this.checkBoxOptHTML.TabIndex = 1;
             this.checkBoxOptHTML.Text = "HTML ON";
+            this.toolTip1.SetToolTip(this.checkBoxOptHTML, "-M[ARKUP] HTML ON  Output from a query will be displayed in HTML format.");
             this.toolTip1.SetToolTip(this.checkBoxOptHTML, "-M[ARKUP] HTML ON  Output from a query will be displayed in HTML format.");
             this.checkBoxOptHTML.UseVisualStyleBackColor = true;
             this.checkBoxOptHTML.CheckedChanged += new System.EventHandler(this.CheckBoxOptHTMLChanged);
@@ -462,6 +466,7 @@
             this.buttonViewLog.Text = "Open";
             this.buttonViewLog.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolTip1.SetToolTip(this.buttonViewLog, "View the Logfile ");
+            this.toolTip1.SetToolTip(this.buttonViewLog, "View the Logfile ");
             this.buttonViewLog.UseVisualStyleBackColor = false;
             this.buttonViewLog.Click += new System.EventHandler(this.ButtonViewLog);
             // 
@@ -475,6 +480,7 @@
             this.checkBoxLogAppend.Size = new System.Drawing.Size(132, 17);
             this.checkBoxLogAppend.TabIndex = 3;
             this.checkBoxLogAppend.Text = "Append to existing File";
+            this.toolTip1.SetToolTip(this.checkBoxLogAppend, "Append to existing log file or create a new log file.");
             this.toolTip1.SetToolTip(this.checkBoxLogAppend, "Append to existing log file or create a new log file.");
             this.checkBoxLogAppend.UseVisualStyleBackColor = true;
             // 
@@ -494,6 +500,7 @@
             this.buttonScheduleSQL.Text = "Schedule";
             this.buttonScheduleSQL.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolTip1.SetToolTip(this.buttonScheduleSQL, "Creates a Windows Task Scheduler Job to execute the SQL File later");
+            this.toolTip1.SetToolTip(this.buttonScheduleSQL, "Creates a Windows Task Scheduler Job to execute the SQL File later");
             this.buttonScheduleSQL.UseVisualStyleBackColor = false;
             this.buttonScheduleSQL.Click += new System.EventHandler(this.ButtonScheduleSQL);
             // 
@@ -510,6 +517,7 @@
             this.tabPageMessages.Size = new System.Drawing.Size(918, 299);
             this.tabPageMessages.TabIndex = 0;
             this.tabPageMessages.Text = "Messages - Log";
+            this.toolTip1.SetToolTip(this.tabPageMessages, "this is ToolTip on toolTip1");
             this.toolTip1.SetToolTip(this.tabPageMessages, "this is ToolTip on toolTip1");
             this.tabPageMessages.ToolTipText = "this is Tool Tip Text";
             // 
@@ -572,6 +580,7 @@
             this.tabPageHistory.TabIndex = 1;
             this.tabPageHistory.Text = "SQL History";
             this.toolTip1.SetToolTip(this.tabPageHistory, "Trace Records from earlier Sessions.");
+            this.toolTip1.SetToolTip(this.tabPageHistory, "Trace Records from earlier Sessions.");
             // 
             // panelSHFind
             // 
@@ -586,7 +595,7 @@
             this.panelSHFind.Controls.Add(this.pictureBoxSHFindDown);
             this.panelSHFind.Controls.Add(this.pictureBoxSHFindUp);
             this.panelSHFind.Controls.Add(this.textBoxSHFindText);
-            this.panelSHFind.Location = new System.Drawing.Point(2, 256);
+            this.panelSHFind.Location = new System.Drawing.Point(2, 260);
             this.panelSHFind.Name = "panelSHFind";
             this.panelSHFind.Size = new System.Drawing.Size(900, 26);
             this.panelSHFind.TabIndex = 1;
@@ -634,6 +643,7 @@
             this.pictureBoxSHFindClose.TabIndex = 3;
             this.pictureBoxSHFindClose.TabStop = false;
             this.toolTip1.SetToolTip(this.pictureBoxSHFindClose, "Close find bar");
+            this.toolTip1.SetToolTip(this.pictureBoxSHFindClose, "Close find bar");
             this.pictureBoxSHFindClose.Click += new System.EventHandler(this.PictureBoxSHFindClose_Click);
             // 
             // pictureBoxSHFindDown
@@ -646,6 +656,7 @@
             this.pictureBoxSHFindDown.TabIndex = 2;
             this.pictureBoxSHFindDown.TabStop = false;
             this.toolTip1.SetToolTip(this.pictureBoxSHFindDown, "Find the next occurence of the phrase");
+            this.toolTip1.SetToolTip(this.pictureBoxSHFindDown, "Find the next occurence of the phrase");
             this.pictureBoxSHFindDown.Click += new System.EventHandler(this.PictureBoxSHFindDown_Click);
             // 
             // pictureBoxSHFindUp
@@ -657,6 +668,7 @@
             this.pictureBoxSHFindUp.Size = new System.Drawing.Size(20, 20);
             this.pictureBoxSHFindUp.TabIndex = 1;
             this.pictureBoxSHFindUp.TabStop = false;
+            this.toolTip1.SetToolTip(this.pictureBoxSHFindUp, "Find the previous occurence of the phrase");
             this.toolTip1.SetToolTip(this.pictureBoxSHFindUp, "Find the previous occurence of the phrase");
             this.pictureBoxSHFindUp.Click += new System.EventHandler(this.PictureBoxSHFindUp_Click);
             // 
@@ -742,6 +754,7 @@
             this.timeoutHH.Size = new System.Drawing.Size(41, 20);
             this.timeoutHH.TabIndex = 7;
             this.toolTip1.SetToolTip(this.timeoutHH, "Kill SQL*Plus Session after x hours");
+            this.toolTip1.SetToolTip(this.timeoutHH, "Kill SQL*Plus Session after x hours");
             this.timeoutHH.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressTimeoutHH);
             // 
             // timeoutMM
@@ -756,6 +769,7 @@
             this.timeoutMM.Name = "timeoutMM";
             this.timeoutMM.Size = new System.Drawing.Size(34, 20);
             this.timeoutMM.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.timeoutMM, "Kill SQL*Plus Session after x minutes");
             this.toolTip1.SetToolTip(this.timeoutMM, "Kill SQL*Plus Session after x minutes");
             this.timeoutMM.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressTimeoutMM);
             // 
@@ -772,6 +786,7 @@
             this.timeoutSS.Size = new System.Drawing.Size(34, 20);
             this.timeoutSS.TabIndex = 1;
             this.toolTip1.SetToolTip(this.timeoutSS, "Kill SQL*Plus Session after x seconds.");
+            this.toolTip1.SetToolTip(this.timeoutSS, "Kill SQL*Plus Session after x seconds.");
             this.timeoutSS.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressTimeoutSS);
             // 
             // checkBoxOptIgnoreError
@@ -783,6 +798,8 @@
             this.checkBoxOptIgnoreError.Size = new System.Drawing.Size(116, 17);
             this.checkBoxOptIgnoreError.TabIndex = 0;
             this.checkBoxOptIgnoreError.Text = "Ignore severe Error";
+            this.toolTip1.SetToolTip(this.checkBoxOptIgnoreError, "Do not stop the SQL Session when SQLAgain detects a severe Error (ORA-01017 or si" +
+        "milar)");
             this.toolTip1.SetToolTip(this.checkBoxOptIgnoreError, "Do not stop the SQL Session when SQLAgain detects a severe Error (ORA-01017 or si" +
         "milar)");
             this.checkBoxOptIgnoreError.UseVisualStyleBackColor = true;
@@ -805,6 +822,7 @@
             this.listView_DBGroups.Name = "listView_DBGroups";
             this.listView_DBGroups.Size = new System.Drawing.Size(144, 166);
             this.listView_DBGroups.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.listView_DBGroups, "Select a Group of Databases");
             this.toolTip1.SetToolTip(this.listView_DBGroups, "Select a Group of Databases");
             this.listView_DBGroups.UseCompatibleStateImageBehavior = false;
             this.listView_DBGroups.View = System.Windows.Forms.View.Details;
@@ -830,6 +848,7 @@
             this.textBox_OptTask_Username.Size = new System.Drawing.Size(356, 20);
             this.textBox_OptTask_Username.TabIndex = 35;
             this.toolTip1.SetToolTip(this.textBox_OptTask_Username, "When running the Task, use the following User Account");
+            this.toolTip1.SetToolTip(this.textBox_OptTask_Username, "When running the Task, use the following User Account");
             // 
             // button_OptUpdate_Update
             // 
@@ -847,6 +866,7 @@
             this.button_OptUpdate_Update.Text = "Update";
             this.button_OptUpdate_Update.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolTip1.SetToolTip(this.button_OptUpdate_Update, "Download and Update to latest Version");
+            this.toolTip1.SetToolTip(this.button_OptUpdate_Update, "Download and Update to latest Version");
             this.button_OptUpdate_Update.UseVisualStyleBackColor = false;
             this.button_OptUpdate_Update.Click += new System.EventHandler(this.Button_OptUpdate_Update_Click);
             // 
@@ -860,6 +880,7 @@
             this.textBox_Favorites_NewDBs.Size = new System.Drawing.Size(274, 20);
             this.textBox_Favorites_NewDBs.TabIndex = 5;
             this.toolTip1.SetToolTip(this.textBox_Favorites_NewDBs, "List of Selected Databases");
+            this.toolTip1.SetToolTip(this.textBox_Favorites_NewDBs, "List of Selected Databases");
             // 
             // textBox_Favorites_NewUser
             // 
@@ -870,6 +891,7 @@
             this.textBox_Favorites_NewUser.ReadOnly = true;
             this.textBox_Favorites_NewUser.Size = new System.Drawing.Size(95, 20);
             this.textBox_Favorites_NewUser.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.textBox_Favorites_NewUser, "Name of Selected DB User");
             this.toolTip1.SetToolTip(this.textBox_Favorites_NewUser, "Name of Selected DB User");
             // 
             // textBox_Favorites_NewFile
@@ -882,6 +904,7 @@
             this.textBox_Favorites_NewFile.Size = new System.Drawing.Size(150, 20);
             this.textBox_Favorites_NewFile.TabIndex = 3;
             this.toolTip1.SetToolTip(this.textBox_Favorites_NewFile, "Copy of above SQL Filename");
+            this.toolTip1.SetToolTip(this.textBox_Favorites_NewFile, "Copy of above SQL Filename");
             // 
             // textBox_Favorites_NewDesc
             // 
@@ -891,6 +914,7 @@
             this.textBox_Favorites_NewDesc.Name = "textBox_Favorites_NewDesc";
             this.textBox_Favorites_NewDesc.Size = new System.Drawing.Size(285, 20);
             this.textBox_Favorites_NewDesc.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.textBox_Favorites_NewDesc, "Description of the Favorite-Entry");
             this.toolTip1.SetToolTip(this.textBox_Favorites_NewDesc, "Description of the Favorite-Entry");
             this.textBox_Favorites_NewDesc.Enter += new System.EventHandler(this.TextBox_Favorites_NewDesc_Enter);
             // 
@@ -909,6 +933,7 @@
             this.button_Favorites_Add.TabIndex = 1;
             this.button_Favorites_Add.Text = "Add";
             this.button_Favorites_Add.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.button_Favorites_Add, "Adds a new Favorite");
             this.toolTip1.SetToolTip(this.button_Favorites_Add, "Adds a new Favorite");
             this.button_Favorites_Add.UseVisualStyleBackColor = false;
             this.button_Favorites_Add.Click += new System.EventHandler(this.Button_Favorites_Add);
@@ -1151,12 +1176,12 @@
             this.listViewSettings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.listViewSettings.HideSelection = false;
             this.listViewSettings.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem13,
-            listViewItem14,
-            listViewItem15,
-            listViewItem16,
-            listViewItem17,
-            listViewItem18});
+            listViewItem19,
+            listViewItem20,
+            listViewItem21,
+            listViewItem22,
+            listViewItem23,
+            listViewItem24});
             this.listViewSettings.LargeImageList = this.imageListSettings;
             this.listViewSettings.Location = new System.Drawing.Point(10, 10);
             this.listViewSettings.MultiSelect = false;
@@ -1478,37 +1503,37 @@
             this.dataGridView_DBGroups.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_DBGroups.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this.dataGridView_DBGroups.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBGroups.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle19.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle19.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle19.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBGroups.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle19;
             this.dataGridView_DBGroups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_DBGroups.ContextMenuStrip = this.contextMenuOptDBGroups;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView_DBGroups.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle20.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle20.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView_DBGroups.DefaultCellStyle = dataGridViewCellStyle20;
             this.dataGridView_DBGroups.EnableHeadersVisualStyles = false;
             this.dataGridView_DBGroups.Location = new System.Drawing.Point(8, 18);
             this.dataGridView_DBGroups.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_DBGroups.MultiSelect = false;
             this.dataGridView_DBGroups.Name = "dataGridView_DBGroups";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBGroups.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle21.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle21.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle21.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle21.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle21.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle21.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBGroups.RowHeadersDefaultCellStyle = dataGridViewCellStyle21;
             this.dataGridView_DBGroups.RowHeadersVisible = false;
             this.dataGridView_DBGroups.RowHeadersWidth = 51;
             this.dataGridView_DBGroups.RowTemplate.Height = 24;
@@ -1673,36 +1698,36 @@
             this.dataGridView_DBUsers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView_DBUsers.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this.dataGridView_DBUsers.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SunkenHorizontal;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBUsers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBUsers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
             this.dataGridView_DBUsers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_DBUsers.ContextMenuStrip = this.contextMenuOptDBUser;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView_DBUsers.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle14.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView_DBUsers.DefaultCellStyle = dataGridViewCellStyle14;
             this.dataGridView_DBUsers.EnableHeadersVisualStyles = false;
             this.dataGridView_DBUsers.Location = new System.Drawing.Point(5, 18);
             this.dataGridView_DBUsers.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView_DBUsers.Name = "dataGridView_DBUsers";
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_DBUsers.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle15.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_DBUsers.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
             this.dataGridView_DBUsers.RowHeadersVisible = false;
             this.dataGridView_DBUsers.RowHeadersWidth = 51;
             this.dataGridView_DBUsers.RowTemplate.Height = 24;
