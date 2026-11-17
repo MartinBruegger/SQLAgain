@@ -102,7 +102,7 @@ namespace SQLAgain
         private  Color colorBack1 = Color.FromArgb(44, 44, 44);                                     // ListView BackColor - we are changing BackColor SELECTED and normal in a DB loop
         private Color colorBack2 = Color.FromArgb(65, 65, 65);                                      //  BackColor - UNSELECTED element
         private readonly Queue<string> pendingMessages = new Queue<string>();
-        private class SHFindMatchClass
+        private class SHFindMatchClass                                                              // SHF = Session History Find
         {
             public int Match { get; set; }
             public string Value { get; set; }
@@ -116,6 +116,8 @@ namespace SQLAgain
         }
         private readonly List<SHFindMatchClass> listSHFindMatches = new List<SHFindMatchClass>();
         private int sHFindMatch_x = 0;
+        private bool flagSHFindRunning = false;                                                     // Session History Find is running ASYNC 
+        CancellationTokenSource m_cancelTokenSource = null;                                         // we cancel the async Task when the user is typing in the Find TextBox (textBox_SHFind) - otherwise the UI is blocked for a long time when the SessionHistory is large
         public Form1(string[] file)
         {
             InitializeComponent();
@@ -2536,16 +2538,26 @@ namespace SQLAgain
             ShowSHFind();
         }
 
-        private void TextBoxSHFindText_TextChanged(object sender, EventArgs e)
+        private async void TextBoxSHFindText_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBoxSHFindText.Text))
             {
                 labelSHFindMsg.Text = "Please enter a string to find.";
                 return;
             }
-            SHFind();
+            if (flagSHFindRunning)
+            {
+                m_cancelTokenSource.Cancel();
+                m_cancelTokenSource = new CancellationTokenSource();
+            }
+            else
+            {
+                m_cancelTokenSource = new CancellationTokenSource();
+                flagSHFindRunning = true;
+            }
+            await SHFind(m_cancelTokenSource.Token);
         }
-        private void SHFind()
+        private async Task SHFind(CancellationToken ct)
         {
             SHFind_Reset();
             int matches = 0;
@@ -2559,6 +2571,7 @@ namespace SQLAgain
             {
                 foreach (Match m in Regex.Matches(textBoxSessionHistory.Text, findText, options))
                 {
+                    ct.ThrowIfCancellationRequested();
                     matches++;
                     ColorKeyword(m.Value, m.Index);
                     listSHFindMatches.Add(new SHFindMatchClass(matches, m.Value, m.Index));
@@ -2652,24 +2665,35 @@ namespace SQLAgain
             }
         }
 
-        private void CheckBoxSHFindCase(object sender, EventArgs e)
+        
+        private async void CheckBoxSHFindWord_CheckedChanged(object sender, EventArgs e)
         {
-            SHFind();
+            if (flagSHFindRunning)
+            {
+                m_cancelTokenSource.Cancel();
+                m_cancelTokenSource = new CancellationTokenSource();
+            }
+            else
+            {
+                m_cancelTokenSource = new CancellationTokenSource();
+                flagSHFindRunning = true;
+            }
+            await SHFind(m_cancelTokenSource.Token);
         }
 
-        private void CheckBoxSHFindWord_Changed(object sender, EventArgs e)
+        private async void CheckBoxSHFind_CheckedChanged(object sender, EventArgs e)
         {
-            SHFind();
-        }
-
-        private void CheckBoxSHFindWord_CheckedChanged(object sender, EventArgs e)
-        {
-            SHFind();
-        }
-
-        private void CheckBoxSHFind_CheckedChanged(object sender, EventArgs e)
-        {
-            SHFind();
+            if (flagSHFindRunning)
+            {
+                m_cancelTokenSource.Cancel();
+                m_cancelTokenSource = new CancellationTokenSource();
+            }
+            else
+            {
+                m_cancelTokenSource = new CancellationTokenSource();
+                flagSHFindRunning = true;
+            }
+            await SHFind(m_cancelTokenSource.Token);
         }
     }
 }

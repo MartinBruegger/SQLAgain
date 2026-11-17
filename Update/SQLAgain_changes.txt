@@ -2,6 +2,7 @@ This file contains latest news about SQLAgain
 
 Version     Date        Changes  
 ========    ==========  =======
+2.0.2.1	    2026/11/17  SessionHistory: Find-Routine runs ASYNC, Cancel when user types in Find-TextBox (textBox_SHFind)
 2.0.2.0	    2026/11/11  Find-Routine added in SQL History
 2.0.1.9     2026/10/21  Minor fix - icons in TabControl1 added
 2.0.1.8     2026/10/01  Minor fix - imageListSettings in listViewSettings restored
