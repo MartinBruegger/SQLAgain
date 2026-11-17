@@ -116,8 +116,7 @@ namespace SQLAgain
         }
         private readonly List<SHFindMatchClass> listSHFindMatches = new List<SHFindMatchClass>();
         private int sHFindMatch_x = 0;
-        private bool flagSHFindRunning = false;                                                     // Session History Find is running ASYNC 
-        CancellationTokenSource m_cancelTokenSource = null;                                         // we cancel the async Task when the user is typing in the Find TextBox (textBox_SHFind) - otherwise the UI is blocked for a long time when the SessionHistory is large
+        
         public Form1(string[] file)
         {
             InitializeComponent();
@@ -2538,61 +2537,60 @@ namespace SQLAgain
             ShowSHFind();
         }
 
-        private async void TextBoxSHFindText_TextChanged(object sender, EventArgs e)
+        private void TextBoxSHFindText_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBoxSHFindText.Text))
             {
                 labelSHFindMsg.Text = "Please enter a string to find.";
                 return;
             }
-            if (flagSHFindRunning)
-            {
-                m_cancelTokenSource.Cancel();
-                m_cancelTokenSource = new CancellationTokenSource();
-            }
-            else
-            {
-                m_cancelTokenSource = new CancellationTokenSource();
-                flagSHFindRunning = true;
-            }
-            await SHFind(m_cancelTokenSource.Token);
+            SHFind();
         }
-        private async Task SHFind(CancellationToken ct)
+        private void SHFind()
         {
-            SHFind_Reset();
+                SHFind_Reset();
             int matches = 0;
+            bool searchLimited = false;
             string findText = textBoxSHFindText.Text;
-            RegexOptions options = RegexOptions.Multiline;
-            if (checkBoxSHFindCase.Checked == false)
-                options = RegexOptions.Multiline | RegexOptions.IgnoreCase;
-            if (checkBoxSHFindWord.Checked == true)                                                      // When "Match Word" is selected
-                findText = "\\b" + findText + "\\b";                            // enclose findText with \b
-            try
-            {
-                foreach (Match m in Regex.Matches(textBoxSessionHistory.Text, findText, options))
+            
+                RegexOptions options = RegexOptions.Multiline;
+                if (checkBoxSHFindCase.Checked == false)
+                    options = RegexOptions.Multiline | RegexOptions.IgnoreCase;
+                if (checkBoxSHFindWord.Checked == true)                                                      // When "Match Word" is selected
+                    findText = "\\b" + findText + "\\b";                            // enclose findText with \b
+                try
                 {
-                    ct.ThrowIfCancellationRequested();
-                    matches++;
-                    ColorKeyword(m.Value, m.Index);
-                    listSHFindMatches.Add(new SHFindMatchClass(matches, m.Value, m.Index));
-                    if (matches == 1000)                    // limit highlighting of found strings to 1000
-                        break;                              // ... otherwise it takes too long and is not responding
+                    foreach (Match m in Regex.Matches(textBoxSessionHistory.Text, findText, options))
+                    {
+                        matches++;
+                        ColorKeyword(m.Value, m.Index);
+                        listSHFindMatches.Add(new SHFindMatchClass(matches, m.Value, m.Index));
+                        if (matches == 1000)                    // limit highlighting of found strings to 1000 ... otherwise it takes too long and is not responding
+                        {
+                            searchLimited = true;
+                            break;
+                        }
+
+                    }
+                    sHFindMatch_x = 0;
+                    SHFIndMatchToggler("none");
                 }
-                sHFindMatch_x = 0;
-                SHFIndMatchToggler("none");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: "
-                    + ex.Message
-                    + Environment.NewLine
-                    + Environment.NewLine
-                    + "Possible cause: Input Error in FIND TEXT, Single Backslash not escaped with Backslash ?");
-            }
-            if (matches > 0)
-                labelSHFindMsg.Text = "1 of " + listSHFindMatches.Count.ToString() + " matches";
-            else
-                labelSHFindMsg.Text = "Phrase not found";
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: "
+                        + ex.Message
+                        + Environment.NewLine
+                        + Environment.NewLine
+                        + "Possible cause: Input Error in FIND TEXT, Single Backslash not escaped with Backslash ?");
+                }
+                if (matches > 0)
+                {
+                    labelSHFindMsg.Text = "1 of " + listSHFindMatches.Count.ToString() + " matches";
+                    if (searchLimited)
+                        labelSHFindMsg.Text += " (limited to 1000 matches)";
+                }
+                else
+                    labelSHFindMsg.Text = "Phrase not found";
         }
         private void ColorKeyword(string word, int startIndex)                  // Highlite all found strings
         {
@@ -2667,33 +2665,13 @@ namespace SQLAgain
 
         
         private async void CheckBoxSHFindWord_CheckedChanged(object sender, EventArgs e)
-        {
-            if (flagSHFindRunning)
-            {
-                m_cancelTokenSource.Cancel();
-                m_cancelTokenSource = new CancellationTokenSource();
-            }
-            else
-            {
-                m_cancelTokenSource = new CancellationTokenSource();
-                flagSHFindRunning = true;
-            }
-            await SHFind(m_cancelTokenSource.Token);
+        {           
+            SHFind();
         }
 
         private async void CheckBoxSHFind_CheckedChanged(object sender, EventArgs e)
         {
-            if (flagSHFindRunning)
-            {
-                m_cancelTokenSource.Cancel();
-                m_cancelTokenSource = new CancellationTokenSource();
-            }
-            else
-            {
-                m_cancelTokenSource = new CancellationTokenSource();
-                flagSHFindRunning = true;
-            }
-            await SHFind(m_cancelTokenSource.Token);
+            SHFind();
         }
     }
 }
